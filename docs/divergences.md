@@ -68,6 +68,8 @@
 
 **Consequência:** **cada PM tem a própria cópia do roadmap, no próprio navegador.** Ninguém vê a edição do outro; limpar o cache do navegador apaga o board. É a contrapartida de B1 e a razão pela qual o backend não pode demorar muito.
 
+**Resolvido (15/09/2026, passo 4):** a fonte da verdade passou a ser a tabela `board` no Supabase, pela API de §9. O `localStorage` continua, agora como cache: abre rápido e segura o board se a conexão cair. A chave `cakto-roadmap-side` (barra lateral) segue local, por ser preferência de cada pessoa.
+
 ### A6 · Barra lateral colapsável e shell de navegação
 
 **Spec:** não descreve o shell — nem sidebar, nem header, nem navegação.
@@ -159,6 +161,8 @@
 **Código:** nada disso. Nenhuma chamada de rede, nenhum indicador. Ver A5.
 
 **Consequência:** a ferramenta hoje não é multiusuário. Seis PMs preenchendo cada um a sua cópia é o cenário atual, e a única forma de juntar seria exportar o JSON e outro importar — que é justamente o que B2 quebra.
+
+**Resolvido (15/09/2026, passo 4):** `js/sync.js` implementa §9.2 inteiro — carga inicial, autosave de 4s, refresh de 15s, `sendBeacon` no fechamento e conflito 409 com confirmação — e o header mostra o indicador. Acrescentado ao previsto na spec: o estado "Erro no servidor" e uma faixa com a causa provável (SPEC §9.2, revisado no mesmo dia). Publicado em `https://roadmap-cakto.vercel.app`, atrás de senha compartilhada (`APP_PASSWORD`, SPEC §10). Teste de fumaça do GPM em 15/09: gravação no Supabase, edição persistida após recarregar e mudança de uma aba aparecendo na outra.
 
 ### B2 · "Restaurar ↑" não tem botão — e a interface promete que tem
 
@@ -400,6 +404,26 @@ As quatro views estão traduzidas para Preact + htm (pedidos 0–6) e conferidas
 **Lógica**: teste de equivalência contra a lógica extraída do export — 304 comparações iguais (`scratchpad` do Claude; reproduzível com `node teste-equivalencia.mjs js/ <pasta com proto-logic.js e proto-class.js>`).
 
 **Fica em aberto para depois de 3a:** A2 (`demandas` → `iniciativas`, com a remodelagem do 4b), A5/B1 (backend, passo 4), A10, B3, C1–C4 (passo 5), B9 (evolução).
+
+---
+
+## Fechamento do passo 4 — backend (15/09/2026)
+
+**A5 e B1 resolvidos.** O roadmap é multiusuário: uma URL, um board, todos os PMs na mesma cópia.
+
+| Entregue | Onde |
+|---|---|
+| API do board (§9.1), escrita condicional por versão, 409 em conflito | `api/board.js` |
+| Adaptador Supabase por REST, sem SDK; fallback em memória sem as variáveis | `api/board.js` |
+| Senha compartilhada em toda chamada, header ou corpo (o caminho do `sendBeacon`) | `api/board.js`, tela de senha em `js/app.js` |
+| Cliente de sincronização (§9.2) e cache local | `js/sync.js` |
+| Indicador no header e faixa de erro com causa provável | `js/app.js` |
+| Servidor local que roda a função, como a Vercel | `tools/dev-server.mjs` |
+| Passos de instalação, SQL da tabela, variáveis e custos | `README.md` |
+
+**Dois tropeços na instalação, ambos corrigidos no código e não na configuração:** o painel do Supabase separou a página de chaves em *Data API* e *API Keys* (README atualizado); e o endereço que ele mostra já traz `/rest/v1/` no fim, o que duplicava o caminho e devolvia `PGRST125` — a função passou a aceitar as duas formas.
+
+**Continua em aberto:** A2 e o vínculo iniciativa → item (passo 4b); A10, B3, C1–C4 (passo 5); B9 (evolução). Da spec, §11 segue como fase futura: login Google por domínio e perfis, que substituem a senha compartilhada.
 
 ---
 

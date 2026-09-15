@@ -1,0 +1,8 @@
+/* Cakto — espaçamento. Variáveis do Figma: 4 6 8 12 16 24 32.
+   O gap 10px é o 2º mais usado na prática (vem de componentes, não é variável). */
+:root{
+  --sp-4:4px;  --sp-6:6px;  --sp-8:8px;  --sp-10:10px;
+  --sp-12:12px; --sp-16:16px; --sp-24:24px; --sp-32:32px;
+  --pad-4:4px; --pad-6:6px; --pad-8:8px; --pad-12:12px;
+  --pad-16:16px; --pad-24:24px; --pad-32:32px;
+}

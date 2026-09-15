@@ -1,0 +1,121 @@
+/* Cakto — cor. Dark-first: o tema padrão do produto é escuro.
+   Fonte: frame Colors (1089:32632) do Figma, dark + light. */
+:root{
+  /* base/ — superfícies e texto */
+  --base-100:#161c24;   /* fundo da página */
+  --base-200:#212b36;   /* card */
+  --base-300:#333e49;   /* borda, superfície elevada, texto disabled */
+  --text-title:#ffffff;
+  --text-body:#919eab;
+  --text-btn:#ffffff;
+  --a-white:#ffffff;
+
+  /* semantic/ — os três verdes, cada um com um papel */
+  --semantic-primary:#65a76b;    /* decorativo: dots, outline de card */
+  --semantic-secondary:#36b37e;  /* texto / estado ativo */
+  --semantic-tertiary:#0f7864;   /* estrutural: CTA, seleção, underline */
+
+  /* status/ */
+  --status-success:#38ca4f;
+  --status-warning:#fdd465;
+  --status-error:#ff5630;
+  --status-accet:#61f3f3;          /* grafia do Figma: "accet" (sic) */
+  --status-accet-content:#003768;
+  --status-accet-text:#cafdf5;
+
+  /* grays soltos de alta frequência */
+  --gray-4:#d1d1d6;
+  --gray-text-2:#637381;
+  --gray-line:#dfe3e8;
+
+  /* aliases semânticos */
+  --page-bg:var(--base-100);
+  --card-bg:var(--base-200);
+  --surface-3:var(--base-300);
+  --border:var(--base-300);
+  --text:var(--text-title);
+  --text-muted:var(--text-body);
+  --accent:var(--semantic-secondary);
+  --accent-deep:var(--semantic-tertiary);
+  --danger:var(--status-error);
+  --success:var(--status-success);
+  --warning:var(--status-warning);
+  --focus-border:var(--a-white);   /* foco de input = borda branca */
+}
+
+/* Tema light oficial — mesmos verdes, muda base/texto/status. */
+.light{
+  --base-100:#f4f6f8;
+  --base-200:#ffffff;
+  --base-300:#dfe3e8;   /* ?FIGMA — light não tem swatch de borda */
+  --text-title:#212b36;
+  --text-body:#637381;
+  --status-success:#0d7b1f;
+  --status-warning:#ffd666;
+  --status-error:#ff5630;
+  --focus-border:var(--semantic-tertiary); /* ?FIGMA */
+  --page-bg:var(--base-100);
+  --card-bg:var(--base-200);
+  --surface-3:var(--base-300);
+  --border:var(--base-300);
+  --text:var(--text-title);
+  --text-muted:var(--text-body);
+  --danger:var(--status-error);
+  --success:var(--status-success);
+  --warning:var(--status-warning);
+  --nav-hover-bg:var(--base-200);
+  --shadow-z1:0 1px 2px 0 rgba(145,158,171,.16);
+}
+
+/* Checkout (legado, light). ATENÇÃO: #095a49 não existe no Figma —
+   veio de fora do design system. Confirmar antes de unificar. */
+.checkout{
+  --page-bg:#f1f1f1;
+  --card-bg:#ffffff;
+  --summary-bg:#ededed;
+  --border:#dfe3e8;
+  --text:#000000;
+  --text-muted:#637381;
+  --label:#4b5563;
+  --accent:#095a49;   /* ?FORA-DO-FIGMA */
+  --accent-deep:#0b6b57;
+  --shadow:0 1px 2px rgba(0,0,0,.05);
+  --shadow-cta:0 8px 20px rgba(9,90,73,.25);
+  --radius-card:8px;
+}
+
+/* NOVA IDENTIDADE VISUAL (rebrand, dark-only, 12535:125496).
+   Usar só quando pedido explicitamente. */
+.nova{
+  --nv-base:#0e0e0e;
+  --nv-elevated:#141414;
+  --nv-paper:#1a1a1a;
+  --nv-extra:#1c1c1c;
+  --nv-muted:#2c2c2c;
+  --nv-shell-gradient:linear-gradient(135deg,#0e0e0e 0%,#0e0e0e 65%,#0f7865 120%); /* @kind color */
+  --nv-green-darker:#064c3b;
+  --nv-green-dark:#0b6856;
+  --nv-green-principal:#0f7865;
+  --nv-green-light:#2ea593;
+  --nv-green-lighter:#82cabf;
+  --nv-text-primary:#ffffff;
+  --nv-text-secondary:#919eab;
+  --nv-text-disabled:#637381;
+  --nv-success:#36b37e;
+  --nv-success-strong:#38ca4f;
+  --nv-warning:#ffab00;
+  --nv-error:#ff5630;
+  --nv-info:#00b8d9;
+  --nv-blue:#3366ff;
+  --page-bg:var(--nv-base);
+  --card-bg:var(--nv-paper);
+  --surface-3:var(--nv-extra);
+  --border:var(--nv-muted);
+  --text:var(--nv-text-primary);
+  --text-muted:var(--nv-text-secondary);
+  --accent:var(--nv-green-principal);
+  --accent-deep:var(--nv-green-dark);
+  --danger:var(--nv-error);
+  --success:var(--nv-success);
+  --warning:var(--nv-warning);
+}

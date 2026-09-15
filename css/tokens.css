@@ -1,0 +1,103 @@
+/* =====================================================================
+   PALETA PROVISÓRIA DO PROTÓTIPO — SUBSTITUIR NO PASSO 5
+   Valores copiados do export do Claude Design (Roadmap Cakto.dc.html),
+   sem alteração, para a tradução fiel (passo 3a) ter zero mudança visual.
+   No passo 5 este arquivo é trocado pelo tokens.css da skill cakto-design
+   e os nomes --proto-* são remapeados em app.css.
+   Usar estes nomes só em css/app.css e nos enums de js/data.js (SPEC §4:
+   "o código referencia tokens, não hex").
+   ===================================================================== */
+:root {
+  color-scheme: dark;
+
+  /* Superfícies (shell, tabela, Gantt, Config) */
+  --proto-bg: #161c24;
+  --proto-paper: #212b36;
+  --proto-elevated: #29323c;
+  --proto-elevated-2: #232d38;
+  --proto-muted: #333e49;
+  --proto-muted-2: #333d48;
+  --proto-avatar: #343b45;
+
+  /* Texto */
+  --proto-text: #fff;
+  --proto-text-2: #c4cdd5;
+  --proto-text-secondary: #919eab;
+  --proto-text-disabled: #637381;
+
+  /* Acentos e status */
+  --proto-green: #36b37e;
+  --proto-green-deep: #0f7864;
+  --proto-green-mid: #65a76b;
+  --proto-yellow: #fdd465;
+  --proto-red: #ff5630;
+  --proto-grey-1: #454f5b;
+  --proto-sand: #f4cd97;
+
+  /* Linhas e sombras (rgba do export) */
+  --proto-line-06: rgba(145,158,171,.06);
+  --proto-line-08: rgba(145,158,171,.08);
+  --proto-line-12: rgba(145,158,171,.12);
+  --proto-line-16: rgba(145,158,171,.16);
+  --proto-line-20: rgba(145,158,171,.2);
+  --proto-line-24: rgba(145,158,171,.24);
+  --proto-line-32: rgba(145,158,171,.32);
+  --proto-line-50: rgba(145,158,171,.5);
+  --proto-shadow: -3px 8px 24px rgba(0,0,0,.3);
+  --proto-soft-green: rgba(15,120,100,.15);
+  --proto-soft-green-strong: rgba(15,120,100,.20);
+  --proto-soft-green-band: rgba(15,120,100,.35);
+  --proto-soft-red: rgba(255,86,48,.12);
+  --proto-soft-yellow: rgba(253,212,101,.12);
+  --proto-today: rgba(54,179,126,.6);
+  --proto-bar-fill: rgba(255,255,255,.22);
+  --proto-bar-fill-edge: rgba(255,255,255,.45);
+  --proto-band-line: rgba(255,255,255,.2);
+  --proto-band-line-strong: rgba(255,255,255,.15);
+  --proto-dot-ring: rgba(22,28,36,.65);
+
+  /* Kanban — segunda família de cores do protótipo (divergences C3) */
+  --proto-k-card: #1e1e1e;
+  --proto-k-card-terminal: #242424;
+  --proto-k-text: #f2f1ec;
+  --proto-k-text-2: #b3b4ab;
+  --proto-k-text-3: #83857c;
+  --proto-k-red: #e88178;
+  --proto-k-green: #7fd98f;
+  --proto-k-amber: #e0ac57;
+  --proto-k-sage: #9bb79b;
+  --proto-k-avatar-pm: #3e3a32;
+  --proto-k-avatar-tl: #4a4438;
+  --proto-k-avatar-text: #e8dfd1;
+  --proto-k-focus: #3fc958;            /* resto da paleta v1.0 (divergences C2) */
+  --proto-k-progress-done: #3fc958;    /* idem */
+  --proto-k-line-06: rgba(242,241,236,.06);
+  --proto-k-line-08: rgba(242,241,236,.08);
+  --proto-k-line-12: rgba(242,241,236,.12);
+  --proto-k-line-20: rgba(242,241,236,.20);
+  --proto-k-soft-red: rgba(232,129,120,.16);
+  --proto-k-soft-red-dep: rgba(168,50,43,.12);
+  --proto-k-soft-green: rgba(63,201,88,.16);
+  --proto-k-shadow: 0 0 0 1px rgba(242,241,236,.06), 0 12px 24px -8px rgba(0,0,0,.55);
+  --proto-k-shadow-hover: 0 0 0 1px rgba(242,241,236,.08), 0 20px 32px -8px rgba(0,0,0,.65);
+  --proto-overlay: rgba(0,0,0,.6);
+
+  /* Botões do design system (valores de _ds/tokens/colors.css) */
+  --proto-btn-text: #ffffff;
+  --proto-white: #ffffff;
+  --proto-btn-shadow: 0 4px 14.2px 0 rgba(54,179,126,.28);
+
+  /* Squads & sprints */
+  --proto-line-60: rgba(145,158,171,.6);
+  --proto-knob-shadow: -1px 1px 4.9px rgba(0,0,0,.3);
+
+  /* Gantt */
+  --proto-line-05: rgba(145,158,171,.05);
+  --proto-line-10: rgba(145,158,171,.10);
+  --proto-soft-green-06: rgba(15,120,100,.06);
+  --proto-bar-shadow: 0 1px 3px rgba(0,0,0,.3);
+
+  /* Roadmap / tabela */
+  --proto-green-50: rgba(54,179,126,.5);
+  --proto-select-arrow: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23919eab' stroke-width='2'><path d='M2 4l4 4 4-4'/></svg>");
+}

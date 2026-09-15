@@ -1,0 +1,12 @@
+/* Cakto — sombras. A assinatura é deslocada para a ESQUERDA (x negativo). */
+:root{
+  --shadow:-3px 8px 24px 0 rgba(0,0,0,.30);
+  --shadow-z1:0 1px 2px 0 rgba(0,0,0,.16);
+  --shadow-z8:0 8px 16px 0 rgba(145,158,171,.16);
+  --shadow-card:0 12px 24px -4px rgba(145,158,171,.12),0 0 2px 0 rgba(145,158,171,.20);
+  --shadow-btn-hover:0 4px 14.2px 0 rgba(54,179,126,.28);
+  --shadow-btn-hover-danger:0 4px 14.2px 0 rgba(255,86,48,.28);
+  --op-disabled:0.26; /* @kind other */
+  --op-dim:0.40; /* @kind other */
+  --op-half:0.50; /* @kind other */
+}

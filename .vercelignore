@@ -1,0 +1,10 @@
+# Só o app vai para a Vercel. Documentos, o export do protótipo e ferramentas locais não são publicados
+# (o site estático fica fora da senha; a senha protege só /api/board).
+Claude Design/
+docs/
+skills/
+tools/
+.claude/
+SPEC.md
+CLAUDE.md
+README.md

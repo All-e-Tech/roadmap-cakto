@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/tokens/fig-tokens.css">
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/tokens/colors.css">
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/tokens/typography.css">
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/tokens/shape.css">
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/tokens/elevation.css">
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/tokens/gradients.css">
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/tokens/components.css">
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/tokens/fig-typography.css">
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/tokens/primitives.css">
+<link rel="stylesheet" href="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/styles.css">
+<script src="_ds/cakto-design-system-figma-9d574ba3-5796-42ce-99f1-46ada244d082/_ds_bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#161c24;color-scheme:dark}
+a{color:#36b37e}a:hover{color:#65a76b}
+input::placeholder{color:#637381}
+.kcard:focus-visible{outline:2px solid #3FC958;outline-offset:2px}
+.kcard .kctl{opacity:0;transition:opacity .15s ease}
+.kcard:hover .kctl,.kcard:focus-within .kctl,.kctl:focus-visible{opacity:1}
+@media (hover:none){.kcard .kctl{opacity:1}}
+svg path[d="M 0 0 L 24 0 L 24 24 L 0 24 L 0 0 Z"],svg path[d="M 0 0 L 32 0 L 32 32 L 0 32 L 0 0 Z"],svg path[d="M 0 0 L 24 0 L 24 24 L 0 24 Z"],svg path[d="M 0 0 L 32 0 L 32 32 L 0 32 Z"]{fill:none!important}
+</style>
+</helmet>
+<div style="display:flex;min-height:100vh;background:#161c24;color:#fff;font-family:'Public Sans',-apple-system,'Segoe UI',Arial,sans-serif">
+
+<div style="{{ sideStyle }}">
+<div style="{{ sideHeadStyle }}">
+<sc-if value="{{ sideOpen }}" hint-placeholder-val="{{ true }}"><img src="assets/cakto-logo.png" alt="Cakto" style="width:140px;height:auto;display:block"></sc-if>
+<button title="{{ sideToggleTitle }}" onClick="{{ toggleSide }}" style="background:#212b36;border:1px solid rgba(145,158,171,.2);border-radius:8px;color:#919eab;cursor:pointer;padding:6px 10px;font-size:13px;line-height:1;font-family:inherit" style-hover="color:#fff;border-color:rgba(145,158,171,.5)">{{ sideToggleGlyph }}</button>
+</div>
+<sc-if value="{{ sideOpen }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:4px">
+<div style="font-size:11px;line-height:18px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#637381;padding:0 16px">Roadmap</div>
+<button style="{{ navData }}" style-hover="background:#212b36" onClick="{{ goData }}"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Icon" name="IcDashboard" size="18" hint-size="18px,18px"></x-import>Quadro Principal</button>
+<button style="{{ navGantt }}" style-hover="background:#212b36" onClick="{{ goGantt }}"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Icon" name="InterfaceEssentialStatisticsAnalyticsArr" size="18" hint-size="18px,18px"></x-import>Visão geral (Gantt)</button>
+<button class="gear-btn" style="{{ navKanban }}" style-hover="background:#212b36" onClick="{{ goKanban }}"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Icon" name="FilesFileBlankList" size="18" hint-size="18px,18px"></x-import>Demandas (Kanban)</button>
+<div style="font-size:11px;line-height:18px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#637381;padding:12px 16px 0">Config</div>
+<button class="gear-btn" style="{{ navCfg }}" style-hover="background:#212b36" onClick="{{ goCfg }}"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Icon" name="InterfaceEssentialSettings" size="18" hint-size="18px,18px"></x-import>Squads &amp; sprints</button>
+</div>
+<div style="margin-top:auto;font-size:12px;line-height:18px;color:#637381">Dados salvos automaticamente neste navegador. Use Salvar / Carregar para compartilhar em JSON.</div>
+</sc-if>
+<sc-if value="{{ sideClosed }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px;align-items:center">
+<button title="Quadro Principal" style="{{ navDataC }}" style-hover="background:#212b36" onClick="{{ goData }}"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Icon" name="IcDashboard" size="20" hint-size="20px,20px"></x-import></button>
+<button title="Visão geral (Gantt)" style="{{ navGanttC }}" style-hover="background:#212b36" onClick="{{ goGantt }}"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Icon" name="InterfaceEssentialStatisticsAnalyticsArr" size="20" hint-size="20px,20px"></x-import></button>
+<button title="Demandas (Kanban)" class="gear-btn" style="{{ navKanbanC }}" style-hover="background:#212b36" onClick="{{ goKanban }}"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Icon" name="FilesFileBlankList" size="20" hint-size="20px,20px"></x-import></button>
+<button title="Squads &amp; sprints" class="gear-btn" style="{{ navCfgC }}" style-hover="background:#212b36" onClick="{{ goCfg }}"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Icon" name="InterfaceEssentialSettings" size="20" hint-size="20px,20px"></x-import></button>
+</div>
+</sc-if>
+</div>
+
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;padding:0 32px 40px">
+<div style="display:flex;align-items:center;gap:8px;padding:20px 0 8px">
+<div style="flex:1;font-size:14px;line-height:20px;color:#919eab">Roadmap <b style="color:#fff;font-weight:700">{{ quarter }}</b> &nbsp;/&nbsp; <b style="color:#fff;font-weight:700">{{ pageTitle }}</b></div>
+<div style="position:relative" data-qwrap="1">
+<button onClick="{{ toggleQMenu }}" style="display:flex;align-items:center;gap:8px;background:#212b36;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit" style-hover="border-color:rgba(145,158,171,.5)">{{ quarter }}<span style="color:#919eab;font-size:10px">▾</span></button>
+<sc-if value="{{ qMenuOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;top:44px;right:0;background:#212b36;border-radius:12px;box-shadow:-3px 8px 24px rgba(0,0,0,.3);padding:8px;width:250px;z-index:50">
+<sc-for list="{{ qOpts }}" as="o" hint-placeholder-count="2">
+<button style="{{ o.style }}" onClick="{{ o.onClick }}"><span>{{ o.label }}</span><span style="font-size:11px;color:#919eab;font-weight:600">{{ o.meta }}</span></button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+<sc-if value="{{ showData }}" hint-placeholder-val="{{ true }}"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Button" variant="secondary" size="small" onClick="{{ importXlsx }}" hint-size="100px,32px">Importar</x-import></sc-if>
+<x-import component-from-global-scope="CaktoDesignSystem_9d574b.Button" variant="secondary" size="small" onClick="{{ loadJson }}" hint-size="100px,32px">Carregar</x-import>
+<x-import component-from-global-scope="CaktoDesignSystem_9d574b.Button" variant="primary" size="small" onClick="{{ saveJson }}" hint-size="90px,32px">Salvar</x-import>
+<div style="width:36px;height:36px;border-radius:100px;background:#343b45;margin-left:8px"></div>
+</div>
+
+<sc-if value="{{ showData }}" hint-placeholder-val="{{ true }}">
+<div>
+<h1 style="margin:16px 0 0;font-size:24px;line-height:32px;font-weight:700">Quadro Principal</h1>
+<p style="margin:4px 0 0;font-size:14px;line-height:20px;color:#919eab">{{ dataSub }}</p>
+<div style="display:flex;gap:6px;background:#212b36;padding:6px;border-radius:12px;width:fit-content;flex-wrap:wrap;margin:18px 0 12px">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+<button style="{{ t.style }}" onClick="{{ t.onClick }}"><span style="{{ t.dotStyle }}"></span>{{ t.name }}</button>
+</sc-for>
+</div>
+<p style="margin:0 0 14px;font-size:13px;line-height:20px;color:#637381">Arraste pela alça ⠿ para reordenar um item ou movê-lo entre categorias. Use os botões nos cabeçalhos para gerenciar categorias e subcategorias.</p>
+<div style="background:#212b36;border-radius:16px;overflow:hidden;box-shadow:-3px 8px 24px rgba(0,0,0,.3);margin-bottom:20px">
+<div style="padding:14px 24px;border-bottom:1px solid rgba(145,158,171,.12);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+<span style="{{ squadAccent }}"></span>
+<span style="font-size:16px;line-height:24px;font-weight:700">{{ squadName }}</span>
+<div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+<button onClick="{{ toggleGroup }}" style="display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#c4cdd5;background:#161c24;padding:6px 11px;border-radius:100px;cursor:pointer;border:none;font-family:inherit"><span style="{{ tgSwStyle }}"><span style="{{ tgKnobStyle }}"></span></span>Agrupar por categoria</button>
+<span style="font-size:12px;line-height:18px;font-weight:700;color:#919eab;background:#333e49;padding:3px 10px;border-radius:100px">{{ countLabel }}</span>
+</div>
+</div>
+<div style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse">
+<thead><tr>
+<sc-for list="{{ theadCols }}" as="c" hint-placeholder-count="8"><th style="text-align:left;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#919eab;padding:11px 12px;background:#333e49;white-space:nowrap">{{ c }}</th></sc-for>
+</tr></thead>
+<tbody>
+<sc-for list="{{ tRows }}" as="r" hint-placeholder-count="6">
+<sc-if value="{{ r.isCat }}" hint-placeholder-val="{{ false }}">
+<tr onDragOver="{{ r.onDragOver }}" onDrop="{{ r.onDrop }}" style="{{ r.headStyle }}"><td colSpan="{{ colspan }}" style="padding:0;background:#29323c;border-bottom:1px solid rgba(145,158,171,.12)">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 16px;gap:12px">
+<span style="display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px;flex:1;min-width:0"><span style="{{ r.dotStyle }}"></span>
+<sc-if value="{{ r.showBtns }}" hint-placeholder-val="{{ false }}"><input value="{{ r.name }}" onChange="{{ r.onRen }}" title="Clique para editar o nome da categoria" style="background:transparent;border:1px solid transparent;border-radius:6px;padding:4px 8px;font-size:13px;font-weight:800;font-family:inherit;color:#fff;min-width:60px;width:220px" style-hover="background:#161c24" style-focus="outline:none;border-color:#0f7864;background:#161c24"></sc-if>
+<sc-if value="{{ r.plainName }}" hint-placeholder-val="{{ false }}"><span>{{ r.name }}</span></sc-if>
+<sc-if value="{{ r.showBtns }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;gap:2px;margin-left:4px">
+<button onClick="{{ r.onAddSub }}" style="background:none;border:none;color:#919eab;cursor:pointer;padding:3px 6px;border-radius:6px;font-size:11px;font-weight:700;font-family:inherit" style-hover="background:rgba(145,158,171,.16);color:#fff">+ sub</button>
+<button title="Remover categoria" onClick="{{ r.onDelCat }}" style="background:none;border:none;color:#919eab;cursor:pointer;padding:3px 6px;border-radius:6px;font-size:13px;line-height:1;font-family:inherit" style-hover="color:#ff5630;background:rgba(255,86,48,.12)">×</button>
+</span></sc-if>
+</span>
+<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:90px;height:7px;border-radius:4px;background:rgba(145,158,171,.24);overflow:hidden;display:inline-block"><i style="{{ r.rollStyle }}"></i></span><b style="font-size:12px">{{ r.rollPct }}%</b></span>
+</div>
+</td></tr>
+</sc-if>
+<sc-if value="{{ r.isSub }}" hint-placeholder-val="{{ false }}">
+<tr onDragOver="{{ r.onDragOver }}" onDrop="{{ r.onDrop }}" style="{{ r.headStyle }}"><td colSpan="{{ colspan }}" style="padding:0;background:#232d38;border-bottom:1px solid rgba(145,158,171,.08)">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 16px 7px 32px;gap:12px">
+<span style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:12.5px;color:#c4cdd5;flex:1;min-width:0"><span style="color:#36b37e">▸</span>
+<input value="{{ r.name }}" onChange="{{ r.onRen }}" title="Clique para editar o nome da subcategoria" style="background:transparent;border:1px solid transparent;border-radius:6px;padding:3px 8px;font-size:12.5px;font-weight:700;font-family:inherit;color:#c4cdd5;min-width:60px;width:200px" style-hover="background:#161c24" style-focus="outline:none;border-color:#0f7864;background:#161c24">
+<span style="display:inline-flex;gap:2px;margin-left:4px">
+<button title="Remover subcategoria" onClick="{{ r.onDelSub }}" style="background:none;border:none;color:#919eab;cursor:pointer;padding:3px 6px;border-radius:6px;font-size:13px;line-height:1;font-family:inherit" style-hover="color:#ff5630;background:rgba(255,86,48,.12)">×</button>
+</span></span>
+<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:90px;height:7px;border-radius:4px;background:rgba(145,158,171,.24);overflow:hidden;display:inline-block"><i style="{{ r.rollStyle }}"></i></span><b style="font-size:12px;color:#c4cdd5">{{ r.rollPct }}%</b></span>
+</div>
+</td></tr>
+</sc-if>
+<sc-if value="{{ r.isEmpty }}" hint-placeholder-val="{{ false }}">
+<tr onDragOver="{{ r.onDragOver }}" onDrop="{{ r.onDrop }}"><td colSpan="{{ colspan }}" style="color:#637381;font-size:12px;padding:10px 16px 10px 44px;border-bottom:1px solid rgba(145,158,171,.08)">— arraste itens para cá ou use + para adicionar —</td></tr>
+</sc-if>
+<sc-if value="{{ r.isItemGrouped }}" hint-placeholder-val="{{ false }}">
+<tr onDragOver="{{ r.onDragOver }}" onDrop="{{ r.onDrop }}" style="{{ r.rowStyle }}">
+<td draggable="true" onDragStart="{{ r.onDragStart }}" onDragEnd="{{ r.onDragEnd }}" title="Arraste para reordenar / mover" style="width:26px;text-align:center;cursor:grab;padding:6px 4px;color:#637381;font-size:13px;user-select:none">⠿</td>
+<td style="padding:5px 8px;min-width:240px"><input value="{{ r.n }}" onChange="{{ r.onN }}" placeholder="Nome do item" style="width:100%;box-sizing:border-box;border:1px solid transparent;background:transparent;border-radius:6px;padding:7px 8px;font-size:14px;font-weight:600;font-family:inherit;color:#fff" style-hover="background:#29323c" style-focus="outline:none;border-color:#0f7864;background:#161c24"></td>
+<td style="padding:5px 8px"><input type="date" value="{{ r.s }}" onChange="{{ r.onS }}" style="width:135px;border:1px solid transparent;background:transparent;border-radius:6px;padding:6px 8px;font-size:13px;font-family:inherit;color:#c4cdd5" style-hover="background:#29323c" style-focus="outline:none;border-color:#0f7864"></td>
+<td style="padding:5px 8px"><input type="date" value="{{ r.e }}" onChange="{{ r.onE }}" style="width:135px;border:1px solid transparent;background:transparent;border-radius:6px;padding:6px 8px;font-size:13px;font-family:inherit;color:#c4cdd5" style-hover="background:#29323c" style-focus="outline:none;border-color:#0f7864"></td>
+<td style="padding:5px 8px"><select value="{{ r.st }}" onChange="{{ r.onSt }}" style="{{ r.stStyle }}"><sc-for list="{{ statusOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></td>
+<td style="padding:5px 8px"><select value="{{ r.pv }}" onChange="{{ r.onPv }}" style="{{ r.pvStyle }}"><sc-for list="{{ prevOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></td>
+<td style="padding:5px 12px;min-width:150px"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:7px;border-radius:4px;background:rgba(145,158,171,.24);overflow:hidden"><i style="{{ r.pctStyle }}"></i></div><input type="number" min="0" max="100" value="{{ r.p }}" onChange="{{ r.onP }}" style="width:52px;text-align:right;font-weight:700;border:1px solid transparent;background:transparent;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;color:#fff" style-focus="outline:none;border-color:#0f7864"><span style="font-size:12px;color:#637381">%</span></div></td>
+<td style="padding:5px 10px;white-space:nowrap;text-align:center">
+<button title="Enviar ao backlog" onClick="{{ r.onToBacklog }}" style="background:none;border:none;color:#637381;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:14px;line-height:1" style-hover="color:#fdd465;background:rgba(253,212,101,.12)">↓</button>
+<button title="Remover" onClick="{{ r.onDel }}" style="background:none;border:none;color:#637381;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:16px;line-height:1" style-hover="color:#ff5630;background:rgba(255,86,48,.12)">×</button>
+</td>
+</tr>
+</sc-if>
+<sc-if value="{{ r.isItemFlat }}" hint-placeholder-val="{{ false }}">
+<tr onDragOver="{{ r.onDragOver }}" onDrop="{{ r.onDrop }}" style="{{ r.rowStyle }}">
+<td draggable="true" onDragStart="{{ r.onDragStart }}" onDragEnd="{{ r.onDragEnd }}" title="Arraste para reordenar" style="width:26px;text-align:center;cursor:grab;padding:6px 4px;color:#637381;font-size:13px;user-select:none">⠿</td>
+<td style="padding:5px 8px;min-width:220px"><input value="{{ r.n }}" onChange="{{ r.onN }}" placeholder="Nome do item" style="width:100%;box-sizing:border-box;border:1px solid transparent;background:transparent;border-radius:6px;padding:7px 8px;font-size:14px;font-weight:600;font-family:inherit;color:#fff" style-hover="background:#29323c" style-focus="outline:none;border-color:#0f7864;background:#161c24"></td>
+<td style="padding:5px 8px"><input value="{{ r.cat }}" onChange="{{ r.onCat }}" placeholder="—" list="catlist" style="width:140px;border:1px solid transparent;background:transparent;border-radius:6px;padding:7px 8px;font-size:13px;font-family:inherit;color:#c4cdd5" style-hover="background:#29323c" style-focus="outline:none;border-color:#0f7864"></td>
+<td style="padding:5px 8px"><input value="{{ r.sub }}" onChange="{{ r.onSub }}" placeholder="—" style="width:120px;border:1px solid transparent;background:transparent;border-radius:6px;padding:7px 8px;font-size:13px;font-family:inherit;color:#c4cdd5" style-hover="background:#29323c" style-focus="outline:none;border-color:#0f7864"></td>
+<td style="padding:5px 8px"><input type="date" value="{{ r.s }}" onChange="{{ r.onS }}" style="width:135px;border:1px solid transparent;background:transparent;border-radius:6px;padding:6px 8px;font-size:13px;font-family:inherit;color:#c4cdd5" style-hover="background:#29323c" style-focus="outline:none;border-color:#0f7864"></td>
+<td style="padding:5px 8px"><input type="date" value="{{ r.e }}" onChange="{{ r.onE }}" style="width:135px;border:1px solid transparent;background:transparent;border-radius:6px;padding:6px 8px;font-size:13px;font-family:inherit;color:#c4cdd5" style-hover="background:#29323c" style-focus="outline:none;border-color:#0f7864"></td>
+<td style="padding:5px 8px"><select value="{{ r.st }}" onChange="{{ r.onSt }}" style="{{ r.stStyle }}"><sc-for list="{{ statusOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></td>
+<td style="padding:5px 8px"><select value="{{ r.pv }}" onChange="{{ r.onPv }}" style="{{ r.pvStyle }}"><sc-for list="{{ prevOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></td>
+<td style="padding:5px 12px;min-width:150px"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:7px;border-radius:4px;background:rgba(145,158,171,.24);overflow:hidden"><i style="{{ r.pctStyle }}"></i></div><input type="number" min="0" max="100" value="{{ r.p }}" onChange="{{ r.onP }}" style="width:52px;text-align:right;font-weight:700;border:1px solid transparent;background:transparent;border-radius:6px;padding:5px 6px;font-size:13px;font-family:inherit;color:#fff" style-focus="outline:none;border-color:#0f7864"><span style="font-size:12px;color:#637381">%</span></div></td>
+<td style="padding:5px 10px;white-space:nowrap;text-align:center">
+<button title="Enviar ao backlog" onClick="{{ r.onToBacklog }}" style="background:none;border:none;color:#637381;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:14px;line-height:1" style-hover="color:#fdd465;background:rgba(253,212,101,.12)">↓</button>
+<button title="Remover" onClick="{{ r.onDel }}" style="background:none;border:none;color:#637381;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:16px;line-height:1" style-hover="color:#ff5630;background:rgba(255,86,48,.12)">×</button>
+</td>
+</tr>
+</sc-if>
+</sc-for>
+<tr><td colSpan="{{ colspan }}" style="padding:0"><button style="width:100%;background:none;border:none;color:#36b37e;font-weight:700;font-size:13px;cursor:pointer;padding:13px;font-family:inherit" style-hover="background:rgba(15,120,100,.15)" onClick="{{ addRow }}">+ Adicionar item ao roadmap</button></td></tr>
+</tbody>
+</table>
+</div>
+<datalist id="catlist"><sc-for list="{{ catOpts }}" as="c" hint-placeholder-count="2"><option value="{{ c }}"></option></sc-for></datalist>
+<div style="padding:12px 16px"><button onClick="{{ addCategory }}" style="color:#36b37e;font-weight:700;font-size:13px;background:none;border:1px dashed rgba(54,179,126,.5);border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit" style-hover="background:rgba(15,120,100,.15)">+ Nova categoria</button></div>
+</div>
+<div style="background:#212b36;border-radius:16px;overflow:hidden;box-shadow:-3px 8px 24px rgba(0,0,0,.3)">
+<div style="padding:14px 24px;border-bottom:1px solid rgba(145,158,171,.12);display:flex;align-items:center;gap:10px">
+<span style="width:4px;height:20px;border-radius:2px;background:#919eab;display:inline-block"></span>
+<span style="font-size:16px;line-height:24px;font-weight:700">Backlog — fora do roadmap</span>
+<span style="margin-left:auto;font-size:12px;line-height:18px;font-weight:700;color:#919eab;background:#333e49;padding:3px 10px;border-radius:100px">não aparece no Gantt · {{ blCount }} itens</span>
+</div>
+<div style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse">
+<thead><tr>
+<th style="text-align:left;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#919eab;padding:11px 16px;background:#333e49;white-space:nowrap">Item</th>
+<th style="text-align:left;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#919eab;padding:11px 12px;background:#333e49;white-space:nowrap">Categoria</th>
+<th style="text-align:left;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#919eab;padding:11px 12px;background:#333e49;white-space:nowrap">Observação</th>
+<th style="background:#333e49"></th>
+</tr></thead>
+<tbody>
+<sc-for list="{{ blRows }}" as="b" hint-placeholder-count="2">
+<tr style="border-bottom:1px solid rgba(145,158,171,.08)">
+<td style="padding:5px 8px 5px 16px;min-width:240px"><input value="{{ b.n }}" onChange="{{ b.onN }}" placeholder="Item do backlog" style="width:100%;box-sizing:border-box;border:1px solid transparent;background:transparent;border-radius:6px;padding:7px 8px;font-size:14px;font-weight:600;font-family:inherit;color:#fff" style-hover="background:#29323c" style-focus="outline:none;border-color:#0f7864;background:#161c24"></td>
+<td style="padding:5px 8px"><input value="{{ b.cat }}" onChange="{{ b.onCat }}" placeholder="—" style="width:150px;border:1px solid transparent;background:transparent;border-radius:6px;padding:7px 8px;font-size:13px;font-family:inherit;color:#c4cdd5" style-hover="background:#29323c" style-focus="outline:none;border-color:#0f7864"></td>
+<td style="padding:5px 8px;min-width:220px"><input value="{{ b.note }}" onChange="{{ b.onNote }}" placeholder="observação / motivo" style="width:100%;box-sizing:border-box;border:1px solid transparent;background:transparent;border-radius:6px;padding:7px 8px;font-size:13px;font-family:inherit;color:#919eab" style-hover="background:#29323c" style-focus="outline:none;border-color:#0f7864"></td>
+<td style="padding:5px 12px;white-space:nowrap;text-align:center">
+<button title="Promover ao roadmap" onClick="{{ b.onPromote }}" style="background:none;border:none;color:#637381;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:14px;line-height:1" style-hover="color:#36b37e;background:rgba(15,120,100,.15)">↑</button>
+<button title="Remover" onClick="{{ b.onDel }}" style="background:none;border:none;color:#637381;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:16px;line-height:1" style-hover="color:#ff5630;background:rgba(255,86,48,.12)">×</button>
+</td>
+</tr>
+</sc-for>
+<sc-if value="{{ blEmpty }}" hint-placeholder-val="{{ false }}"><tr><td colSpan="4" style="text-align:center;color:#637381;font-size:12px;padding:16px">Nenhum item no backlog.</td></tr></sc-if>
+<tr><td colSpan="4" style="padding:0"><button style="width:100%;background:none;border:none;color:#36b37e;font-weight:700;font-size:13px;cursor:pointer;padding:13px;font-family:inherit" style-hover="background:rgba(15,120,100,.15)" onClick="{{ addBl }}">+ Adicionar item ao backlog</button></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showGantt }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-top:16px">
+<div>
+<h1 style="margin:0;font-size:24px;line-height:32px;font-weight:700">Roadmap {{ quarter }} — Gantt</h1>
+<p style="margin:4px 0 0;font-size:14px;line-height:20px;color:#919eab">{{ ganttSub }}</p>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{ chips }}" as="c" hint-placeholder-count="3">
+<button style="{{ c.style }}" onClick="{{ c.onClick }}">{{ c.label }}</button>
+</sc-for>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:18px 0">
+<div style="background:#212b36;border-radius:16px;padding:20px 24px"><div style="font-size:12px;line-height:18px;font-weight:700;color:#919eab;text-transform:uppercase;letter-spacing:.3px">Itens no roadmap</div><div style="font-size:32px;line-height:40px;font-weight:700;margin-top:4px">{{ sumTotal }}</div></div>
+<div style="background:#212b36;border-radius:16px;padding:20px 24px"><div style="font-size:12px;line-height:18px;font-weight:700;color:#919eab;text-transform:uppercase;letter-spacing:.3px">Em desenvolvimento</div><div style="font-size:32px;line-height:40px;font-weight:700;margin-top:4px">{{ sumDev }}</div></div>
+<div style="background:#212b36;border-radius:16px;padding:20px 24px"><div style="font-size:12px;line-height:18px;font-weight:700;color:#919eab;text-transform:uppercase;letter-spacing:.3px">Em risco / atrasados</div><div style="{{ sumRiskStyle }}">{{ sumRisk }}</div></div>
+<div style="background:#212b36;border-radius:16px;padding:20px 24px"><div style="font-size:12px;line-height:18px;font-weight:700;color:#919eab;text-transform:uppercase;letter-spacing:.3px">Concluídos</div><div style="font-size:32px;line-height:40px;font-weight:700;margin-top:4px">{{ sumDone }}<span style="font-size:14px;font-weight:600;color:#919eab"> / {{ sumTotal }} · {{ sumPct }}%</span></div></div>
+</div>
+<div style="background:#212b36;border-radius:16px;overflow-x:auto;box-shadow:-3px 8px 24px rgba(0,0,0,.3)">
+<div style="min-width:960px">
+<div style="display:flex;background:#0f7864;color:#fff">
+<div style="width:290px;flex:none;box-sizing:border-box;padding:9px 24px;font-weight:800;font-size:13px;display:flex;align-items:center">Squad / Categoria / Item</div>
+<div style="flex:1;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;letter-spacing:.5px">{{ quarter }}</div>
+</div>
+<div style="display:flex;background:rgba(15,120,100,.35);border-top:1px solid rgba(255,255,255,.15)">
+<div style="width:290px;flex:none"></div>
+<div style="flex:1;display:flex">
+<sc-for list="{{ months }}" as="m" hint-placeholder-count="3">
+<div style="{{ m.style }}">{{ m.label }}</div>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;align-items:stretch;border-bottom:1px solid rgba(145,158,171,.24);background:#29323c">
+<div style="width:290px;flex:none;box-sizing:border-box;padding:8px 24px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#919eab;display:flex;align-items:center">clique na squad / camada para colapsar</div>
+<div style="flex:1;display:flex">
+<sc-for list="{{ sprintCols }}" as="s" hint-placeholder-count="6">
+<div style="{{ s.style }}"><div style="font-size:12px;font-weight:800">{{ s.label }}</div><div style="font-size:9.5px;color:#919eab;font-weight:600;margin-top:2px">{{ s.range }}</div></div>
+</sc-for>
+</div>
+</div>
+<sc-for list="{{ glanes }}" as="g" hint-placeholder-count="6">
+<sc-if value="{{ g.isSquad }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ g.onClick }}" style="display:flex;align-items:center;gap:10px;padding:9px 24px;background:#333e49;font-size:13.5px;font-weight:700;cursor:pointer">
+<span style="{{ g.dotStyle }}"></span>{{ g.name }}
+<span style="margin-left:auto;font-size:11px;font-weight:600;color:#919eab">{{ g.meta }} {{ g.arrow }}</span>
+</div>
+</sc-if>
+<sc-if value="{{ g.isLayer }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ g.onClick }}" style="display:flex;align-items:center;gap:9px;padding:6px 24px 6px 32px;background:rgba(145,158,171,.10);font-size:12.5px;font-weight:700;color:#36b37e;border-bottom:1px solid rgba(145,158,171,.08);cursor:pointer">
+<span>{{ g.arrow }}</span>{{ g.name }}<span style="font-size:10px;font-weight:700;color:#919eab;background:#161c24;padding:1px 8px;border-radius:100px">{{ g.count }}</span>
+</div>
+</sc-if>
+<sc-if value="{{ g.isSubLayer }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:9px;padding:5px 24px 5px 46px;background:rgba(145,158,171,.05);font-size:12px;font-weight:600;color:#c4cdd5;border-bottom:1px solid rgba(145,158,171,.06)">
+<span style="color:#36b37e">▾</span>{{ g.name }}<span style="font-size:10px;font-weight:700;color:#919eab;background:#161c24;padding:1px 8px;border-radius:100px">{{ g.count }}</span>
+</div>
+</sc-if>
+<sc-if value="{{ g.isRow }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;min-height:40px;border-bottom:1px solid rgba(145,158,171,.06)" style-hover="background:rgba(15,120,100,.06)">
+<div style="{{ g.labelStyle }}" title="{{ g.label }}">{{ g.label }}</div>
+<div style="flex:1;position:relative;height:40px;display:flex">
+<sc-for list="{{ glCols }}" as="x" hint-placeholder-count="6"><span style="flex:1;border-left:1px solid rgba(145,158,171,.08)"></span></sc-for>
+<div style="{{ todayStyle }}"></div>
+<sc-if value="{{ g.isHist }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:8px;top:10px;font-size:10px;font-weight:700;color:#919eab;background:#333e49;padding:3px 8px;border-radius:100px;z-index:2">◀ {{ g.histLabel }}</div></sc-if>
+<sc-if value="{{ g.hasBar }}" hint-placeholder-val="{{ true }}">
+<div style="{{ g.barStyle }}" title="{{ g.title }}">
+<span style="{{ g.fillStyle }}"></span>
+<span style="position:relative;z-index:2">{{ g.barLabel }}</span>
+<sc-if value="{{ g.hasDot }}" hint-placeholder-val="{{ false }}"><span style="{{ g.dotStyle }}"></span></sc-if>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:18px;padding:15px 20px;background:#212b36;border-radius:16px">
+<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#919eab">Status</span>
+<sc-for list="{{ legendStatus }}" as="l" hint-placeholder-count="6">
+<span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:#c4cdd5"><span style="{{ l.swStyle }}"></span>{{ l.label }}</span>
+</sc-for>
+<span style="width:1px;height:20px;background:rgba(145,158,171,.24)"></span>
+<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#919eab">Previsão</span>
+<sc-for list="{{ legendPrev }}" as="l" hint-placeholder-count="4">
+<span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:#c4cdd5"><span style="{{ l.dotStyle }}"></span>{{ l.label }}</span>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showKanban }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-top:16px">
+<div>
+<h1 style="margin:0;font-size:24px;line-height:32px;font-weight:700">Demandas</h1>
+<p style="margin:4px 0 0;font-size:14px;line-height:20px;color:#919eab">Fila central priorizada — arraste um card para reordenar a prioridade ou mover de etapa. Novas iniciativas entram no fim da fila de backlog.</p>
+</div>
+<x-import component-from-global-scope="CaktoDesignSystem_9d574b.Button" variant="primary" size="medium" onClick="{{ openModal }}" hint-size="130px,40px">Adicionar</x-import>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 16px">
+<sc-for list="{{ kChips }}" as="c" hint-placeholder-count="4">
+<button style="{{ c.style }}" onClick="{{ c.onClick }}"><sc-if value="{{ c.hasDot }}" hint-placeholder-val="{{ false }}"><span style="{{ c.dotStyle }}"></span></sc-if>{{ c.label }}</button>
+</sc-for>
+</div>
+<div style="{{ kGridStyle }}">
+<sc-for list="{{ kCols }}" as="col" hint-placeholder-count="4">
+<div onDragOver="{{ col.onDragOver }}" onDrop="{{ col.onDrop }}" style="{{ col.colStyle }}">
+<div style="display:flex;align-items:center;gap:6px;padding:2px 2px 4px">
+<input value="{{ col.label }}" onChange="{{ col.onLabel }}" title="Clique para editar o nome da coluna" style="flex:1;min-width:0;background:transparent;border:1px solid transparent;border-radius:6px;padding:3px 6px;font-size:13px;line-height:20px;font-weight:700;font-family:inherit;color:#fff" style-hover="background:#212b36" style-focus="outline:none;border-color:#0f7864;background:#161c24">
+<span style="font-size:11px;font-weight:700;color:#919eab;background:#161c24;padding:1px 8px;border-radius:100px">{{ col.count }}</span>
+<sc-if value="{{ col.canDel }}" hint-placeholder-val="{{ false }}"><button title="Remover coluna (vazia)" onClick="{{ col.onDelCol }}" style="background:none;border:none;color:#637381;cursor:pointer;padding:2px 6px;border-radius:6px;font-size:15px;line-height:1" style-hover="color:#ff5630;background:rgba(255,86,48,.12)">×</button></sc-if>
+</div>
+<sc-for list="{{ col.cards }}" as="c" hint-placeholder-count="2">
+<div class="kcard" tabIndex="0" draggable="true" onDragStart="{{ c.onDragStart }}" onDragEnd="{{ c.onDragEnd }}" onDragOver="{{ c.onDragOver }}" onDrop="{{ c.onDrop }}" style="{{ c.cardStyle }}" style-hover="transform:translateY(-2px);box-shadow:0 0 0 1px rgba(242,241,236,.08),0 20px 32px -8px rgba(0,0,0,.65)">
+<div style="display:flex;align-items:center;gap:8px">
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.02em;color:#83857C">{{ c.code }}</span>
+<sc-if value="{{ c.hasTag }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;min-width:0"><span style="{{ c.sqDot }}"></span><span style="{{ c.sqTxt }}">{{ c.tagName }}</span></span></sc-if>
+<span title="{{ c.prioTitle }}" aria-label="{{ c.prioTitle }}" style="margin-left:auto;display:inline-flex;align-items:flex-end;gap:2px;height:15px;flex:none">
+<sc-for list="{{ c.prioBars }}" as="b" hint-placeholder-count="4"><span style="{{ b }}"></span></sc-for>
+</span>
+<button title="Configurar" class="gear-btn kctl" onClick="{{ c.onEdit }}" style="background:none;border:none;color:#83857C;cursor:pointer;padding:0 1px;border-radius:6px;display:inline-flex;align-items:center;flex:none" style-hover="color:#7FD98F"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Icon" name="InterfaceEssentialSettings" size="14" hint-size="14px,14px"></x-import></button>
+<button title="Remover" class="kctl" onClick="{{ c.onDel }}" style="background:none;border:none;color:#83857C;cursor:pointer;padding:0 1px;border-radius:6px;font-size:15px;line-height:1;flex:none" style-hover="color:#E88178">×</button>
+</div>
+<div style="{{ c.titleStyle }}">{{ c.t }}</div>
+<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+<sc-if value="{{ c.showTipo }}" hint-placeholder-val="{{ true }}"><span style="border:1px solid rgba(242,241,236,.20);background:transparent;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;color:#B3B4AB">{{ c.tipo }}</span></sc-if>
+<sc-if value="{{ c.hasOrigem }}" hint-placeholder-val="{{ false }}"><span style="border:1px solid rgba(242,241,236,.20);background:transparent;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:500;color:#83857C">{{ c.origem }}</span></sc-if>
+<sc-if value="{{ c.hasMotivo }}" hint-placeholder-val="{{ false }}"><span style="background:rgba(242,241,236,.08);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;color:#83857C">{{ c.motivo }}</span></sc-if>
+<sc-if value="{{ c.hasEst }}" hint-placeholder-val="{{ false }}"><span style="background:rgba(242,241,236,.08);border-radius:6px;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#B3B4AB;min-width:26px;text-align:center;box-sizing:border-box">{{ c.est }}</span></sc-if>
+<sc-if value="{{ c.hasPer }}" hint-placeholder-val="{{ false }}"><span style="{{ c.perStyle }}"><sc-if value="{{ c.perDone }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>{{ c.per }}</span></sc-if>
+<sc-if value="{{ c.hasAnexo }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.onOpenAnexo }}" style="background:none;border:1px solid rgba(242,241,236,.20);border-radius:6px;color:#B3B4AB;cursor:pointer;padding:2px 8px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif" style-hover="border-color:#7FD98F;color:#7FD98F">Anexo</button></sc-if>
+<sc-if value="{{ c.hasLink }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.onOpenLink }}" style="background:none;border:1px solid rgba(242,241,236,.20);border-radius:6px;color:#B3B4AB;cursor:pointer;padding:2px 8px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif" style-hover="border-color:#7FD98F;color:#7FD98F">Protótipo</button></sc-if>
+</div>
+<sc-if value="{{ c.hasFooter }}" hint-placeholder-val="{{ false }}">
+<div style="border-top:1px solid rgba(242,241,236,.12);padding-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+<sc-if value="{{ c.hasProg }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:7px"><span style="width:64px;height:4px;border-radius:2px;background:rgba(242,241,236,.12);overflow:hidden;display:inline-block"><i style="{{ c.progFill }}"></i></span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:#83857C;font-variant-numeric:tabular-nums">{{ c.progTxt }}</span></span></sc-if>
+<span style="display:inline-flex;align-items:center;gap:10px;margin-left:auto">
+<sc-if value="{{ c.hasDep }}" hint-placeholder-val="{{ false }}"><span title="{{ c.depTitle }}" style="display:inline-flex;align-items:center;gap:4px;background:rgba(168,50,43,.12);color:#E88178;border-radius:6px;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>{{ c.depTxt }}</span></sc-if>
+<sc-if value="{{ c.hasAv }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center"><sc-for list="{{ c.avatars }}" as="a" hint-placeholder-count="2"><span style="{{ a.style }}">{{ a.ini }}</span></sc-for></span></sc-if>
+</span>
+</div>
+</sc-if>
+<sc-if value="{{ c.hasIdade }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:flex-start"><span title="Idade no backlog" style="{{ c.idadeStyle }}">{{ c.idade }}</span></div>
+</sc-if>
+</div>
+</sc-for>
+<sc-if value="{{ col.empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;line-height:18px;color:#637381;text-align:center;padding:16px 0">Nenhum registro encontrado</div></sc-if>
+</div>
+</sc-for>
+<button title="Adicionar coluna" onClick="{{ addKCol }}" style="width:44px;min-height:340px;border-radius:16px;border:1px dashed rgba(145,158,171,.32);background:none;color:#637381;font-size:20px;cursor:pointer;font-family:inherit" style-hover="border-color:#36b37e;color:#36b37e;background:rgba(15,120,100,.08)">+</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showCfg }}" hint-placeholder-val="{{ false }}">
+<div>
+<h1 style="margin:16px 0 0;font-size:24px;line-height:32px;font-weight:700">Squads &amp; sprints</h1>
+<p style="margin:4px 0 0;font-size:14px;line-height:20px;color:#919eab">Configure o calendário de cada quarter e as squads.</p>
+<div style="background:#212b36;border-radius:16px;padding:24px;max-width:680px;margin-top:20px">
+<div style="font-size:16px;line-height:24px;font-weight:700">Quarter atual — calendário de sprints</div>
+<div style="font-size:13px;line-height:20px;color:#919eab;margin:4px 0 18px">As sprints (Sprint 01…NN) e as datas são geradas a partir do início da 1ª sprint e da quantidade. O Gantt recalcula automaticamente.</div>
+<div style="display:grid;grid-template-columns:210px 1fr;gap:14px;align-items:center">
+<label style="font-size:14px;font-weight:600">Rótulo do quarter</label>
+<input value="{{ cfgQ }}" onChange="{{ onCfgQ }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:#fff" style-focus="outline:none;border-color:#fff">
+<label style="font-size:14px;font-weight:600">Início da Sprint 01</label>
+<input type="date" value="{{ cfgStart }}" onChange="{{ onCfgStart }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:#fff" style-focus="outline:none;border-color:#fff">
+<label style="font-size:14px;font-weight:600">Duração da sprint (dias)</label>
+<input type="number" min="7" max="30" value="{{ cfgDays }}" onChange="{{ onCfgDays }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:#fff" style-focus="outline:none;border-color:#fff">
+<label style="font-size:14px;font-weight:600">Número de sprints</label>
+<input type="number" min="1" max="16" value="{{ cfgCount }}" onChange="{{ onCfgCount }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:#fff" style-focus="outline:none;border-color:#fff">
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px">
+<sc-for list="{{ spChips }}" as="s" hint-placeholder-count="6">
+<span style="background:#161c24;border:1px solid rgba(145,158,171,.16);border-radius:8px;padding:5px 9px;font-size:11.5px;font-weight:600;color:#c4cdd5">{{ s }}</span>
+</sc-for>
+</div>
+</div>
+<div style="background:#212b36;border-radius:16px;padding:24px;max-width:680px;margin-top:20px">
+<div style="font-size:16px;line-height:24px;font-weight:700">Quarters</div>
+<div style="font-size:13px;line-height:20px;color:#919eab;margin:4px 0 8px">Edite o nome, troque o ativo, arquive (sai do seletor do topo) ou exclua quarters sem itens no roadmap.</div>
+<sc-for list="{{ qRows }}" as="q" hint-placeholder-count="2">
+<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(145,158,171,.12);flex-wrap:wrap">
+<input value="{{ q.label }}" onChange="{{ q.onLabel }}" title="Clique para editar o nome do quarter" style="width:130px;background:transparent;border:1px solid transparent;border-radius:6px;padding:5px 8px;font-weight:700;font-size:14px;font-family:inherit;color:#fff" style-hover="background:#161c24" style-focus="outline:none;border-color:#0f7864;background:#161c24">
+<span style="font-size:12px;color:#919eab">{{ q.meta }}</span>
+<span style="{{ q.tagStyle }}">{{ q.tagLabel }}</span>
+<div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+<sc-if value="{{ q.showAtivar }}" hint-placeholder-val="{{ false }}"><button onClick="{{ q.onAtivar }}" style="background:transparent;border:1px solid rgba(145,158,171,.32);color:#c4cdd5;font-size:12px;font-weight:600;padding:6px 11px;border-radius:100px;cursor:pointer;font-family:inherit" style-hover="border-color:#36b37e;color:#36b37e">Ativar</button></sc-if>
+<button onClick="{{ q.onArch }}" style="background:transparent;border:1px solid rgba(145,158,171,.32);color:#c4cdd5;font-size:12px;font-weight:600;padding:6px 11px;border-radius:100px;cursor:pointer;font-family:inherit" style-hover="border-color:rgba(145,158,171,.6)">{{ q.archLabel }}</button>
+<sc-if value="{{ q.canDel }}" hint-placeholder-val="{{ false }}"><button title="Excluir quarter (sem itens)" onClick="{{ q.onDelQ }}" style="background:none;border:none;color:#637381;cursor:pointer;padding:4px 8px;border-radius:6px;font-size:17px;line-height:1" style-hover="color:#ff5630;background:rgba(255,86,48,.12)">×</button></sc-if>
+</div>
+</div>
+</sc-for>
+<div style="margin-top:14px"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Button" variant="secondary" size="small" onClick="{{ newQuarter }}" hint-size="150px,32px">+ Novo quarter</x-import></div>
+</div>
+<div style="background:#212b36;border-radius:16px;padding:24px;max-width:680px;margin-top:20px">
+<div style="font-size:16px;line-height:24px;font-weight:700">Squads</div>
+<div style="font-size:13px;line-height:20px;color:#919eab;margin:4px 0 8px">Nome, cor e se a squad usa categorias (Pilar).</div>
+<sc-for list="{{ cfgSquads }}" as="sq" hint-placeholder-count="5">
+<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(145,158,171,.12)">
+<input type="color" value="{{ sq.color }}" onChange="{{ sq.onColor }}" style="width:34px;height:28px;border:none;background:none;padding:0;border-radius:6px;cursor:pointer">
+<input value="{{ sq.name }}" onChange="{{ sq.onName }}" style="flex:1;background:#161c24;border:1px solid rgba(145,158,171,.16);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit;color:#fff" style-focus="outline:none;border-color:#fff">
+<button onClick="{{ sq.onToggleCat }}" style="display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#c4cdd5;background:#161c24;padding:6px 11px;border-radius:100px;cursor:pointer;border:none;font-family:inherit"><span style="{{ sq.swStyle }}"><span style="{{ sq.knobStyle }}"></span></span>categorias</button>
+<button onClick="{{ sq.onDel }}" style="background:none;border:none;color:#637381;cursor:pointer;padding:4px 8px;border-radius:6px;font-size:18px;line-height:1" style-hover="color:#ff5630;background:rgba(255,86,48,.12)">×</button>
+</div>
+</sc-for>
+<div style="margin-top:14px"><x-import component-from-global-scope="CaktoDesignSystem_9d574b.Button" variant="secondary" size="small" onClick="{{ addSquad }}" hint-size="160px,32px">+ Adicionar squad</x-import></div>
+</div>
+</div>
+</sc-if>
+
+</div>
+<input type="file" accept=".json" onChange="{{ onJsonFile }}" ref="{{ jsonRef }}" style="display:none">
+<input type="file" accept=".html,.htm" onChange="{{ onAnexoFile }}" ref="{{ anexoRef }}" style="display:none">
+<input type="file" accept=".xlsx,.xls" onChange="{{ onXlsxFile }}" ref="{{ xlsxRef }}" style="display:none">
+<sc-if value="{{ showModal }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:90;display:flex;align-items:center;justify-content:center" onClick="{{ closeModal }}">
+<div style="background:#212b36;border-radius:24px;padding:24px;width:480px;max-width:calc(100vw - 48px);box-sizing:border-box;display:flex;flex-direction:column;gap:14px;box-shadow:-3px 8px 24px rgba(0,0,0,.3)" onClick="{{ stopClick }}">
+<div style="font-size:18px;line-height:26px;font-weight:700">{{ mTitle }}</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Título</label>
+<input value="{{ mT }}" onChange="{{ onMT }}" placeholder="Nome da demanda" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:#fff" style-focus="outline:none;border-color:#fff">
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Descrição</label>
+<textarea value="{{ mD }}" onChange="{{ onMD }}" rows="3" placeholder="Contexto, problema ou oportunidade" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:#fff;resize:vertical" style-focus="outline:none;border-color:#fff"></textarea>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Destino</label>
+<select value="{{ mSq }}" onChange="{{ onMSq }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:#fff;cursor:pointer">
+<sc-for list="{{ mSquadOpts }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
+</select>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Prioridade</label>
+<select value="{{ mPrio }}" onChange="{{ onMPrio }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 8px;font-size:14px;font-family:inherit;color:#fff;cursor:pointer">
+<option value="">— não avaliado</option><option value="P0">P0</option><option value="P1">P1</option><option value="P2">P2</option><option value="P3">P3</option>
+</select>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Tipo</label>
+<select value="{{ mTipo }}" onChange="{{ onMTipo }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 8px;font-size:14px;font-family:inherit;color:#fff;cursor:pointer">
+<option value="Discovery">Discovery</option><option value="Delivery">Delivery</option><option value="Bug">Bug</option><option value="Débito técnico">Débito técnico</option><option value="Compliance">Compliance</option>
+</select>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Estimativa</label>
+<select value="{{ mEst }}" onChange="{{ onMEst }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 8px;font-size:14px;font-family:inherit;color:#fff;cursor:pointer">
+<option value="">—</option><option value="XS">XS</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option><option value="XXL">XXL</option>
+</select>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Período — trimestre</label>
+<select value="{{ mPerQ }}" onChange="{{ onMPerQ }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 8px;font-size:14px;font-family:inherit;color:#fff;cursor:pointer">
+<option value="">— sem compromisso —</option><option value="Q1">Q1</option><option value="Q2">Q2</option><option value="Q3">Q3</option><option value="Q4">Q4</option>
+</select>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Período — mês-alvo</label>
+<select value="{{ mPerM }}" onChange="{{ onMPerM }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 8px;font-size:14px;font-family:inherit;color:#fff;cursor:pointer">
+<option value="">—</option><option value="jan">jan</option><option value="fev">fev</option><option value="mar">mar</option><option value="abr">abr</option><option value="mai">mai</option><option value="jun">jun</option><option value="jul">jul</option><option value="ago">ago</option><option value="set">set</option><option value="out">out</option><option value="nov">nov</option><option value="dez">dez</option>
+</select>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">PM</label>
+<input value="{{ mPm }}" onChange="{{ onMPm }}" placeholder="Nome do PM" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:#fff" style-focus="outline:none;border-color:#fff">
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Tech Lead</label>
+<input value="{{ mTl }}" onChange="{{ onMTl }}" placeholder="Nome do TL" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:#fff" style-focus="outline:none;border-color:#fff">
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Origem</label>
+<select value="{{ mOrigem }}" onChange="{{ onMOrigem }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 8px;font-size:14px;font-family:inherit;color:#fff;cursor:pointer">
+<option value="">—</option><option value="stakeholder">stakeholder</option><option value="suporte">suporte</option><option value="dados">dados</option><option value="discovery">discovery</option><option value="incidente">incidente</option><option value="regulatório">regulatório</option>
+</select>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Motivo do descarte</label>
+<select value="{{ mMotivo }}" onChange="{{ onMMotivo }}" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 8px;font-size:14px;font-family:inherit;color:#fff;cursor:pointer">
+<option value="">—</option><option value="duplicado">duplicado</option><option value="fora de estratégia">fora de estratégia</option><option value="sem viabilidade técnica">sem viabilidade técnica</option><option value="resolvido por outro card">resolvido por outro card</option><option value="sem impacto suficiente">sem impacto suficiente</option>
+</select>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Anexo</label>
+<div style="display:flex;align-items:center;gap:10px">
+<x-import component-from-global-scope="CaktoDesignSystem_9d574b.Button" variant="secondary" size="small" onClick="{{ pickAnexo }}" hint-size="130px,32px">Anexar HTML</x-import>
+<span style="font-size:12px;color:#919eab;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ mAnexoNome }}</span>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<label style="font-size:13px;font-weight:600;color:#c4cdd5">Link do protótipo navegável (Claude design)</label>
+<input value="{{ mLink }}" onChange="{{ onMLink }}" placeholder="https://…" style="background:#161c24;border:1px solid rgba(145,158,171,.2);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:#fff" style-focus="outline:none;border-color:#fff">
+</div>
+<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
+<x-import component-from-global-scope="CaktoDesignSystem_9d574b.Button" variant="white" size="medium" onClick="{{ closeModal }}" hint-size="110px,40px">Cancelar</x-import>
+<x-import component-from-global-scope="CaktoDesignSystem_9d574b.Button" variant="primary" size="medium" onClick="{{ submitAdd }}" hint-size="150px,40px">{{ mSubmitLabel }}</x-import>
+</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ toastShow }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#333e49;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:100;box-shadow:-3px 8px 24px rgba(0,0,0,.3)">{{ toastMsg }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;paginaInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;dados&quot;,&quot;options&quot;:[&quot;dados&quot;,&quot;gantt&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comportamento&quot;},&quot;mostrarRotuloBarra&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Gantt&quot;},&quot;destacarHoje&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Gantt&quot;}}">
+const STATUS = {
+  entregue:{label:'Entregue', color:'#36b37e', tx:'#161c24', chip:'#36b37e'},
+  dev:     {label:'Em desenvolvimento', color:'#0f7864', tx:'#ffffff', chip:'#36b37e'},
+  qa:      {label:'Em teste / QA', color:'#fdd465', tx:'#161c24', chip:'#fdd465'},
+  homolog: {label:'Homologação', color:'#65a76b', tx:'#161c24', chip:'#65a76b'},
+  backlog: {label:'Backlog', color:'#454f5b', tx:'#c4cdd5', chip:'#919eab'},
+  stories: {label:'User stories', color:'#333e49', tx:'#919eab', chip:'#919eab'},
+};
+const PREV = {
+  prazo: {label:'No prazo', color:'#36b37e'},
+  prod:  {label:'Em produção', color:'#36b37e'},
+  risco: {label:'Em risco', color:'#fdd465'},
+  atraso:{label:'Atrasado', color:'#ff5630'},
+  bloq:  {label:'Bloqueado', color:'#919eab'},
+  nao:   {label:'Não iniciado', color:'#637381'},
+};
+const PALETTE = ['#36b37e','#0f7864','#65a76b','#fdd465','#f4cd97','#919eab'];
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const KSPEC = {'Payment':{p:'PAY',c:'#7FC08C'},'Platform':{p:'PLT',c:'#7FAECB'},'Growth':{p:'GRW',c:'#D69B72'},'Cakto Members':{p:'MBR',c:'#BE9BBE'},'Cakto Bank':{p:'BNK',c:'#6FB3B0'},'Bank & App':{p:'BNK',c:'#6FB3B0'},'Partnership':{p:'PRT',c:'#A8A870'}};
+const KPRIO = {P0:{n:4,c:'#E88178'},P1:{n:3,c:'#E0AC57'},P2:{n:2,c:'#9BB79B'},P3:{n:1,c:'#83857C'}};
+const KCOLS_DEFAULT = [{k:'backlog',label:'Backlog',role:'entrada'},{k:'priorizado',label:'Priorizado',role:'fluxo'},{k:'execucao',label:'Execução',role:'execucao'},{k:'concluido',label:'Concluído',role:'concluido'},{k:'descartado',label:'Descartado',role:'descartado'}];
+const SEED_DEMANDAS = (() => {
+  const out = []; let id = 1;
+  ['Payment','Platform','Growth','Cakto Members','Bank & App'].forEach(sq => {
+    for (let i = 1; i <= 3; i++) out.push({ id: id++, t: sq + ' - Item ' + i, d: '', sq, col: 'backlog', link: '', anexoNome: '', anexoConteudo: '' });
+  });
+  return out;
+})();
+const SEED = {activeQuarter:'q3-2026', order:['q3-2026','q2-2026'], quarters:{
+ 'q3-2026':{label:'Q3 2026', start:'2026-07-07', days:14, count:6, archived:false, squads:[
+   {name:'Payment', color:'#36b37e', groupByCat:true,
+     categories:[{name:'Assinatura', subs:[]},{name:'Internacional', subs:['Novos Métodos','Arquitetura','México']}],
+     items:[
+      {n:'FASE 0 · Arrumar a casa', s:'2026-07-07', e:'2026-07-20', st:'entregue', pv:'prod', p:100, cat:'Assinatura', sub:''},
+      {n:'FASE 1 · MVP comercial', s:'2026-07-21', e:'2026-08-17', st:'dev', pv:'prazo', p:15, cat:'Assinatura', sub:''},
+      {n:'FASE 2 · API + MCP', s:'2026-08-18', e:'2026-09-14', st:'backlog', pv:'nao', p:0, cat:'Assinatura', sub:''},
+      {n:'FASE 3 · Inteligência', s:'2026-09-15', e:'2026-09-28', st:'backlog', pv:'nao', p:0, cat:'Assinatura', sub:''},
+      {n:'Ebanx — MercadoPago', s:'2026-04-30', e:'2026-05-15', st:'homolog', pv:'bloq', p:100, cat:'Internacional', sub:'Novos Métodos'},
+      {n:'Ebanx — Debit Card Internacional', s:'2026-07-20', e:'2026-07-29', st:'homolog', pv:'prod', p:100, cat:'Internacional', sub:'Novos Métodos'},
+      {n:'LATAM — Colômbia (NEQUI · PSE)', s:'2026-08-04', e:'2026-08-17', st:'backlog', pv:'nao', p:0, cat:'Internacional', sub:'Novos Métodos'},
+      {n:'LATAM — Chile (Webpay)', s:'2026-08-04', e:'2026-08-17', st:'backlog', pv:'nao', p:0, cat:'Internacional', sub:'Novos Métodos'},
+      {n:'LATAM — Peru e Equador (Yape)', s:'2026-08-18', e:'2026-08-31', st:'backlog', pv:'nao', p:0, cat:'Internacional', sub:'Novos Métodos'},
+      {n:'Checkout por Country Code', s:'2026-07-21', e:'2026-08-06', st:'dev', pv:'prazo', p:50, cat:'Internacional', sub:'Arquitetura'},
+      {n:'Smart Routing', s:'2026-08-18', e:'2026-08-31', st:'backlog', pv:'nao', p:0, cat:'Internacional', sub:'Arquitetura'},
+      {n:'CAKTO USD — Câmbio para Saque', s:'2026-07-20', e:'2026-07-29', st:'homolog', pv:'prod', p:100, cat:'Internacional', sub:'México'},
+     ],
+     backlog:[
+      {n:'Order Bump e Add-ons na Assinatura', cat:'Assinatura', note:'aguardando discovery'},
+      {n:'Parcelamento Cartão de Crédito', cat:'Internacional', note:'depende de adquirente'},
+      {n:'Cartão de crédito Cakto', cat:'', note:'ideia — sem prioridade'},
+     ]},
+   {name:'Platform', color:'#0f7864', groupByCat:true, categories:[], items:[
+      {n:'Fluxo de Saque USD', s:'2026-07-14', e:'2026-08-04', st:'dev', pv:'prazo', p:70, cat:'', sub:''},
+      {n:'Partnership — Plataforma', s:'2026-08-04', e:'2026-08-25', st:'dev', pv:'prazo', p:5, cat:'', sub:''},
+      {n:'Partnership — ADMIN', s:'2026-08-25', e:'2026-09-08', st:'backlog', pv:'nao', p:0, cat:'', sub:''},
+     ], backlog:[]},
+   {name:'Growth', color:'#65a76b', groupByCat:true, categories:[], items:[
+      {n:'Reembolso', s:'2026-07-21', e:'2026-09-28', st:'dev', pv:'prazo', p:40, cat:'', sub:''},
+      {n:'Emissão NFSe (Cakto — interno)', s:'2026-07-21', e:'2026-08-03', st:'qa', pv:'risco', p:90, cat:'', sub:''},
+      {n:'Emissão NFSe (Produtor)', s:'2026-07-21', e:'2026-09-28', st:'stories', pv:'nao', p:0, cat:'', sub:''},
+     ], backlog:[]},
+   {name:'Cakto Members', color:'#fdd465', groupByCat:true, categories:[], items:[
+      {n:'Novo Fluxo de Área de Membros', s:'2026-06-23', e:'2026-08-03', st:'dev', pv:'prazo', p:50, cat:'', sub:''},
+      {n:'[BASE] Enablement de dados', s:'2026-07-07', e:'2026-08-03', st:'qa', pv:'prazo', p:50, cat:'', sub:''},
+      {n:'[BASE] Consumir Conteúdo da V3', s:'2026-06-22', e:'2026-08-03', st:'qa', pv:'atraso', p:50, cat:'', sub:''},
+     ], backlog:[]},
+   {name:'Bank & App', color:'#f4cd97', groupByCat:true, categories:[], items:[
+      {n:'Onboarding & KYC | Sustentação', s:'2026-07-20', e:'2026-08-31', st:'dev', pv:'prazo', p:60, cat:'', sub:''},
+      {n:'App | Portabilidade chave Pix', s:'2026-07-06', e:'2026-08-14', st:'dev', pv:'bloq', p:70, cat:'', sub:''},
+      {n:'Multicontas | Evolução', s:'2026-09-01', e:'2026-09-28', st:'backlog', pv:'nao', p:0, cat:'', sub:''},
+     ], backlog:[]},
+ ]},
+ 'q2-2026':{label:'Q2 2026', start:'2026-04-07', days:14, count:6, archived:true, squads:[
+   {name:'Payment', color:'#36b37e', groupByCat:true, categories:[], items:[
+     {n:'Worldpay — Integração', s:'2026-04-07', e:'2026-05-04', st:'entregue', pv:'prod', p:100, cat:'', sub:''},
+   ], backlog:[]},
+ ]},
+}};
+const LS_KEY = 'cakto-roadmap-v1';
+function parseD(str){ if(!str) return null; const [y,m,d]=str.split('-').map(Number); return new Date(y,m-1,d); }
+function addDays(dt,n){ const d=new Date(dt); d.setDate(d.getDate()+n); return d; }
+function fmtBR(str){ if(!str) return '—'; const [y,m,d]=str.split('-'); return d+'/'+m; }
+function dd(n){ return ('0'+n).slice(-2); }
+function rgba(hex,a){ const n=parseInt(hex.slice(1),16); return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'; }
+function avg(arr){ return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0; }
+function normalizeSquad(sq){
+  if(!sq.categories) sq.categories=[]; if(!sq.backlog) sq.backlog=[]; if(!sq.items) sq.items=[];
+  if(sq.groupByCat === undefined) sq.groupByCat = true;
+  sq.items.forEach(it=>{ if(it.cat){ let c=sq.categories.find(x=>x.name===it.cat); if(!c){ c={name:it.cat, subs:[]}; sq.categories.push(c);} if(it.sub && !c.subs.includes(it.sub)) c.subs.push(it.sub); } });
+}
+function normalize(d){
+  if(!d.quarters && d.config && d.squads){
+    d = { activeQuarter:'q1', order:['q1'], quarters:{ q1:{ label:d.config.quarter||'Quarter', start:d.config.start||'2026-07-07', days:d.config.days||14, count:d.config.count||6, archived:false, squads:d.squads.map(s=>({name:s.name, color:s.color, groupByCat:false, categories:[], items:(s.items||[]).map(it=>({...it, cat:it.cat||'', sub:it.sub||''})), backlog:[]})) } }, demandas:d.demandas };
+  }
+  if(!d.demandas) d.demandas = JSON.parse(JSON.stringify(SEED_DEMANDAS));
+  if(!d.kcols || !d.kcols.length) d.kcols = JSON.parse(JSON.stringify(KCOLS_DEFAULT));
+  const ROLE_BY_KEY = {backlog:'entrada', discovery:'fluxo', priorizado:'fluxo', andamento:'execucao', execucao:'execucao', concluido:'concluido', descartado:'descartado'};
+  d.kcols.forEach(c=>{ if(!c.role) c.role = ROLE_BY_KEY[c.k] || 'fluxo'; });
+  const KREN = {'Discovery':'Priorizado','Em andamento':'Execução'};
+  d.kcols.forEach(c=>{ if(KREN[c.label]) c.label = KREN[c.label]; });
+  if(!d.kcols.some(c=>c.role==='descartado')) d.kcols.push({k:'descartado', label:'Descartado', role:'descartado'});
+  d.demandas.forEach(dm=>{ if(!dm.createdAt) dm.createdAt = Date.now(); if(!dm.code){ const p = KSPEC[dm.sq] ? KSPEC[dm.sq].p : (dm.sq ? dm.sq.replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase() || 'CKT' : 'CKT'); dm.code = p + '-' + (100 + dm.id); } });
+  Object.values(d.quarters).forEach(q=>q.squads.forEach(normalizeSquad));
+  return d;
+}
+function sprintsOf(q){
+  const start=parseD(q.start), out=[];
+  for(let i=0;i<q.count;i++){
+    const s=addDays(start,i*q.days), e=addDays(start,(i+1)*q.days-1);
+    out.push({label:'Sprint '+String(i+1).padStart(2,'0'), start:s, end:e, range:dd(s.getDate())+'/'+dd(s.getMonth()+1)+'–'+dd(e.getDate())+'/'+dd(e.getMonth()+1)});
+  }
+  return out;
+}
+function timelineOf(q){ const min=parseD(q.start), max=addDays(min,q.days*q.count); return {min,max,span:max-min}; }
+function monthBands(q){
+  const sp=sprintsOf(q), b=[];
+  sp.forEach(s=>{ const m=s.start.getMonth(), y=s.start.getFullYear(), last=b[b.length-1]; if(last&&last.m===m&&last.y===y) last.span++; else b.push({m,y,span:1}); });
+  return b.map(x=>({label:MESES[x.m], span:x.span}));
+}
+function xlDate(v){
+  if(!v) return '';
+  if(v instanceof Date) return v.getFullYear()+'-'+dd(v.getMonth()+1)+'-'+dd(v.getDate());
+  const s=String(v).trim();
+  let m=s.match(/(\d{4})-(\d{2})-(\d{2})/); if(m) return m[1]+'-'+m[2]+'-'+m[3];
+  m=s.match(/(\d{2})\/(\d{2})\/(\d{4})/); if(m) return m[3]+'-'+m[2]+'-'+m[1];
+  return '';
+}
+function mapStatus(v){ v=String(v||'');
+  if(/Entregue/i.test(v)) return 'entregue';
+  if(/Desenvolvimento/i.test(v)) return 'dev';
+  if(/Teste|QA/i.test(v)) return 'qa';
+  if(/Homolog/i.test(v)) return 'homolog';
+  if(/Stories/i.test(v)) return 'stories';
+  return 'backlog';
+}
+function mapPrev(v){ v=String(v||'');
+  if(/Risco/i.test(v)) return 'risco';
+  if(/Atrasad/i.test(v)) return 'atraso';
+  if(/Bloque/i.test(v)) return 'bloq';
+  if(/Produção|Producao/i.test(v)) return 'prod';
+  if(/Prazo/i.test(v)) return 'prazo';
+  return 'nao';
+}
+function mapPct(v){ const m=String(v||'').match(/(\d{1,3})\s*%/); return m?Math.min(100,parseInt(m[1])):0; }
+
+class Component extends DCLogic {
+  state = { data: normalize(JSON.parse(JSON.stringify(SEED))), activeSquad: 0, page: 'data', filter: 'all', toast: '', kFilter: 'all', modal: null, collapsed: {}, qMenuOpen: false, dragMark: null, sideOpen: (localStorage.getItem('cakto-roadmap-side') ?? '1') === '1' };
+  jsonRef = React.createRef();
+  xlsxRef = React.createRef();
+  anexoRef = React.createRef();
+  componentDidMount() {
+    try { const raw = localStorage.getItem(LS_KEY); if (raw) { const d = JSON.parse(raw); if (d.quarters || (d.config && d.squads)) this.setState({ data: normalize(d) }); } } catch(e) {}
+    if ((this.props.paginaInicial ?? 'dados') === 'gantt') this.setState({ page: 'gantt' });
+    this._doc = (e) => { if (this.state.qMenuOpen && !e.target.closest('[data-qwrap]')) this.setState({ qMenuOpen: false }); };
+    document.addEventListener('click', this._doc);
+  }
+  componentWillUnmount() { document.removeEventListener('click', this._doc); }
+  Q() { return this.state.data.quarters[this.state.data.activeQuarter]; }
+  SQ() { return this.Q().squads[this.state.activeSquad]; }
+  mut(fn) { const data = this.state.data; fn(data); try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e) {} this.forceUpdate(); }
+  toast(msg) { this.setState({ toast: msg }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: '' }), 2200); }
+  passFilter(it) {
+    const f = this.state.filter;
+    if (f === 'risco') return it.pv === 'risco' || it.pv === 'atraso';
+    if (f === 'dev') return it.st === 'dev';
+    return true;
+  }
+  bar(it, tl, q, showLabel) {
+    const s = parseD(it.s), e = parseD(it.e);
+    if (!s || !e) return { hasBar: false, isHist: false };
+    if (e < tl.min) return { hasBar: false, isHist: true, histLabel: 'antes de ' + q.label.split(' ')[0] };
+    if (s > tl.max) return { hasBar: false, isHist: false };
+    const clampS = Math.max(s, tl.min), clampE = Math.min(addDays(e, 1), tl.max);
+    const left = (clampS - tl.min) / tl.span * 100;
+    const width = Math.max((clampE - clampS) / tl.span * 100, 2.2);
+    const st = STATUS[it.st], pv = PREV[it.pv];
+    return {
+      hasBar: true, isHist: false,
+      barStyle: { position: 'absolute', top: 7, height: 26, borderRadius: 7, display: 'flex', alignItems: 'center', padding: '0 9px', fontSize: 11, fontWeight: 700, overflow: 'hidden', zIndex: 2, minWidth: 26, boxSizing: 'border-box', left: left.toFixed(3) + '%', width: width.toFixed(3) + '%', background: st.color, color: st.tx, boxShadow: '0 1px 3px rgba(0,0,0,.3)' },
+      fillStyle: { position: 'absolute', left: 0, top: 0, bottom: 0, width: it.p + '%', background: 'rgba(255,255,255,.22)', borderRight: '2px solid rgba(255,255,255,.45)' },
+      barLabel: showLabel ? (s < tl.min ? '◀ ' : '') + it.p + '%' : (s < tl.min ? '◀' : ''),
+      hasDot: it.pv !== 'prazo' && it.pv !== 'prod',
+      dotStyle: { position: 'absolute', right: 7, top: '50%', transform: 'translateY(-50%)', zIndex: 3, width: 8, height: 8, borderRadius: '50%', background: pv.color, boxShadow: '0 0 0 2px rgba(22,28,36,.65)' },
+      title: it.n + ' · ' + fmtBR(it.s) + ' → ' + fmtBR(it.e) + ' · ' + st.label + ' · ' + pv.label + ' · ' + it.p + '%'
+    };
+  }
+  reorder(from, to, cat, sub) {
+    this.mut(d => {
+      const arr = this.SQ().items;
+      const [m] = arr.splice(from, 1);
+      if (cat !== undefined) m.cat = cat;
+      if (sub !== undefined) m.sub = sub;
+      if (from < to) to--;
+      to = Math.max(0, Math.min(arr.length, to));
+      arr.splice(to, 0, m);
+      normalizeSquad(this.SQ());
+    });
+  }
+  findLastIdx(pred) { let idx = -1; this.SQ().items.forEach((it, i) => { if (pred(it)) idx = i; }); return idx; }
+  saveJson = () => {
+    const d = this.state.data;
+    const blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'roadmap-cakto.json'; a.click();
+    this.toast('Arquivo salvo');
+  };
+  onJsonFile = (ev) => {
+    const f = ev.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => { try { let d = JSON.parse(r.result); if (!d.quarters && !(d.config && d.squads)) throw 0; d = normalize(d); this.setState({ data: d, activeSquad: 0 }); localStorage.setItem(LS_KEY, JSON.stringify(d)); this.toast('Dados carregados'); } catch(e) { this.toast('Arquivo inválido'); } };
+    r.readAsText(f); ev.target.value = '';
+  };
+  onXlsxFile = (ev) => {
+    const f = ev.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const wb = XLSX.read(r.result, { type: 'array', cellDates: true });
+        const newSquads = [];
+        wb.SheetNames.forEach((name, idx) => {
+          const ws = wb.Sheets[name];
+          const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, dateNF: 'yyyy-mm-dd' });
+          let h = -1;
+          for (let i = 0; i < rows.length; i++) { if ((rows[i] || []).some(c => /^item/i.test(String(c).trim()))) { h = i; break; } }
+          if (h < 0) return;
+          const hdr = (rows[h] || []).map(c => String(c || '').toLowerCase());
+          const find = (...ks) => { for (let i = 0; i < hdr.length; i++) if (ks.some(k => hdr[i].includes(k))) return i; return -1; };
+          const col = { item: find('item'), cat: find('pilar', 'categoria'), ini: find('início', 'inicio'), fim: find('fim'), st: find('status'), pv: find('previsão', 'previsao'), pct: find('conclus', '%') };
+          if (col.item < 0) return;
+          const items = []; let started = false;
+          for (let i = h + 1; i < rows.length; i++) {
+            const row = rows[i] || []; const nm = String(row[col.item] || '').trim();
+            if (!nm) { if (started) break; else continue; }
+            started = true;
+            items.push({ n: nm, s: col.ini >= 0 ? xlDate(row[col.ini]) : '', e: col.fim >= 0 ? xlDate(row[col.fim]) : '', st: mapStatus(col.st >= 0 ? row[col.st] : ''), pv: mapPrev(col.pv >= 0 ? row[col.pv] : ''), p: mapPct(col.pct >= 0 ? row[col.pct] : ''), cat: col.cat >= 0 ? String(row[col.cat] || '').trim() : '', sub: '' });
+          }
+          if (items.length) { const sq = { name, color: PALETTE[idx % PALETTE.length], groupByCat: items.some(i => i.cat), categories: [], items, backlog: [] }; normalizeSquad(sq); newSquads.push(sq); }
+        });
+        if (newSquads.length) { this.mut(d => { d.quarters[d.activeQuarter].squads = newSquads; }); this.setState({ activeSquad: 0 }); this.toast('Importado: ' + newSquads.length + ' squads'); }
+        else this.toast('Nenhuma tabela reconhecida');
+      } catch(e) { console.error(e); this.toast('Erro ao ler a planilha'); }
+    };
+    r.readAsArrayBuffer(f); ev.target.value = '';
+  };
+  addSquad = () => {
+    this.mut(d => { const q = d.quarters[d.activeQuarter]; let n = q.squads.length + 1, name = 'Nova squad'; while (q.squads.some(s => s.name === name)) name = 'Nova squad ' + (++n); q.squads.push({ name, color: PALETTE[q.squads.length % PALETTE.length], groupByCat: true, categories: [], items: [], backlog: [] }); });
+    this.setState({ activeSquad: this.Q().squads.length - 1 });
+    this.toast('Squad criada — renomeie no campo de nome');
+  };
+  newQuarter = () => {
+    this.mut(d => {
+      const cur = d.quarters[d.activeQuarter];
+      const id = 'q' + Date.now();
+      const t = new Date();
+      const start = t.getFullYear() + '-' + dd(t.getMonth() + 1) + '-' + dd(t.getDate());
+      let n = 1, label = 'Novo quarter'; while (Object.values(d.quarters).some(x => x.label === label)) label = 'Novo quarter ' + (++n);
+      d.quarters[id] = { label, start, days: 14, count: 6, archived: false, squads: cur.squads.map(s => ({ name: s.name, color: s.color, groupByCat: s.groupByCat, categories: JSON.parse(JSON.stringify(s.categories || [])), items: [], backlog: [] })) };
+      d.order.unshift(id);
+      d.activeQuarter = id;
+    });
+    this.setState({ activeSquad: 0, qMenuOpen: false });
+    this.toast('Quarter criado — ajuste rótulo e datas em Squads & sprints');
+  };
+  switchQuarter(id) {
+    this.mut(d => { d.activeQuarter = id; });
+    this.setState({ activeSquad: 0, qMenuOpen: false });
+    this.toast('Quarter: ' + this.Q().label);
+  }
+  canDropInfo(dragId, toKey) {
+    const d = this.state.data;
+    const card = d.demandas.find(x => x.id === dragId);
+    if (!card) return { ok: false, msg: '' };
+    if (toKey === card.col) return { ok: true };
+    const roleOf = k => { const c = (d.kcols || []).find(x => x.k === k); return c ? (c.role || 'fluxo') : 'fluxo'; };
+    const from = roleOf(card.col), to = roleOf(toKey);
+    const toCol = d.kcols.find(x => x.k === toKey);
+    if (to === 'descartado') {
+      if (!card.motivo) return { ok: false, msg: 'Falta o motivo do descarte — defina na engrenagem do card' };
+      return { ok: true };
+    }
+    if (from === 'entrada' && to !== 'entrada') {
+      const req = [['sq', 'Squad'], ['pm', 'PM'], ['tl', 'Tech Lead'], ['tipo', 'Tipo'], ['est', 'Estimativa'], ['perQ', 'Período']];
+      const miss = req.filter(([f]) => !card[f]).map(([, l]) => l);
+      if (miss.length) return { ok: false, msg: 'Faltam para ' + (toCol ? toCol.label : 'avançar') + ': ' + miss.join(' · ') };
+    }
+    if (to === 'concluido' && (card.subsTotal || 0) > 0 && (card.subsDone || 0) < card.subsTotal) return { ok: false, msg: 'Progresso precisa estar em 100% para concluir' };
+    return { ok: true };
+  }
+  dropOn(targetId, col) {
+    const dragId = this._drag; if (dragId == null) return;
+    const chk = this.canDropInfo(dragId, col);
+    if (!chk.ok) { this.toast(chk.msg); this._drag = null; this.setState({ kDragId: null, kMark: null }); return; }
+    this.mut(d => {
+      const from = d.demandas.findIndex(x => x.id === dragId);
+      if (from < 0) return;
+      const [card] = d.demandas.splice(from, 1);
+      card.col = col;
+      if (targetId != null && targetId !== dragId) {
+        const to = d.demandas.findIndex(x => x.id === targetId);
+        d.demandas.splice(to < 0 ? d.demandas.length : to, 0, card);
+      } else if (targetId == null) {
+        d.demandas.push(card);
+      } else {
+        d.demandas.splice(from, 0, card);
+      }
+    });
+    this._drag = null;
+    this.setState({ kDragId: null, kMark: null });
+  }
+  openModal = () => this.setState({ modal: { editId: null, t: '', d: '', sq: '', link: '', anexoNome: '', anexoConteudo: '', prio: '', tipo: 'Delivery', est: '', perQ: '', perM: '', pm: '', tl: '', origem: '', motivo: '' } });
+  openEdit = (dm) => this.setState({ modal: { editId: dm.id, t: dm.t, d: dm.d, sq: dm.sq, link: dm.link, anexoNome: dm.anexoNome, anexoConteudo: dm.anexoConteudo, prio: dm.prio || '', tipo: dm.tipo || 'Delivery', est: dm.est || '', perQ: dm.perQ || '', perM: dm.perM || '', pm: dm.pm || '', tl: dm.tl || '', origem: dm.origem || '', motivo: dm.motivo || '' } });
+  closeModal = () => this.setState({ modal: null });
+  onAnexoFile = (ev) => {
+    const f = ev.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => this.setState({ modal: { ...this.state.modal, anexoNome: f.name, anexoConteudo: String(r.result) } });
+    r.readAsText(f); ev.target.value = '';
+  };
+  submitAdd = () => {
+    const m = this.state.modal; if (!m) return;
+    if (!m.t.trim()) { this.toast('Dê um título à iniciativa'); return; }
+    this.mut(d => {
+      if (m.editId != null) {
+        const dm = d.demandas.find(x => x.id === m.editId);
+        if (dm) Object.assign(dm, { t: m.t.trim(), d: m.d.trim(), sq: m.sq, link: m.link.trim(), anexoNome: m.anexoNome, anexoConteudo: m.anexoConteudo, prio: m.prio, tipo: m.tipo, est: m.est, perQ: m.perQ, perM: m.perM, pm: m.pm, tl: m.tl, origem: m.origem, motivo: m.motivo });
+      } else {
+        const nid = d.demandas.reduce((mx, x) => Math.max(mx, x.id), 0) + 1;
+        d.demandas.push({ id: nid, t: m.t.trim(), d: m.d.trim(), sq: m.sq, col: d.kcols[0] ? d.kcols[0].k : 'backlog', link: m.link.trim(), anexoNome: m.anexoNome, anexoConteudo: m.anexoConteudo, prio: m.prio, tipo: m.tipo, est: m.est, perQ: m.perQ, perM: m.perM, pm: m.pm, tl: m.tl, origem: m.origem, motivo: m.motivo, createdAt: Date.now() });
+      }
+      normalize(d);
+    });
+    this.setState({ modal: null });
+    this.toast(m.editId != null ? 'Iniciativa atualizada' : 'Iniciativa adicionada ao fim da fila de backlog');
+  };
+  renderVals() {
+    const { data, activeSquad, page, filter, toast, kFilter, modal, collapsed, qMenuOpen, dragMark } = this.state;
+    const q = this.Q();
+    const showLabel = this.props.mostrarRotuloBarra ?? true;
+    const destacarHoje = this.props.destacarHoje ?? true;
+    const nav = (on) => ({ display: 'flex', alignItems: 'center', gap: 16, height: 44, padding: '0 16px', boxSizing: 'border-box', borderRadius: 8, border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left', fontFamily: 'inherit', fontSize: 14, lineHeight: '20px', background: on ? 'rgba(15,120,100,.20)' : 'none', color: on ? '#36b37e' : '#919eab', fontWeight: on ? 700 : 500 });
+    const titles = { data: 'Quadro Principal', gantt: 'Gantt / Roadmap', cfg: 'Squads & sprints', kanban: 'Demandas' };
+    const navC = (on) => ({ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, boxSizing: 'border-box', borderRadius: 8, border: 'none', cursor: 'pointer', background: on ? 'rgba(15,120,100,.20)' : 'none', color: on ? '#36b37e' : '#919eab' });
+    const go = (p) => () => { this.setState({ page: p }); window.scrollTo(0, 0); };
+    const sq = q.squads[activeSquad];
+    if (sq) normalizeSquad(sq);
+    const swStyle = (on) => ({ width: 30, height: 18, borderRadius: 100, background: on ? '#0f7864' : '#454f5b', position: 'relative', display: 'inline-block', transition: 'background .2s', flex: 'none' });
+    const knobStyle = (on) => ({ position: 'absolute', width: 14, height: 14, borderRadius: '50%', background: '#fff', top: 2, left: on ? 14 : 2, transition: 'left .2s', boxShadow: '-1px 1px 4.9px rgba(0,0,0,.3)' });
+    const selBase = { cursor: 'pointer', fontWeight: 600, border: '1px solid transparent', borderRadius: 6, padding: '7px 26px 7px 8px', fontSize: 13, fontFamily: 'inherit', minWidth: 168, appearance: 'none', WebkitAppearance: 'none', backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23919eab' stroke-width='2'><path d='M2 4l4 4 4-4'/></svg>\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 9px center' };
+    const u = (j, key) => (e) => { let v = e.target.value; if (key === 'p') v = Math.max(0, Math.min(100, parseInt(v) || 0)); this.mut(d => { this.SQ().items[j][key] = v; }); };
+    const markRow = (j) => dragMark && dragMark.type === 'row' && dragMark.j === j ? { boxShadow: dragMark.after ? 'inset 0 -3px 0 #36b37e' : 'inset 0 3px 0 #36b37e' } : {};
+    const markCat = (cat, sub) => dragMark && dragMark.type === 'cat' && dragMark.cat === cat && dragMark.sub === (sub || '') ? { outline: '2px dashed #36b37e', outlineOffset: -2 } : {};
+    const rowDragOver = (j) => (e) => {
+      if (this._dragRow == null) return; e.preventDefault();
+      const r = e.currentTarget.getBoundingClientRect();
+      const after = (e.clientY - r.top) > r.height / 2;
+      const cur = this.state.dragMark;
+      if (!cur || cur.type !== 'row' || cur.j !== j || cur.after !== after) this.setState({ dragMark: { type: 'row', j, after } });
+    };
+    const rowDrop = (j) => (e) => {
+      if (this._dragRow == null) return; e.preventDefault();
+      const mk = this.state.dragMark;
+      const tgt = this.SQ().items[j];
+      this.reorder(this._dragRow, (mk && mk.type === 'row' && mk.after) ? j + 1 : j, tgt.cat, tgt.sub);
+      this._dragRow = null; this.setState({ dragMark: null });
+    };
+    const catDragOver = (cat, sub) => (e) => {
+      if (this._dragRow == null) return; e.preventDefault();
+      const cur = this.state.dragMark;
+      if (!cur || cur.type !== 'cat' || cur.cat !== cat || cur.sub !== (sub || '')) this.setState({ dragMark: { type: 'cat', cat, sub: sub || '' } });
+    };
+    const catDrop = (cat, sub) => (e) => {
+      if (this._dragRow == null) return; e.preventDefault();
+      const S = sub || '';
+      const last = this.findLastIdx(it => (it.cat || '') === cat && (S ? (it.sub || '') === S : true));
+      this.reorder(this._dragRow, last >= 0 ? last + 1 : this.SQ().items.length, cat, S);
+      this._dragRow = null; this.setState({ dragMark: null });
+    };
+    const itemRow = (j, it, flat) => {
+      const st = STATUS[it.st] || STATUS.backlog, pv = PREV[it.pv] || PREV.nao;
+      return {
+        isItemFlat: flat, isItemGrouped: !flat,
+        n: it.n, s: it.s, e: it.e, st: it.st, pv: it.pv, p: it.p, cat: it.cat, sub: it.sub,
+        onN: u(j, 'n'), onS: u(j, 's'), onE: u(j, 'e'), onSt: u(j, 'st'), onPv: u(j, 'pv'), onP: u(j, 'p'), onCat: u(j, 'cat'), onSub: u(j, 'sub'),
+        onDel: () => this.mut(d => { this.SQ().items.splice(j, 1); }),
+        onToBacklog: () => { this.mut(d => { const s2 = this.SQ(); const [x] = s2.items.splice(j, 1); s2.backlog.push({ n: x.n, cat: x.cat || '', note: '' }); }); this.toast('Movido para o backlog'); },
+        onDragStart: (e) => { this._dragRow = j; try { e.dataTransfer.setData('text/plain', ''); } catch(_) {} e.dataTransfer.effectAllowed = 'move'; },
+        onDragEnd: () => { this._dragRow = null; this.setState({ dragMark: null }); },
+        onDragOver: rowDragOver(j), onDrop: rowDrop(j),
+        rowStyle: { borderBottom: '1px solid rgba(145,158,171,.08)', opacity: this._dragRow === j ? .5 : 1, ...markRow(j) },
+        stStyle: { ...selBase, background: rgba(st.color, .16), color: st.chip, backgroundImage: selBase.backgroundImage, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 9px center' },
+        pvStyle: { ...selBase, background: 'transparent', color: pv.color, backgroundImage: selBase.backgroundImage, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 9px center' },
+        pctStyle: { display: 'block', height: '100%', borderRadius: 4, width: it.p + '%', background: sq ? sq.color : '#36b37e' }
+      };
+    };
+    const tRows = [];
+    let theadCols, colspan;
+    if (sq && sq.groupByCat) {
+      theadCols = ['', 'Pilar / Item', 'Início', 'Fim', 'Status', 'Previsão', '% Conclusão', '']; colspan = 8;
+      const idxOf = sq.items.map((it, j) => ({ it, j }));
+      const roll = (pct, color) => ({ display: 'block', height: '100%', borderRadius: 4, width: pct + '%', background: color });
+      sq.categories.forEach((c, ci) => {
+        const inCat = idxOf.filter(x => (x.it.cat || '') === c.name);
+        tRows.push({
+          isCat: true, name: c.name || '—', showBtns: true,
+          dotStyle: { width: 9, height: 9, borderRadius: 3, background: sq.color, display: 'inline-block' },
+          rollPct: avg(inCat.map(x => x.it.p)), rollStyle: roll(avg(inCat.map(x => x.it.p)), sq.color),
+          plainName: false,
+          headStyle: markCat(c.name, ''),
+          onDragOver: catDragOver(c.name, ''), onDrop: catDrop(c.name, ''),
+          onRen: (e) => { const nn = e.target.value; this.mut(d => { const s2 = this.SQ(); const old = s2.categories[ci].name; s2.items.forEach(it => { if (it.cat === old) it.cat = nn; }); s2.categories[ci].name = nn; }); },
+          onAddSub: () => { this.mut(d => { const cc = this.SQ().categories[ci]; let n = cc.subs.length + 1, nn = 'Nova subcategoria'; while (cc.subs.includes(nn)) nn = 'Nova subcategoria ' + (++n); cc.subs.push(nn); }); this.toast('Subcategoria criada — clique no nome para editar'); },
+          onDelCat: () => { this.mut(d => { this.SQ().items.forEach(it => { if (it.cat === c.name) { it.cat = ''; it.sub = ''; } }); this.SQ().categories.splice(ci, 1); }); this.toast('Categoria removida — itens preservados sem categoria'); }
+        });
+        c.subs.forEach((s, si) => {
+          const inSub = inCat.filter(x => (x.it.sub || '') === s);
+          tRows.push({
+            isSub: true, name: s,
+            rollPct: avg(inSub.map(x => x.it.p)), rollStyle: roll(avg(inSub.map(x => x.it.p)), '#65a76b'),
+            headStyle: markCat(c.name, s),
+            onDragOver: catDragOver(c.name, s), onDrop: catDrop(c.name, s),
+            onRen: (e) => { const nn = e.target.value; this.mut(d => { const s2 = this.SQ(); const old = s2.categories[ci].subs[si]; s2.items.forEach(it => { if (it.cat === c.name && it.sub === old) it.sub = nn; }); s2.categories[ci].subs[si] = nn; }); },
+            onDelSub: () => { this.mut(d => { this.SQ().items.forEach(it => { if (it.cat === c.name && it.sub === s) it.sub = ''; }); this.SQ().categories[ci].subs.splice(si, 1); }); this.toast('Subcategoria removida — itens preservados') }
+          });
+          inSub.forEach(x => tRows.push(itemRow(x.j, x.it, false)));
+        });
+        const loose = inCat.filter(x => !x.it.sub || !c.subs.includes(x.it.sub));
+        loose.forEach(x => tRows.push(itemRow(x.j, x.it, false)));
+        if (!inCat.length) tRows.push({ isEmpty: true, onDragOver: catDragOver(c.name, ''), onDrop: catDrop(c.name, '') });
+      });
+      const unc = idxOf.filter(x => !x.it.cat);
+      unc.forEach(x => tRows.push(itemRow(x.j, x.it, false)));
+    } else {
+      theadCols = ['', 'Item', 'Categoria', 'Subcat.', 'Início', 'Fim', 'Status', 'Previsão', '% Conclusão', '']; colspan = 10;
+      if (sq) sq.items.forEach((it, j) => tRows.push(itemRow(j, it, true)));
+    }
+    const bl = sq ? (sq.backlog || []) : [];
+    const blRows = bl.map((b, k) => ({
+      n: b.n, cat: b.cat, note: b.note,
+      onN: (e) => this.mut(d => { this.SQ().backlog[k].n = e.target.value; }),
+      onCat: (e) => this.mut(d => { this.SQ().backlog[k].cat = e.target.value; }),
+      onNote: (e) => this.mut(d => { this.SQ().backlog[k].note = e.target.value; }),
+      onPromote: () => { this.mut(d => { const s2 = this.SQ(); const [x] = s2.backlog.splice(k, 1); s2.items.push({ n: x.n, s: this.Q().start, e: this.Q().start, st: 'backlog', pv: 'nao', p: 0, cat: x.cat || '', sub: '' }); normalizeSquad(s2); }); this.toast('Promovido ao roadmap — defina as datas'); },
+      onDel: () => this.mut(d => { this.SQ().backlog.splice(k, 1); })
+    }));
+    const tl = timelineOf(q), sp = sprintsOf(q), now = new Date();
+    const todayPct = Math.max(0, Math.min(100, (now - tl.min) / tl.span * 100));
+    const counts = { done: 0, dev: 0, risk: 0, total: 0 };
+    const glanes = [];
+    const rowEntry = (it, indent) => {
+      counts.total++;
+      if (it.p >= 100 || it.st === 'entregue') counts.done++;
+      if (it.st === 'dev') counts.dev++;
+      if (it.pv === 'risco' || it.pv === 'atraso') counts.risk++;
+      return { isRow: true, label: it.n || 'sem nome', labelStyle: { width: 290, flex: 'none', boxSizing: 'border-box', padding: '6px 24px 6px ' + indent + 'px', fontSize: 13, fontWeight: indent > 24 ? 500 : 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#c4cdd5' }, ...this.bar(it, tl, q, showLabel) };
+    };
+    q.squads.forEach((sqd, si) => {
+      normalizeSquad(sqd);
+      const items = sqd.items.filter(it => this.passFilter(it));
+      if (!items.length && filter !== 'all') return;
+      const sqKey = 'sq' + si, sqCol = collapsed[sqKey];
+      glanes.push({ isSquad: true, name: sqd.name, dotStyle: { width: 10, height: 10, borderRadius: 3, background: sqd.color, display: 'inline-block' }, meta: items.length + ' itens' + (sqd.groupByCat ? ' · categorias' : ''), arrow: sqCol ? '▸' : '▾', onClick: () => this.setState({ collapsed: { ...collapsed, [sqKey]: !sqCol } }) });
+      if (sqCol) return;
+      if (sqd.groupByCat) {
+        sqd.categories.forEach((c, ci) => {
+          const inCat = items.filter(i => (i.cat || '') === c.name);
+          const ck = sqKey + 'c' + ci, cCol = collapsed[ck];
+          glanes.push({ isLayer: true, name: c.name, count: inCat.length, arrow: cCol ? '▸' : '▾', onClick: () => this.setState({ collapsed: { ...collapsed, [ck]: !cCol } }) });
+          if (cCol) return;
+          c.subs.forEach(s => {
+            const inSub = inCat.filter(i => (i.sub || '') === s);
+            if (inSub.length) { glanes.push({ isSubLayer: true, name: s, count: inSub.length }); inSub.forEach(i => glanes.push(rowEntry(i, 56))); }
+          });
+          const loose = inCat.filter(i => !i.sub || !c.subs.includes(i.sub));
+          loose.forEach(i => glanes.push(rowEntry(i, 40)));
+          if (!inCat.length) glanes.push({ isRow: true, label: '— sem itens —', labelStyle: { width: 290, flex: 'none', boxSizing: 'border-box', padding: '6px 24px 6px 40px', fontSize: 13, fontWeight: 500, color: '#637381' }, hasBar: false, isHist: false });
+        });
+        const unc = items.filter(i => !i.cat);
+        unc.forEach(i => glanes.push(rowEntry(i, 24)));
+      } else {
+        items.forEach(i => glanes.push(rowEntry(i, 24)));
+      }
+    });
+    const pctDone = counts.total ? Math.round(counts.done / counts.total * 100) : 0;
+    const chip = (f, label) => ({ label, onClick: () => this.setState({ filter: f }), style: { background: filter === f ? '#333d48' : '#212b36', border: '1px solid ' + (filter === f ? '#333d48' : 'rgba(145,158,171,.2)'), borderRadius: 100, padding: '7px 14px', fontSize: 12, fontWeight: 600, color: filter === f ? '#fff' : '#919eab', cursor: 'pointer', fontFamily: 'inherit' } });
+    const cfg = (key, num) => (e) => { let v = e.target.value; if (num) v = Math.max(num[0], Math.min(num[1], parseInt(v) || num[0])); this.mut(d => { d.quarters[d.activeQuarter][key] = v; }); };
+    const demandas = data.demandas || [];
+    const squadColor = (name) => { const s = q.squads.find(x => x.name === name); return s ? s.color : null; };
+    const kPass = (dm) => kFilter === 'all' ? true : kFilter === 'none' ? !dm.sq : dm.sq === kFilter;
+    const kChipStyle = (on) => ({ display: 'inline-flex', alignItems: 'center', gap: 7, background: on ? '#333d48' : '#212b36', border: '1px solid ' + (on ? '#333d48' : 'rgba(145,158,171,.2)'), borderRadius: 100, padding: '7px 14px', fontSize: 12, fontWeight: 600, color: on ? '#fff' : '#919eab', cursor: 'pointer', fontFamily: 'inherit' });
+    const kChips = [
+      { label: 'Board geral', hasDot: false, style: kChipStyle(kFilter === 'all'), onClick: () => this.setState({ kFilter: 'all' }) },
+      { label: 'Sem squad', hasDot: false, style: kChipStyle(kFilter === 'none'), onClick: () => this.setState({ kFilter: 'none' }) },
+      ...q.squads.map(s => ({ label: s.name, hasDot: true, dotStyle: { width: 9, height: 9, borderRadius: '50%', background: s.color, display: 'inline-block' }, style: kChipStyle(kFilter === s.name), onClick: () => this.setState({ kFilter: s.name }) }))
+    ];
+    const kCols = (data.kcols || []).map((kc, kci) => {
+      const key = kc.k, label = kc.label;
+      const barH = [6, 9, 12, 15];
+      const cards = demandas.filter(dm => dm.col === key && kPass(dm)).map(dm => {
+        const sqc = dm.sq ? (KSPEC[dm.sq] ? KSPEC[dm.sq].c : squadColor(dm.sq)) : null;
+        const pr = KPRIO[dm.prio];
+        const subsT = dm.subsTotal || 0, subsD = Math.min(dm.subsDone || 0, subsT);
+        const deps = Array.isArray(dm.dep) ? dm.dep : (dm.dep ? [dm.dep] : []);
+        const avatars = [];
+        if (dm.pm) avatars.push({ ini: dm.pm.split(/\s+/).map(x => x[0]).join('').slice(0, 2).toUpperCase(), style: { width: 24, height: 24, borderRadius: '50%', background: '#3E3A32', color: '#E8DFD1', fontSize: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #1E1E1E', boxSizing: 'content-box' } });
+        if (dm.tl) avatars.push({ ini: dm.tl.split(/\s+/).map(x => x[0]).join('').slice(0, 2).toUpperCase(), style: { width: 24, height: 24, borderRadius: '50%', background: '#4A4438', color: '#E8DFD1', fontSize: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #1E1E1E', marginLeft: -6, boxSizing: 'content-box' } });
+        const role = kc.role || 'fluxo';
+        const isBacklog = role === 'entrada', isDone = role === 'concluido', isDisc = role === 'descartado';
+        const terminal = isDone || isDisc;
+        const blocked = deps.length > 0 && !terminal;
+        const days = Math.max(0, Math.floor((Date.now() - (dm.createdAt || Date.now())) / 86400000));
+        const MIDX = { jan: 0, fev: 1, mar: 2, abr: 3, mai: 4, jun: 5, jul: 6, ago: 7, set: 8, out: 9, nov: 10, dez: 11 };
+        const late = !!dm.perM && MIDX[dm.perM] !== undefined && MIDX[dm.perM] < now.getMonth() && !isDone;
+        const showProg = subsT > 0 && !isBacklog && !isDisc;
+        const showDep = deps.length > 0 && !isDisc;
+        const showAv = !isBacklog && avatars.length > 0;
+        const dragging = this.state.kDragId === dm.id;
+        const idadeBand = days > 45 ? { fontWeight: 700, color: '#E0AC57' } : days >= 14 ? { fontWeight: 600, color: '#B3B4AB' } : { fontWeight: 500, color: '#83857C' };
+        return {
+          t: dm.t,
+          code: dm.code || 'CKT-' + (100 + dm.id),
+          cardStyle: { width: '100%', maxWidth: 320, boxSizing: 'border-box', background: terminal ? '#242424' : '#1E1E1E', borderRadius: 12, padding: blocked ? '12px 14px 12px' : '14px 14px 12px', borderTop: blocked ? '3px solid #E88178' : 'none', display: 'flex', flexDirection: 'column', gap: 10, cursor: 'grab', fontFamily: "'Inter',sans-serif", transition: 'transform .15s ease,box-shadow .15s ease,opacity .15s ease', boxShadow: isDisc ? 'none' : '0 0 0 1px rgba(242,241,236,.06),0 12px 24px -8px rgba(0,0,0,.55)', opacity: dragging ? .45 : 1, transform: dragging ? 'rotate(-1.4deg) scale(.99)' : 'none' },
+          titleStyle: { fontSize: 15, fontWeight: 600, lineHeight: 1.34, letterSpacing: '-.011em', color: terminal ? '#83857C' : '#F2F1EC', textDecoration: isDisc ? 'line-through' : 'none', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' },
+          showTipo: !isBacklog,
+          hasOrigem: isBacklog && !!dm.origem, origem: 'origem: ' + dm.origem,
+          hasMotivo: isDisc && !!dm.motivo, motivo: 'não faremos: ' + dm.motivo,
+          hasIdade: isBacklog, idade: days + 'd',
+          idadeStyle: { fontFamily: "'JetBrains Mono',monospace", fontSize: 11, fontVariantNumeric: 'tabular-nums', ...idadeBand },
+          hasTag: !!sqc, tagName: dm.sq,
+          sqDot: { width: 7, height: 7, borderRadius: '50%', background: sqc, display: 'inline-block', flex: 'none' },
+          sqTxt: { fontSize: 11, fontWeight: 600, color: sqc, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
+          prioTitle: pr ? 'Prioridade ' + dm.prio : 'Prioridade não avaliada',
+          prioBars: barH.map((h, i) => ({ width: 3, height: h, borderRadius: 1, background: pr && i < pr.n ? pr.c : 'rgba(242,241,236,.20)', display: 'inline-block' })),
+          tipo: dm.tipo || 'Delivery',
+          hasEst: !isBacklog && !!dm.est, est: dm.est,
+          hasPer: !isBacklog && !!dm.perQ, per: dm.perQ ? dm.perQ + (dm.perM ? ' · ' + dm.perM : '') : '', perDone: isDone && !!dm.perQ,
+          perStyle: { display: 'inline-flex', alignItems: 'center', gap: 4, background: isDone ? 'rgba(63,201,88,.16)' : late ? 'rgba(232,129,120,.16)' : 'rgba(242,241,236,.08)', color: isDone ? '#7FD98F' : late ? '#E88178' : '#B3B4AB', borderRadius: 6, padding: '2px 8px', fontFamily: "'JetBrains Mono',monospace", fontSize: 11, fontWeight: 500 },
+          hasFooter: !isBacklog && (showProg || showDep || showAv),
+          hasProg: showProg, progTxt: subsD + '/' + subsT,
+          progFill: { display: 'block', height: '100%', borderRadius: 2, width: (subsT ? subsD / subsT * 100 : 0) + '%', background: subsT && subsD >= subsT ? '#3FC958' : '#9BB79B' },
+          hasDep: showDep, depTxt: deps.length === 1 ? deps[0] : String(deps.length), depTitle: 'Bloqueado por ' + deps.join(', '),
+          hasAv: showAv, avatars,
+          hasAnexo: !!dm.anexoConteudo,
+          onOpenAnexo: () => window.open(URL.createObjectURL(new Blob([dm.anexoConteudo], { type: 'text/html' }))),
+          hasLink: !!dm.link,
+          onOpenLink: () => window.open(dm.link, '_blank'),
+          onEdit: () => this.openEdit(dm),
+          onDel: () => { this.mut(d => { d.demandas = d.demandas.filter(x => x.id !== dm.id); }); this.toast('Iniciativa removida'); },
+          onDragStart: () => { this._drag = dm.id; this.setState({ kDragId: dm.id }); },
+          onDragEnd: () => { this._drag = null; this.setState({ kDragId: null, kMark: null }); },
+          onDragOver: (e) => { if (this._drag != null) e.preventDefault(); },
+          onDrop: (e) => { e.preventDefault(); e.stopPropagation(); this.dropOn(dm.id, key); }
+        };
+      });
+      const totalInCol = demandas.filter(dm => dm.col === key).length;
+      return {
+        label, count: cards.length, cards, empty: cards.length === 0,
+        onLabel: (e) => this.mut(d => { d.kcols[kci].label = e.target.value; }),
+        canDel: totalInCol === 0,
+        onDelCol: () => { if (demandas.some(dm => dm.col === key)) { this.toast('Esvazie a coluna antes de removê-la'); return; } this.mut(d => { d.kcols.splice(kci, 1); }); this.toast('Coluna removida'); },
+        colStyle: { background: 'rgba(145,158,171,.08)', borderRadius: 16, padding: 12, display: 'flex', flexDirection: 'column', gap: 10, minHeight: 340, boxSizing: 'border-box', border: (this.state.kMark && this.state.kMark.key === key && !this.state.kMark.ok) ? '1px solid #E88178' : '1px solid transparent' },
+        onDragOver: (e) => { if (this._drag == null) return; e.preventDefault(); const ok = this.canDropInfo(this._drag, key).ok; const m = this.state.kMark; if (!m || m.key !== key || m.ok !== ok) this.setState({ kMark: { key, ok } }); },
+        onDrop: (e) => { e.preventDefault(); this.dropOn(null, key); }
+      };
+    });
+    const addKCol = () => this.mut(d => { let n = d.kcols.length + 1, label = 'Nova coluna'; while (d.kcols.some(c => c.label === label)) label = 'Nova coluna ' + (++n); d.kcols.push({ k: 'c' + Date.now(), label, role: 'fluxo' }); });
+    return {
+      quarter: q.label, pageTitle: titles[page],
+      showData: page === 'data', showGantt: page === 'gantt', showCfg: page === 'cfg', showKanban: page === 'kanban',
+      navData: nav(page === 'data'), navGantt: nav(page === 'gantt'), navCfg: nav(page === 'cfg'), navKanban: nav(page === 'kanban'),
+      goData: go('data'), goGantt: go('gantt'), goCfg: go('cfg'), goKanban: go('kanban'),
+      sideOpen: this.state.sideOpen, sideClosed: !this.state.sideOpen,
+      navDataC: navC(page === 'data'), navGanttC: navC(page === 'gantt'), navKanbanC: navC(page === 'kanban'), navCfgC: navC(page === 'cfg'),
+      sideStyle: this.state.sideOpen
+        ? { width: 280, flex: 'none', boxSizing: 'border-box', position: 'sticky', top: 0, height: '100vh', padding: '32px 24px 24px', display: 'flex', flexDirection: 'column', gap: 24, borderRight: '1px solid rgba(145,158,171,.5)' }
+        : { width: 64, flex: 'none', boxSizing: 'border-box', position: 'sticky', top: 0, height: '100vh', padding: '32px 12px 24px', display: 'flex', flexDirection: 'column', gap: 24, borderRight: '1px solid rgba(145,158,171,.5)' },
+      sideHeadStyle: this.state.sideOpen
+        ? { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }
+        : { display: 'flex', alignItems: 'center', justifyContent: 'center' },
+      sideToggleGlyph: this.state.sideOpen ? '⟨' : '⟩',
+      sideToggleTitle: this.state.sideOpen ? 'Recolher menu' : 'Expandir menu',
+      toggleSide: () => { const v = !this.state.sideOpen; this.setState({ sideOpen: v }); try { localStorage.setItem('cakto-roadmap-side', v ? '1' : '0'); } catch(e) {} },
+      qMenuOpen,
+      toggleQMenu: (e) => { e.stopPropagation(); this.setState({ qMenuOpen: !qMenuOpen }); },
+      qOpts: data.order.filter(id => !data.quarters[id].archived || id === data.activeQuarter).map(id => {
+        const x = data.quarters[id]; const on = id === data.activeQuarter;
+        return { label: x.label, meta: x.archived ? 'arquivado' : 'Sprint 01–' + String(x.count).padStart(2, '0'), onClick: () => this.switchQuarter(id), style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '9px 10px', borderRadius: 8, fontSize: 13, fontWeight: 600, color: on ? '#36b37e' : '#fff', background: on ? 'rgba(15,120,100,.20)' : 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', boxSizing: 'border-box' } };
+      }),
+      newQuarter: this.newQuarter,
+      importXlsx: () => this.xlsxRef.current && this.xlsxRef.current.click(),
+      loadJson: () => this.jsonRef.current && this.jsonRef.current.click(),
+      saveJson: this.saveJson, onJsonFile: this.onJsonFile, onXlsxFile: this.onXlsxFile,
+      jsonRef: this.jsonRef, xlsxRef: this.xlsxRef,
+      dataSub: 'Editando ' + q.label + ' · ' + q.count + ' sprints a partir de ' + fmtBR(q.start) + ' · categorias (Pilar) opcionais por squad.',
+      tabs: q.squads.map((s, i) => ({
+        name: s.name,
+        onClick: () => this.setState({ activeSquad: i }),
+        style: { display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', borderRadius: 8, fontSize: 13, fontWeight: i === activeSquad ? 700 : 600, color: i === activeSquad ? '#36b37e' : '#919eab', cursor: 'pointer', border: 'none', background: i === activeSquad ? 'rgba(15,120,100,.20)' : 'none', fontFamily: 'inherit' },
+        dotStyle: { width: 9, height: 9, borderRadius: '50%', background: s.color, display: 'inline-block' }
+      })),
+      addSquad: this.addSquad,
+      squadName: sq ? sq.name : '',
+      countLabel: sq ? sq.items.length + ' no roadmap' + (sq.groupByCat ? ' · ' + sq.categories.length + ' categorias' : '') : '',
+      squadAccent: { width: 4, height: 20, borderRadius: 2, background: sq ? sq.color : '#36b37e', display: 'inline-block' },
+      toggleGroup: () => this.mut(d => { this.SQ().groupByCat = !this.SQ().groupByCat; }),
+      tgSwStyle: swStyle(sq ? sq.groupByCat : false), tgKnobStyle: knobStyle(sq ? sq.groupByCat : false),
+      theadCols, colspan, tRows,
+      catOpts: sq ? [...new Set(sq.items.map(i => i.cat).filter(Boolean))] : [],
+      addCategory: () => { this.mut(d => { const s2 = this.SQ(); let n = s2.categories.length + 1, nn = 'Nova categoria'; while (s2.categories.some(c => c.name === nn)) nn = 'Nova categoria ' + (++n); s2.categories.push({ name: nn, subs: [] }); if (!s2.groupByCat) s2.groupByCat = true; }); this.toast('Categoria criada — clique no nome para editar'); },
+      statusOpts: Object.entries(STATUS).map(([v, o]) => ({ v, label: o.label })),
+      prevOpts: Object.entries(PREV).map(([v, o]) => ({ v, label: o.label })),
+      addRow: () => this.mut(d => { this.SQ().items.push({ n: '', s: q.start, e: q.start, st: 'backlog', pv: 'nao', p: 0, cat: '', sub: '' }); }),
+      blRows, blCount: bl.length, blEmpty: bl.length === 0,
+      addBl: () => this.mut(d => { this.SQ().backlog.push({ n: '', cat: '', note: '' }); }),
+      ganttSub: 'Sprints de ' + q.days + ' dias · categorias como camadas (opcional) · linha verde = hoje',
+      chips: [chip('all', 'Todas as squads'), chip('risco', 'Em risco / atrasado'), chip('dev', 'Em desenvolvimento')],
+      sumTotal: counts.total, sumDev: counts.dev, sumRisk: counts.risk, sumDone: counts.done, sumPct: pctDone,
+      sumRiskStyle: { fontSize: 32, lineHeight: '40px', fontWeight: 700, marginTop: 4, color: counts.risk ? '#ff5630' : '#fff' },
+      months: monthBands(q).map(m => ({ label: m.label, style: { flex: m.span, textAlign: 'center', padding: '5px 4px', color: '#fff', fontWeight: 700, fontSize: 12, borderLeft: '1px solid rgba(255,255,255,.2)' } })),
+      sprintCols: sp.map(s => ({ label: s.label, range: s.range, style: { flex: 1, padding: '7px 3px', textAlign: 'center', borderLeft: '1px solid rgba(145,158,171,.12)', background: (now >= s.start && now <= addDays(s.end, 1)) ? 'rgba(15,120,100,.15)' : 'transparent' } })),
+      glCols: sp.map((_, i) => i),
+      todayStyle: { position: 'absolute', top: 0, bottom: 0, width: 2, background: 'rgba(54,179,126,.6)', zIndex: 1, left: todayPct + '%', display: destacarHoje ? 'block' : 'none' },
+      glanes,
+      legendStatus: Object.values(STATUS).map(o => ({ label: o.label, swStyle: { width: 14, height: 10, borderRadius: 3, background: o.color, display: 'inline-block' } })),
+      legendPrev: ['prazo', 'risco', 'atraso', 'bloq'].map(k => ({ label: PREV[k].label, dotStyle: { width: 9, height: 9, borderRadius: '50%', background: PREV[k].color, display: 'inline-block' } })),
+      cfgQ: q.label, cfgStart: q.start, cfgDays: q.days, cfgCount: q.count,
+      onCfgQ: cfg('label'), onCfgStart: cfg('start'), onCfgDays: cfg('days', [7, 30]), onCfgCount: cfg('count', [1, 16]),
+      spChips: sp.map(s => s.label + ' · ' + s.range),
+      qRows: data.order.map(id => {
+        const x = data.quarters[id]; const on = id === data.activeQuarter;
+        const itemCount = x.squads.reduce((n, s) => n + (s.items || []).length, 0);
+        return {
+          label: x.label, meta: 'Sprint 01–' + String(x.count).padStart(2, '0') + ' · início ' + fmtBR(x.start) + ' · ' + itemCount + ' itens',
+          onLabel: (e) => this.mut(d => { d.quarters[id].label = e.target.value; }),
+          canDel: itemCount === 0 && !on,
+          onDelQ: () => {
+            if (data.quarters[id].squads.reduce((n, s) => n + (s.items || []).length, 0) > 0) { this.toast('Quarter com itens no roadmap não pode ser excluído'); return; }
+            if (id === data.activeQuarter) { this.toast('Ative outro quarter antes de excluir este'); return; }
+            this.mut(d => { delete d.quarters[id]; d.order = d.order.filter(z => z !== id); });
+            this.toast('Quarter excluído');
+          },
+          tagLabel: on ? 'ativo' : (x.archived ? 'arquivado' : 'inativo'),
+          tagStyle: { fontSize: 10, fontWeight: 700, textTransform: 'uppercase', padding: '2px 8px', borderRadius: 100, background: on ? 'rgba(15,120,100,.20)' : 'rgba(145,158,171,.16)', color: on ? '#36b37e' : '#919eab' },
+          showAtivar: !on, onAtivar: () => this.switchQuarter(id),
+          archLabel: x.archived ? 'Desarquivar' : 'Arquivar',
+          onArch: () => this.mut(d => { d.quarters[id].archived = !d.quarters[id].archived; })
+        };
+      }),
+      cfgSquads: q.squads.map((s, i) => ({
+        name: s.name, color: s.color,
+        onColor: (e) => this.mut(d => { this.Q().squads[i].color = e.target.value; }),
+        onName: (e) => this.mut(d => { this.Q().squads[i].name = e.target.value; }),
+        onToggleCat: () => this.mut(d => { this.Q().squads[i].groupByCat = !this.Q().squads[i].groupByCat; }),
+        swStyle: swStyle(s.groupByCat), knobStyle: knobStyle(s.groupByCat),
+        onDel: () => { this.mut(d => { this.Q().squads.splice(i, 1); }); this.setState({ activeSquad: Math.max(0, Math.min(this.state.activeSquad, this.Q().squads.length - 1)) }); this.toast('Squad removida'); }
+      })),
+      kChips, kCols, addKCol, kGridStyle: { display: 'grid', gridTemplateColumns: 'repeat(' + Math.max(1, (data.kcols || []).length) + ',minmax(272px,1fr)) 44px', gap: 16, alignItems: 'start', overflowX: 'auto', paddingBottom: 8 },
+      titleClampStyle: { fontSize: 15, fontWeight: 600, lineHeight: 1.34, letterSpacing: '-.011em', color: '#F2F1EC', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' },
+      openModal: this.openModal, closeModal: this.closeModal, submitAdd: this.submitAdd,
+      stopClick: (e) => e.stopPropagation(),
+      showModal: !!modal,
+      mTitle: modal && modal.editId != null ? 'Configurar iniciativa' : 'Nova iniciativa',
+      mSubmitLabel: modal && modal.editId != null ? 'Salvar alterações' : 'Adicionar à fila',
+      mT: modal ? modal.t : '', mD: modal ? modal.d : '', mSq: modal ? modal.sq : '', mLink: modal ? modal.link : '',
+      mAnexoNome: modal && modal.anexoNome ? modal.anexoNome : 'Nenhum arquivo anexado',
+      onMT: (e) => this.setState({ modal: { ...modal, t: e.target.value } }),
+      onMD: (e) => this.setState({ modal: { ...modal, d: e.target.value } }),
+      onMSq: (e) => this.setState({ modal: { ...modal, sq: e.target.value } }),
+      onMLink: (e) => this.setState({ modal: { ...modal, link: e.target.value } }),
+      mPrio: modal ? modal.prio : 'P2', mTipo: modal ? modal.tipo : 'Delivery', mEst: modal ? modal.est : '',
+      onMPrio: (e) => this.setState({ modal: { ...modal, prio: e.target.value } }),
+      onMTipo: (e) => this.setState({ modal: { ...modal, tipo: e.target.value } }),
+      onMEst: (e) => this.setState({ modal: { ...modal, est: e.target.value } }),
+      mPerQ: modal ? modal.perQ : '', mPerM: modal ? modal.perM : '',
+      onMPerQ: (e) => this.setState({ modal: { ...modal, perQ: e.target.value } }),
+      onMPerM: (e) => this.setState({ modal: { ...modal, perM: e.target.value } }),
+      mPm: modal ? modal.pm : '', mTl: modal ? modal.tl : '', mOrigem: modal ? modal.origem : '', mMotivo: modal ? modal.motivo : '',
+      onMPm: (e) => this.setState({ modal: { ...modal, pm: e.target.value } }),
+      onMTl: (e) => this.setState({ modal: { ...modal, tl: e.target.value } }),
+      onMOrigem: (e) => this.setState({ modal: { ...modal, origem: e.target.value } }),
+      onMMotivo: (e) => this.setState({ modal: { ...modal, motivo: e.target.value } }),
+      mSquadOpts: [{ v: '', label: 'Fila central (sem squad)' }, ...q.squads.map(s => ({ v: s.name, label: 'Squad ' + s.name }))],
+      pickAnexo: () => this.anexoRef.current && this.anexoRef.current.click(),
+      onAnexoFile: this.onAnexoFile, anexoRef: this.anexoRef,
+      toastShow: !!toast, toastMsg: toast
+    };
+  }
+}
+</script>
+</body>
+</html>

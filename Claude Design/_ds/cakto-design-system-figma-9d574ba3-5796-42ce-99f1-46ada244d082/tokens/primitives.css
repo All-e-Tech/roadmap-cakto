@@ -1,0 +1,17 @@
+/* Cakto — utilitários mínimos. Componentes React são a via principal;
+   estas classes existem para HTML estático (slides, cards de specimen). */
+.ck-page{background:var(--page-bg);color:var(--text);margin:0;font:var(--t-body-weight) var(--t-body-size)/var(--t-body-lh) var(--font-sans)}
+.nova.ck-page,.nova .ck-page{background:var(--nv-shell-gradient) fixed}
+.ck-card{background:var(--card-bg);border:var(--stroke-hairline) solid var(--border);border-radius:var(--radius-card);padding:var(--pad-24);box-shadow:var(--shadow)}
+.ck-h1{font:var(--t-h1-weight) var(--t-h1-size)/var(--t-h1-lh) var(--font-sans);color:var(--text);margin:0}
+.ck-h2{font:var(--t-h2-weight) var(--t-h2-size)/var(--t-h2-lh) var(--font-sans);color:var(--text);margin:0}
+.ck-h3{font:var(--t-h3-weight) var(--t-h3-size)/var(--t-h3-lh) var(--font-sans);color:var(--text);margin:0}
+.ck-h6{font:var(--t-h6-weight) var(--t-h6-size)/var(--t-h6-lh) var(--font-sans);color:var(--text);margin:0}
+.ck-body{font-size:var(--t-body-size);line-height:var(--t-body-lh)}
+.ck-sm{font-size:var(--t-body-sm-size);line-height:var(--t-body-sm-lh)}
+.ck-xs{font-size:var(--t-body-12-size);line-height:var(--t-body-12-lh)}
+.ck-muted{color:var(--text-muted)}
+.ck-hat{font:var(--t-hat-weight) var(--t-hat-size)/var(--t-hat-lh) var(--font-sans);letter-spacing:var(--t-hat-ls);text-transform:uppercase}
+.ck-overline{font:var(--t-overline-weight) var(--t-overline-size)/var(--t-overline-lh) var(--font-sans);text-transform:uppercase}
+a{color:var(--semantic-secondary);text-decoration:none}
+a:hover{color:var(--semantic-primary)}

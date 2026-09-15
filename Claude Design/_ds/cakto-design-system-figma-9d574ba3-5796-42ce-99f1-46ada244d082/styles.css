@@ -1,0 +1,12 @@
+/* Cakto Design System — entrada global. Só @imports. */
+@import './tokens/fig-tokens.css';
+@import './tokens/fonts.css';
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/shape.css';
+@import './tokens/elevation.css';
+@import './tokens/gradients.css';
+@import './tokens/components.css';
+@import './tokens/fig-typography.css';
+@import './tokens/primitives.css';

@@ -1,0 +1,35 @@
+/* Cakto — medidas de componente extraídas dos component sets do Style Guide
+   e das telas reais (Nav 1:4986, 6.0 Financeiro 1:9384). */
+:root{
+  /* botão */
+  --btn-h:40px; --btn-pad:8px 16px; --btn-gap:10px;
+  /* nav item */
+  --nav-item-h:48px;
+  --nav-active-bg:rgba(15,120,100,.20);
+  --nav-hover-bg:var(--base-200);
+  --nav-submenu-indent:56px;
+  --nav-w:304px;
+  --nav-divider:rgba(145,158,171,.50);
+  /* filtro-período */
+  --chipbtn-h:36px; --chipbtn-hover-bg:#29343f; --chipbtn-active-bg:#333d48;
+  /* seleção (método de pagamento, checkbox hover) */
+  --select-active-bg:rgba(15,120,100,.15);
+  --select-active-border:var(--semantic-tertiary);
+  /* tab */
+  --tab-underline:2px;
+  /* toggle */
+  --toggle-w:44px; --toggle-h:24px; --toggle-thumb:16px;
+  /* checkbox */
+  --checkbox-size:16px; --checkbox-stroke:1.667px; --checkbox-hit:40px;
+  /* card dashboard */
+  --card-outline:4px solid var(--semantic-primary);
+  --card-accent-w:4px;
+  /* steps */
+  --step-bar-h:4px; --step-pending-bg:rgba(15,120,100,.20);
+  /* diversos das telas */
+  --toast-warning-bg:#7a4100; --toast-warning-text:#fff5cc;
+  --table-head-bg:var(--base-300);
+  --avatar-bg:#343b45;
+  --tile-bg:var(--semantic-tertiary);
+  --input-border:rgba(145,158,171,.20);
+}

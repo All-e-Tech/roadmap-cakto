@@ -1,0 +1,220 @@
+/* ============================================================================
+   Cakto Design System — tokens.css — v2.0.0 (rebrand 2026)
+   ----------------------------------------------------------------------------
+   Fonte de verdade: Figma "Cakto" (bloco .nova, frame 12535:125496), Public Sans.
+   Arquitetura de aliases: DS de produção (Minimal UI), recolorida.
+   Tema: dark-first. Light é DERIVADO — status: pendente de validação do design.
+   Uso: <link rel="stylesheet" href="tokens.css"> ou colar em <style>.
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+:root{
+  color-scheme:dark;
+
+  /* ---- 1. Primitivas — verde Cakto (5 degraus, iguais nos dois temas) ---- */
+  --green-darker:#064C3B;
+  --green-dark:#0B6856;
+  --green-principal:#0F7865;
+  --green-light:#2EA593;
+  --green-lighter:#82CABF;
+
+  /* ---- 2. Primitivas — status (iguais nos dois temas) ---- */
+  --success:#36B37E;          /* único verde de status; #38CA4F descartado na v2.0 */
+  --warning:#FFAB00;
+  --error:#FF5630;
+  --info:#00B8D9;
+
+  /* ---- 3. Primitivas — cinzas de texto (Figma) ---- */
+  --grey-500:#919EAB;
+  --grey-600:#637381;
+  --grey-800:#212B36;
+  --grey-line:#DFE3E8;
+  --grey-bg:#F4F6F8;
+
+  /* ---- 4. Superfícies dark (.nova) — empilhar em ordem, sem pular níveis ---- */
+  --surface-base:#0E0E0E;
+  --surface-elevated:#141414;
+  --surface-paper:#1A1A1A;
+  --surface-extra:#1C1C1C;
+  --surface-muted:#2C2C2C;
+
+  /* ---- 5. Aliases semânticos (flipam por tema) ---- */
+  --bg:var(--surface-base);                 /* fundo de página */
+  --ground:var(--surface-elevated);         /* sidebar, header, faixas */
+  --paper:var(--surface-paper);             /* card, modal, drawer, menu */
+  --elevated:var(--surface-extra);          /* hover de linha, input, head de tabela */
+  --line:var(--surface-muted);              /* borda hairline */
+  --line-strong:rgba(145,158,171,.28);      /* borda de controle */
+  --overlay:rgba(0,0,0,.60);                /* fundo de modal/drawer */
+  --shell-bg:linear-gradient(135deg,#0E0E0E 0%,#0E0E0E 65%,#0F7865 120%);
+
+  --text:#FFFFFF;
+  --text-secondary:var(--grey-500);
+  --text-disabled:var(--grey-600);
+  --text-on-primary:#FFFFFF;                /* texto sobre --green-principal */
+
+  /* verde para TEXTO. Nunca --green-principal sobre fundo escuro (3.6:1). */
+  --primary:var(--green-principal);         /* superfícies: CTA, seleção, underline, toggle on */
+  --primary-hover:var(--green-dark);
+  --primary-text:var(--green-light);        /* links, nav ativo, valores positivos (6.4:1) */
+  --primary-text-strong:var(--green-lighter);/* texto verde pequeno / sobre paper (9.2:1) */
+
+  /* ---- 6. Soft fills (16%) — mesma alpha nos dois temas ---- */
+  --soft-green:rgba(15,120,101,.16);
+  --soft-green-strong:rgba(15,120,101,.20); /* nav ativo, step pendente */
+  --soft-success:rgba(54,179,126,.16);
+  --soft-warning:rgba(255,171,0,.16);
+  --soft-error:rgba(255,86,48,.16);
+  --soft-info:rgba(0,184,217,.16);
+  --soft-grey:rgba(145,158,171,.16);
+
+  /* texto legível sobre cada soft fill (flipa por tema) */
+  --on-soft-green:var(--green-light);
+  --on-soft-success:var(--success);
+  --on-soft-warning:var(--warning);
+  --on-soft-error:var(--error);
+  --on-soft-info:var(--info);
+  --on-soft-grey:var(--grey-500);
+
+  /* ---- 7. Tipografia — Public Sans ---- */
+  --font-sans:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  --font-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+
+  --t-h1:700 48px/56px var(--font-sans);
+  --t-h2:700 36px/40px var(--font-sans);
+  --t-h3:700 24px/32px var(--font-sans);
+  --t-h4:700 24px/36px var(--font-sans);
+  --t-h5:700 20px/30px var(--font-sans);
+  --t-h6:600 18px/28px var(--font-sans);
+  --t-subtitle1:600 16px/24px var(--font-sans);
+  --t-subtitle2:600 14px/22px var(--font-sans);
+  --t-body1:400 16px/24px var(--font-sans);
+  --t-body2:400 14px/22px var(--font-sans);
+  --t-body-sm:400 14px/20px var(--font-sans);   /* o texto mais usado do app */
+  --t-body-xs:400 12px/18px var(--font-sans);
+  --t-caption:400 12px/18px var(--font-sans);
+  --t-overline:700 12px/18px var(--font-sans);   /* + uppercase */
+  --t-hat:700 14px/20px var(--font-sans);        /* + uppercase + letter-spacing .7px */
+  --t-hat-ls:0.7px;
+  --t-link:500 14px/20px var(--font-sans);
+  --t-metric:700 32px/40px var(--font-sans);     /* valor de StatCard */
+  /* styles de componente */
+  --t-table-head:600 14px/24px var(--font-sans);
+  --t-nav-item:500 14px/22px var(--font-sans);
+  --t-tab-label:500 14px/22px var(--font-sans);
+  --t-chip-label:500 13px/18px var(--font-sans);
+  --t-button:700 14px/24px var(--font-sans);
+  --t-input-label:600 12px/18px var(--font-sans);
+  --t-input-text:400 15px/24px var(--font-sans);
+  --num-tabular:tabular-nums;
+
+  /* ---- 8. Espaçamento (Figma: 4 6 8 12 16 24 32; 10 vem de componentes) ---- */
+  --sp-4:4px; --sp-6:6px; --sp-8:8px; --sp-10:10px; --sp-12:12px;
+  --sp-16:16px; --sp-24:24px; --sp-32:32px; --sp-40:40px; --sp-56:56px;
+  --card-pad:24px; --card-gap:16px; --grid-gap:16px; --section-gap:32px;
+  --content-pad:32px; --content-pad-mobile:16px;
+
+  /* ---- 9. Forma — raios e strokes ---- */
+  --r-4:4px;          /* label, checkbox, item de menu */
+  --r-control:8px;    /* botão, input, tag, nav item, tooltip, toast */
+  --r-12:12px;
+  --r-card:16px;
+  --r-frame:24px;     /* modal, frames grandes */
+  --r-pill:100px;     /* chip, avatar, toggle, badge count */
+  --stroke-hairline:1px;
+  --stroke-icon:1.5px;
+  --stroke-accent:2px;   /* tab underline */
+  --stroke-outline:4px;  /* card em destaque, borda esquerda de StatCard */
+
+  /* ---- 10. Elevação — assinatura deslocada à ESQUERDA (x negativo) ---- */
+  --shadow:-3px 8px 24px 0 rgba(0,0,0,.30);            /* card hover, menu, modal, tooltip */
+  --shadow-z1:0 1px 2px 0 rgba(0,0,0,.16);
+  --shadow-overlay:0 0 2px rgba(0,0,0,.24),0 20px 40px -4px rgba(0,0,0,.40);
+  --shadow-btn-hover:0 4px 14.2px 0 rgba(15,120,101,.28);
+  --shadow-btn-hover-danger:0 4px 14.2px 0 rgba(255,86,48,.28);
+  --op-disabled:0.26; --op-dim:0.40; --op-half:0.50;
+
+  /* ---- 11. Motion, foco, z-index ---- */
+  --ease:cubic-bezier(.4,0,.2,1);
+  --dur-fast:150ms; --dur:200ms; --dur-slow:250ms;
+  --focus-ring:2px solid var(--green-light);
+  --focus-offset:2px;
+  --focus-border:#FFFFFF;      /* foco de input = borda branca (Figma) */
+  --z-bar:50; --z-menu:100; --z-overlay:1300; --z-toast:1400;
+
+  /* ---- 12. Medidas de componente ---- */
+  --sidebar-w:238px;           /* padrão para ferramentas internas */
+  --sidebar-w-figma:304px;     /* valor do painel do produtor no Figma */
+  --sidebar-w-collapsed:72px;
+  --header-h:64px;
+  --btn-h-sm:32px; --btn-h:40px; --btn-h-lg:48px; --btn-pad:8px 16px; --btn-gap:10px;
+  --icon-btn:36px;
+  --input-h:40px; --input-pad:8px 12px; --input-bg:var(--surface-base);
+  --input-border:rgba(145,158,171,.20);
+  --nav-item-h:48px; --nav-active-bg:var(--soft-green-strong);
+  --chip-h:32px; --chip-h-sm:24px;
+  --filterchip-h:36px;
+  --tab-underline:2px;
+  --toggle-w:44px; --toggle-h:24px; --toggle-thumb:16px;
+  --checkbox-size:16px; --checkbox-stroke:1.667px; --checkbox-hit:40px;
+  --avatar:40px; --avatar-bg:var(--surface-muted);
+  --table-head-bg:var(--surface-extra); --table-cell-pad:16px 24px;
+  --progress-h:4px; --progress-track:var(--soft-green-strong);
+  --modal-w:560px; --drawer-w:480px;
+}
+
+/* ============================================================================
+   LIGHT — derivado (status: pendente de validação do design)
+   Superfícies e texto: Figma bloco .light. Rampa de verde: .nova (a mesma).
+   O verde inverte de papel: --green-principal vira texto/link (5.4:1 sobre branco);
+   #2EA593 e #82CABF ficam decorativos (fills, dots, bordas) — não texto.
+   ============================================================================ */
+:root[data-theme="light"]{
+  color-scheme:light;
+
+  --bg:var(--grey-bg);                      /* #F4F6F8 */
+  --ground:#FFFFFF;
+  --paper:#FFFFFF;
+  --elevated:var(--grey-bg);
+  --line:var(--grey-line);                  /* #DFE3E8 */
+  --line-strong:rgba(145,158,171,.32);
+  --overlay:rgba(33,43,54,.48);
+  --shell-bg:var(--grey-bg);                /* gradiente não tem versão light */
+
+  --text:var(--grey-800);                   /* #212B36 */
+  --text-secondary:var(--grey-600);         /* #637381 */
+  --text-disabled:var(--grey-500);          /* #919EAB */
+
+  --primary-text:var(--green-principal);    /* #0F7865 — 5.4:1 sobre branco */
+  --primary-text-strong:var(--green-dark);  /* #0B6856 — hover de texto */
+
+  --on-soft-green:var(--green-dark);
+  --on-soft-success:#0D7B1F;                /* Figma .light --status-success */
+  --on-soft-warning:#B76E00;                /* DS produção warning-dark (4.0:1 — só bold/≥14px) */
+  --on-soft-error:#B71D18;                  /* DS produção error-dark */
+  --on-soft-info:#006C9C;                   /* DS produção info-dark */
+  --on-soft-grey:var(--grey-600);
+
+  --shadow:0 12px 24px -4px rgba(145,158,171,.12),0 0 2px 0 rgba(145,158,171,.20);
+  --shadow-z1:0 1px 2px 0 rgba(145,158,171,.16);
+  --shadow-overlay:0 0 2px rgba(145,158,171,.24),0 20px 40px -4px rgba(145,158,171,.24);
+
+  --focus-ring:2px solid var(--green-principal);
+  --focus-border:var(--green-principal);
+
+  --input-bg:#FFFFFF;
+  --avatar-bg:var(--grey-line);
+  --table-head-bg:var(--grey-bg);
+}
+
+/* ============================================================================
+   BASE — reset mínimo (opcional; remover se o host já tiver reset)
+   ============================================================================ */
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font:var(--t-body-sm);font-family:var(--font-sans);color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:var(--primary-text);text-decoration:none}
+a:hover{color:var(--primary-text-strong);text-decoration:underline}
+:focus-visible{outline:var(--focus-ring);outline-offset:var(--focus-offset)}
+code,pre{font-family:var(--font-mono)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

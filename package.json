@@ -1,0 +1,9 @@
+{
+  "name": "roadmap-cakto",
+  "private": true,
+  "type": "module",
+  "description": "Roadmap Cakto — ferramenta interna de roadmap por squad. Sem build; Preact + htm via CDN; api/board.js na Vercel.",
+  "scripts": {
+    "dev": "node tools/dev-server.mjs"
+  }
+}

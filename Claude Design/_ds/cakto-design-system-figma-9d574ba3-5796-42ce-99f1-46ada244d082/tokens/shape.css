@@ -1,0 +1,14 @@
+/* Cakto — raios e strokes. */
+:root{
+  --radius-4:4px;
+  --radius-button:8px;
+  --radius-input:8px;
+  --radius-12:12px;
+  --radius-card:16px;
+  --radius-frame:24px;    /* modais e frames grandes */
+  --radius-pill:100px;    /* chips, avatares, toggles */
+  --stroke-hairline:1px;
+  --stroke-icons:1.5px;
+  --stroke-accent:2px;    /* tab underline */
+  --stroke-outline:4px;   /* outline de card em destaque */
+}

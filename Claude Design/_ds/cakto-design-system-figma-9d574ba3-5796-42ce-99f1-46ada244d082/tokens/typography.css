@@ -1,0 +1,35 @@
+/* Cakto — escala tipográfica (styles nomeados do Figma). Public Sans. */
+:root{
+  --t-h1-size:48px;        --t-h1-lh:56px;        --t-h1-weight:700;
+  --t-h2-size:36px;        --t-h2-lh:40px;        --t-h2-weight:700;
+  --t-h3-size:24px;        --t-h3-lh:32px;        --t-h3-weight:700;
+  --t-h4-size:24px;        --t-h4-lh:36px;        --t-h4-weight:700;
+  --t-h5-size:20px;        --t-h5-lh:30px;        --t-h5-weight:700;
+  --t-h6-size:18px;        --t-h6-lh:28px;        --t-h6-weight:600;
+  --t-subtitle1-size:16px; --t-subtitle1-lh:24px; --t-subtitle1-weight:600;
+  --t-subtitle2-size:14px; --t-subtitle2-lh:22px; --t-subtitle2-weight:600;
+  --t-body-size:16px;      --t-body-lh:24px;      --t-body-weight:400;
+  --t-body-heavy-weight:700;
+  --t-body2-size:14px;     --t-body2-lh:22px;     --t-body2-weight:400;
+  --t-body-sm-size:14px;   --t-body-sm-lh:20px;   --t-body-sm-weight:400;
+  --t-body-sm-heavy-weight:700;
+  --t-body-12-size:12px;   --t-body-12-lh:18px;   --t-body-12-weight:400;
+  --t-caption-size:12px;   --t-caption-lh:18px;   --t-caption-weight:400;
+  --t-caption-500-weight:500;
+  --t-overline-size:12px;  --t-overline-lh:18px;  --t-overline-weight:700;
+  --t-hat-size:14px;       --t-hat-lh:20px;       --t-hat-weight:700; --t-hat-ls:0.7px;
+  --t-link-size:14px;      --t-link-lh:20px;      --t-link-weight:500;
+  --t-input-16-size:16px;  --t-input-16-lh:24px;
+  --t-input-14-size:14px;  --t-input-14-lh:20px;
+  --t-input-12-size:12px;  --t-input-12-lh:18px;
+
+  /* styles de componente nomeados */
+  --t-table-head:600 14px/24px var(--font-sans);
+  --t-nav-item:500 14px/22px var(--font-sans);
+  --t-tab-label:500 14px/22px var(--font-sans);
+  --t-chip-label:500 13px/18px var(--font-sans);
+  --t-button-medium:700 14px/24px var(--font-sans);
+  --t-chart-legend:500 13px/22px var(--font-sans);
+  --t-input-label:600 12px/18px var(--font-sans);
+  --t-input-text:400 15px/24px var(--font-sans);
+}

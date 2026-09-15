@@ -1,0 +1,9 @@
+# segredos locais (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, APP_PASSWORD) — nunca commitar
+.env
+.env.*
+# Vercel CLI
+.vercel
+# sistema / editores
+node_modules/
+.DS_Store
+Thumbs.db

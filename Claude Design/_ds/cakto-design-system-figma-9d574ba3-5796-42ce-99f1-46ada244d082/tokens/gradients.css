@@ -1,0 +1,11 @@
+/* Cakto — gradientes. */
+:root{
+  --gradient-brand:linear-gradient(90deg,#0f7864 0%,#65a76b 100%); /* @kind color */
+  --gradient-badge:linear-gradient(90deg,#36b37e 0%,#14513c 100%); /* @kind color */
+  --gradient-badge-text:linear-gradient(90deg,#ffffff 0%,#45f0a8 100%); /* @kind color */
+  --gradient-gold:linear-gradient(180deg,#a27435 0%,#f4cd97 33%,#a27435 54%,#f4cd97 80%,rgba(162,116,53,.85) 100%); /* @kind color */
+  --gradient-primary:linear-gradient(135deg,#5be49b 0%,#00a76f 100%); /* @kind color */
+  --gradient-error:linear-gradient(135deg,#ffac82 0%,#ff5630 100%); /* @kind color */
+  --gradient-warning:linear-gradient(135deg,#ffd666 0%,#ffab00 100%); /* @kind color */
+  --gradient-info:linear-gradient(135deg,#61f3f3 0%,#00b8d9 100%); /* @kind color */
+}

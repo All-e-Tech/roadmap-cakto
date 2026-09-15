@@ -366,7 +366,8 @@ Chips: Todas as squads / Em risco/atrasado / Em desenvolvimento.
 - **Refresh:** a cada 15s, se **não** houver edição local pendente, busca o servidor e recarrega se a versão for maior (pega mudanças de outros PMs).
 - **beforeunload:** `navigator.sendBeacon` faz um último flush se houver pendências.
 - **Conflito (409):** dois editando ao mesmo tempo → confirm perguntando manter as suas (sobrescreve) ou recarregar a do servidor (last-write-wins com confirmação). Aceitável para o grupo pequeno na validação; substituível por edição por-item quando virar multiusuário sério.
-- Indicador no header: "Salvando…" / "Salvo · HH:MM" / "Sem conexão" / "Conflito…".
+- Indicador no header: "Salvando…" / "Salvo · HH:MM" / "Sem conexão" / "Conflito…" / "Erro no servidor".
+- **Erro do servidor:** além do indicador, uma faixa abaixo do header diz que as alterações não estão sendo salvas, aponta a causa provável (tabela ausente, chave sem permissão, endereço inacessível) e mostra o detalhe técnico devolvido pela função — o erro tem de ser legível na tela, não só no tooltip.
 
 ---
 
@@ -378,7 +379,7 @@ Chips: Todas as squads / Em risco/atrasado / Em desenvolvimento.
 3. **Supabase:** criar projeto, criar a tabela `board` (SQL no `README.md`), copiar URL e chave de serviço para as variáveis de ambiente do projeto na Vercel (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`).
 4. Deploy. Primeira abertura publica o seed.
 5. (Opcional) domínio `roadmap.cakto.com.br`.
-6. **Deployment Protection → Password** (gate desta fase sem login).
+6. **Senha compartilhada** (gate desta fase sem login): variável `APP_PASSWORD` no projeto da Vercel. `api/board.js` exige a senha em toda chamada (header `X-App-Password`, ou campo `senha` no corpo — o caminho do `sendBeacon`); o cliente pede a senha numa tela própria e a guarda no navegador. Substitui o *Deployment Protection → Password* da Vercel, que é recurso do plano Pro (decisão de 09/09/2026). Consequência: a página estática é pública para quem tem a URL; os dados, não.
 
 ### Atualização com produção no ar
 - **Git push = deploy automático, atômico, sem downtime.** Código e dados são separados: melhorias de interface **não tocam nos dados**.

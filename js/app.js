@@ -75,7 +75,25 @@ const VIEWS = {
   cfg:    ConfigView,
 };
 
-// Indicador de sincronização (SPEC §9.2): "Salvando…" / "Salvo · HH:MM" / "Sem conexão" / "Conflito…".
+// Erro do servidor traduzido para causa provável (as duas que acontecem na instalação, SPEC §10).
+// O texto técnico segue visível abaixo, para o diagnóstico.
+function causaProvavel(detalhe) {
+  const d = String(detalhe || '');
+  if (/PGRST205|Could not find the table|does not exist/i.test(d)) return 'A tabela board não existe no banco. Rode o SQL do README no SQL Editor do Supabase, no mesmo projeto das variáveis de ambiente.';
+  if (/row-level security|PGRST301|JWSError|Invalid API key|invalid signature|401|403/i.test(d)) return 'A chave do Supabase não tem permissão de escrita. Confira se é a chave secreta (service_role ou sb_secret_), não a pública (anon / publishable).';
+  if (/ENOTFOUND|fetch failed|getaddrinfo/i.test(d)) return 'O endereço do Supabase não respondeu. Confira a variável SUPABASE_URL.';
+  return 'Falha ao falar com o banco. O detalhe técnico está abaixo.';
+}
+// Faixa de erro (SPEC §9.2): quando o servidor falha, a causa fica visível na tela, não só no tooltip.
+function ErroBanner() {
+  if (sync.status !== 'erro') return '';
+  return html`
+    <div class="err-banner">
+      <div>Erro no servidor — as alterações não estão sendo salvas.<span class="err-hint">${' ' + causaProvavel(sync.detalhe)}</span></div>
+      ${sync.detalhe && html`<code class="err-detalhe">${sync.detalhe}</code>`}
+    </div>`;
+}
+// Indicador de sincronização (SPEC §9.2): "Salvando…" / "Salvo · HH:MM" / "Sem conexão" / "Conflito…" / "Erro no servidor".
 function SyncBadge() {
   const hora = sync.hora ? sync.hora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
   const rot = {
@@ -183,6 +201,7 @@ function App() {
           <${Button} variant="primary" size="small" onClick=${saveJson}>Salvar</${Button}>
           <div class="avatar"></div>
         </header>
+        ${ErroBanner()}
         ${ro && html`<div class="ro-banner">${q.archived ? 'Quarter arquivado — somente leitura' : 'Quarter não ativo — somente leitura'}<span class="ro-hint">Para editar, ative-o em Squads & sprints ou volte ao quarter ativo.</span></div>`}
         ${VIEWS[state.page]()}
       </main>

@@ -29,7 +29,10 @@ const emMemoria = {
 
 // ---------- Adaptador Supabase (PostgREST via fetch) ----------
 function supabase() {
-  const url = env('SUPABASE_URL').replace(/\/+$/, ''), key = env('SUPABASE_SERVICE_ROLE_KEY');
+  // O painel do Supabase oferece o endereço nas duas formas — "https://<ref>.supabase.co" (Project URL)
+  // e "https://<ref>.supabase.co/rest/v1/" (Data API). Aceita as duas: tira a barra final e o /rest/v1
+  // se já vier, para não montar um caminho duplicado (PGRST125).
+  const url = env('SUPABASE_URL').replace(/\/+$/, '').replace(/\/rest\/v1$/i, ''), key = env('SUPABASE_SERVICE_ROLE_KEY');
   if (!url || !key) return null;
   const base = `${url}/rest/v1/board`;
   const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=representation' };

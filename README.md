@@ -50,7 +50,9 @@ alter table public.board enable row level security;
 
 Com RLS ligado e sem políticas, só a chave de serviço (usada pela função) acessa a tabela.
 
-3. **Project Settings → API**: copiar a **Project URL** e a chave **service_role** (secret) para o passo 3.
+3. Copiar dois valores para o passo 3 (o painel do Supabase separa os dois):
+   - **Settings → Data API → Project URL** (`https://<ref>.supabase.co`).
+   - **Settings → API Keys**: a chave de serviço — na aba **Legacy API keys**, a `service_role` (texto longo começando com `eyJ`); ou, na aba principal, **Create new secret key** (começa com `sb_secret_`). As duas funcionam. A chave `anon`/`publishable` é pública e **não** serve aqui.
 
 ### 3. Vercel
 1. Entrar com o GitHub; **Add New → Project**; escolher `roadmap-cakto`.
@@ -65,8 +67,8 @@ Cada `git push` na `main` gera um deploy novo, sem parar o que está no ar. Cód
 
 | Nome | Onde obter | Efeito |
 |---|---|---|
-| `SUPABASE_URL` | Supabase → Project Settings → API → Project URL | sem ela (e a chave), a função roda em memória |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API → service_role (secret) | acesso total ao banco; **só na Vercel e no `.env.local`, nunca no código ou em chat** |
+| `SUPABASE_URL` | Supabase → Settings → Data API → Project URL | sem ela (e a chave), a função roda em memória |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Settings → API Keys → `service_role` (aba Legacy API keys) ou uma secret key nova (`sb_secret_…`) | acesso total ao banco; **só na Vercel e no `.env.local`, nunca no código ou em chat** |
 | `APP_PASSWORD` | escolhida pelo GPM | senha compartilhada pedida na primeira abertura; sem ela, o app abre sem senha |
 
 ### Custos e limites

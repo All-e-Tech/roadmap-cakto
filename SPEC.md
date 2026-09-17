@@ -14,10 +14,11 @@
 
 | Termo | Onde vive | Definição |
 |---|---|---|
-| **Item** | Roadmap/Gantt | Unidade de planejamento de uma squad em um quarter. Tem datas, status, previsão, %. É o que vira barra no Gantt. **Não usar "épico"** — a granularidade do item ainda está em definição e o termo foi deliberadamente evitado. |
-| **Categoria / Subcategoria** | Roadmap/Gantt | Agrupadores de itens dentro de uma squad, em um quarter. Existem mesmo vazios. Viram layers no Gantt. |
-| **Backlog (do roadmap)** | Roadmap/Gantt | Itens da squad **fora** do roadmap do quarter. Não entram no Gantt nem nos KPIs. Distinto da coluna "Backlog" do Kanban. |
-| **Iniciativa** | Kanban de intake | O que entra pela primeira coluna do Kanban. Ainda não é item de roadmap. Chave `iniciativas` em `data` (§3). |
+| **Item** | Roadmap/Gantt | Unidade de planejamento de uma squad em um quarter. Tem datas, status, previsão, %. É o que vira barra no Gantt. Todo item pertence a **uma** iniciativa (§3). **Não usar "épico"** — confirmado em 17/09/2026: o glossário fica em "item". |
+| **Categoria** | Roadmap/Gantt | Agrupador **de iniciativas** dentro de uma squad, em um quarter. Sempre opcional. Existe mesmo vazia. Vira layer no Gantt. **Subcategoria deixou de existir** em 17/09/2026 — a iniciativa ocupa esse nível. |
+| **Iniciativa** | Kanban ↔ Roadmap | A unidade de trabalho, do intake à entrega. Agrupa **um ou mais itens** e só está concluída quando todos estiverem entregues. Vive fora dos quarters (chave `iniciativas`, §3). No roadmap aparece como linha de grupo quando tem vários itens e como a própria linha do item quando tem um só. |
+| **Backlog (do roadmap)** | Roadmap | Itens da squad **fora** do roadmap do quarter. Não entram no Gantt nem nos KPIs. É a mesma coisa que a coluna **Backlog Priorizado** do Kanban, vista do outro lado (17/09/2026). |
+| **Arquivado · Descartado** | Roadmap ↔ Kanban | Marca que tira a iniciativa ou o item de circulação **preservando o status em que estavam** (§4.3). Arquivado = perdeu prioridade, pode ser retomado; Descartado = não será feito. Nenhum dos dois aparece no Gantt nem nos indicadores; ambos são consultáveis em Squads & sprints (§7). |
 | **Squad · Sprint · Quarter** | Config | Estrutura temporal e organizacional. Sprint de 2 semanas por padrão; quarter = N sprints a partir de uma data de início. |
 
 Regra: código, labels de interface e documentação usam **estes** termos. Sinônimos (demanda, épico, task, feature) não entram.
@@ -44,7 +45,7 @@ Quatro views — **nomes travados** (decisão de 07/09/2026, `divergences.md` C5
 
 ### 1.1 Shell e navegação
 
-- **Barra lateral** (280px): logo, seção "Roadmap" (Roadmap, Visão geral (Gantt), Kanban de iniciativas) e seção "Config" (Squads & sprints), com ícones do design system. **Colapsável** para 64px (só ícones, com tooltip no título); o estado fica lembrado no navegador (`localStorage`, chave `cakto-roadmap-side`). Rodapé com a nota de persistência ("Dados salvos automaticamente neste navegador. Use Salvar / Carregar para compartilhar em JSON.") — texto a rever quando §9 existir.
+- **Barra lateral** (280px): logo, seção "Roadmap" (Roadmap, Visão geral (Gantt), Kanban de iniciativas) e seção "Config" (Squads & sprints), com ícones do design system. **Colapsável** para 64px (só ícones, com tooltip no título); o estado fica lembrado no navegador (`localStorage`, chave `cakto-roadmap-side`). Rodapé com a nota de persistência ("Alterações são salvas automaticamente e compartilhadas com todos. Salvar / Carregar exportam e importam uma cópia em JSON.", desde o passo 4).
 - **Header:** trilha `Roadmap {quarter} / {view}`; **seletor de quarter** em menu suspenso (lista **todos** os quarters, arquivados em seção própria e marcados — comportamento em §7; cada linha mostra o rótulo e "Sprint 01–NN"; fecha ao clicar fora); botões **Importar** (só na view Roadmap), **Carregar** e **Salvar** (§8); placeholder de avatar à direita.
 - Rótulos de navegação: os quatro nomes travados de §1. Enquanto um quarter que não é o ativo estiver em visualização (§7), o header exibe o banner "Quarter arquivado — somente leitura" (ou "Quarter não ativo — somente leitura", se não estiver arquivado) e toda edição é recusada com a mensagem de §1.2.
 
@@ -59,15 +60,20 @@ Toda ação relevante responde com uma mensagem curta no rodapé, centralizada, 
 | Importar planilha | Importado: N squads · Nenhuma tabela reconhecida · Erro ao ler a planilha |
 | + Squad · excluir squad · arquivar/desarquivar | Squad criada — renomeie no campo de nome · Squad excluída · Squad arquivada · Squad desarquivada |
 | Arquivar/excluir squad com pendências · prefixo inválido | Squad com {N itens no roadmap, M no backlog, K iniciativas no Kanban} — remaneje antes de {arquivar/excluir} · Prefixo inválido ou já usado por outra squad |
-| + Nova categoria · + sub | Categoria criada — clique no nome para editar · Subcategoria criada — clique no nome para editar |
-| Remover categoria · remover subcategoria | Categoria removida — itens preservados sem categoria · Subcategoria removida — itens preservados |
-| Renomear categoria / subcategoria para um nome que já existe (B5) | Já existe uma categoria com esse nome · Já existe uma subcategoria com esse nome |
+| + Nova categoria | Categoria criada — clique no nome para editar |
+| Remover categoria | Categoria removida — iniciativas preservadas sem categoria |
+| Renomear categoria para um nome que já existe (B5) | Já existe uma categoria com esse nome |
 | Enviar ao backlog · promover ao roadmap | Movido para o backlog · Promovido ao roadmap — defina as datas |
 | + Novo quarter · trocar quarter | Quarter criado — ajuste rótulo e datas em Squads & sprints · Quarter: {rótulo} |
 | Excluir quarter (travas, §7) | Quarter com itens no roadmap não pode ser excluído · Ative outro quarter antes de excluir este · Quarter excluído |
 | Kanban — criar / editar / remover | Dê um título à iniciativa · Iniciativa adicionada ao fim da fila de backlog · Iniciativa atualizada · Iniciativa removida |
 | Kanban — passagem recusada | Faltam para {coluna}: {campos} · Falta o motivo do descarte — defina na engrenagem do card · Progresso precisa estar em 100% para concluir |
 | Editar em quarter que não é o ativo (C7) | Quarter em visualização — somente leitura |
+| Mover iniciativa para squad sem a categoria dela | Iniciativa movida — {squad} não tem a categoria {nome}; ficou sem categoria |
+| Arrastar item avulso para outra categoria | A categoria é da iniciativa — arraste a iniciativa |
+| Mover o último item de uma iniciativa | A iniciativa ficaria sem itens — mova a iniciativa inteira |
+| Extrair item · juntar iniciativas | Item extraído — nova iniciativa {code} · Iniciativas juntadas em {code} |
+| Arquivar · descartar · retomar | Iniciativa arquivada — veja em Squads & sprints · Iniciativa descartada · Iniciativa retomada |
 
 Substitui o preenchimento manual em planilha (`Q2 Weekly Review.xlsx`), preservando as mesmas colunas de entrada (Item, Início, Fim, Status, Previsão, % Conclusão) e adicionando estrutura (quarters, categorias, backlog) e uma visualização rica.
 
@@ -93,7 +99,7 @@ Decisão deliberada para a fase de validação, feita por um único dev (o GPM) 
 
 **Constantes herdadas do Claude Design:** o protótipo expunha três props do componente; na reescrita (passo 3) viram constantes de configuração, com os mesmos defaults — `paginaInicial = 'dados'` (view inicial: `dados` ou `gantt`), `mostrarRotuloBarra = true` (percentual escrito dentro da barra do Gantt — manter ou não é decisão aberta em `divergences.md`, A10) e `destacarHoje = true` (linha vertical de hoje no Gantt, §6.1).
 
-**Por que documento JSON e não relacional agora:** o modelo ainda pode mudar. Guardar o board como documento evita migrations a cada ajuste. A estrutura (`quarter → squad → categoria → subcategoria → item`) já mapeia direto para tabelas quando estabilizar (§11).
+**Por que documento JSON e não relacional agora:** o modelo ainda pode mudar. Guardar o board como documento evita migrations a cada ajuste. A estrutura (`quarter → squad → categoria → iniciativa → item`, desde 17/09/2026) já mapeia direto para tabelas quando estabilizar (§11).
 
 ### 2.1 Decisão — storage e hospedagem (09/09/2026)
 
@@ -163,9 +169,11 @@ Todo o estado da aplicação é um único objeto `data`, serializável em JSON, 
           "archived": false,             // arquivada = fora das abas, do Gantt e do Kanban neste quarter; dados preservados
           "color": "#3FC958",           // cor da swimlane / chip (hex)
           "groupByCat": true,            // true = visão agrupada por categoria; false = plana
+          "pm": "",                      // NOVO (17/09/2026) — PM padrão da squad; copiado para toda iniciativa nova
+          "tl": "",                      // NOVO — Tech Lead padrão; o PM pode trocar no card da iniciativa
           "categories": [                // lista EXPLÍCITA de categorias (existem mesmo vazias)
-            { "name": "Assinatura", "subs": [] },
-            { "name": "Internacional", "subs": ["Novos Métodos", "Arquitetura", "México"] }
+            { "name": "Assinatura" },     // `subs` REMOVIDO em 17/09/2026 — a iniciativa ocupa esse nível
+            { "name": "Internacional" }
           ],
           "items": [
             {
@@ -175,12 +183,14 @@ Todo o estado da aplicação é um único objeto `data`, serializável em JSON, 
               "st": "dev",                     // chave de status (ver §4.1)
               "pv": "prazo",                   // chave de previsão (ver §4.2)
               "p": 15,                          // % de conclusão (int 0–100)
-              "cat": "Assinatura",             // categoria (string; "" = sem categoria)
-              "sub": ""                         // subcategoria (string; "" = nenhuma)
+              "ini": "PAY-104",                // NOVO (17/09/2026) — `code` da iniciativa dona; obrigatório
+              "arq": "",                        // NOVO — "" | "arquivado" | "descartado" (§4.3)
+              "nota": ""                        // NOVO — motivo livre do arquivamento ou do descarte
+              // "cat" e "sub" REMOVIDOS — a categoria é da iniciativa; subcategoria não existe mais
             }
           ],
           "backlog": [                     // itens FORA do roadmap (não aparecem no Gantt)
-            { "n": "Order Bump", "cat": "Assinatura", "note": "aguardando discovery" }
+            { "n": "Order Bump", "ini": "PAY-118", "note": "aguardando discovery" }   // `cat` saiu: vem da iniciativa
           ]
         }
       ]
@@ -194,7 +204,8 @@ Todo o estado da aplicação é um único objeto `data`, serializável em JSON, 
       "t": "Order Bump na assinatura",    // título
       "d": "",                            // descrição (contexto, problema ou oportunidade)
       "sq": "Payment",                    // squad (nome); "" = fila central, sem squad
-      "col": "backlog",                   // coluna: backlog | priorizado | execucao | concluido | descartado (fixas — ver A.2)
+      "col": "iniciativas",               // coluna: iniciativas | priorizado | execucao | concluido | descartado (fixas — ver A.2)
+      "cat": "Internacional",             // NOVO (17/09/2026) — categoria; "" = sem categoria. Resolvida por NOME dentro do quarter
       "prio": "P1",                       // prioridade: "" (não avaliada) | P0 | P1 | P2 | P3
       "tipo": "Delivery",                 // Discovery | Delivery | Bug | Débito técnico | Compliance
       "est": "M",                         // estimativa t-shirt: "" | XS | S | M | L | XL | XXL
@@ -204,24 +215,42 @@ Todo o estado da aplicação é um único objeto `data`, serializável em JSON, 
       "tl": "Nome do TL",                 // idem
       "origem": "stakeholder",            // "" | stakeholder | suporte | dados | discovery | incidente | regulatório
       "motivo": "",                       // motivo do descarte (enum de 5, A.2); obrigatório para entrar em Descartado
+      "nota": "",                         // NOVO (17/09/2026) — texto livre do descarte ou da despriorização; substituído a cada ação
+      "arq": "",                          // NOVO — "" | "arquivado" | "descartado" (§4.3)
       "link": "https://…",               // protótipo navegável ou documento externo. Anexo é SEMPRE link — arquivo dentro do board não é aceito
       "dep": [],                          // dependências: lista de `code` de outras iniciativas; bloqueia enquanto o card não é terminal
-      "subsTotal": 0,                     // progresso (subitens) — sem interface hoje; pendência do passo 6
-      "subsDone": 0,
+      // "subsTotal"/"subsDone" REMOVIDOS em 17/09/2026 — o progresso vem dos itens (ver "Derivados" abaixo)
       "createdAt": 1757000000000          // epoch ms; base do card aging (faixas 14/45 dias)
     }
   ]
 }
 ```
 
+### Derivados — nunca armazenados (17/09/2026)
+
+Calculados a partir dos itens da iniciativa, ignorando os que estão arquivados ou descartados:
+
+| Derivado | Cálculo |
+|---|---|
+| `%` da iniciativa | **média simples** do `p` dos itens. Consequência aceita: item pequeno pesa igual a item grande, e item novo entra com zero e derruba a barra. |
+| datas da iniciativa | envelope: menor `s` e maior `e` dos itens que estão no roadmap. |
+| conclusão | todos os itens estão `entregue`. |
+| `col` = `execucao` | pelo menos um item saiu do backlog para o roadmap. |
+| `col` = `concluido` | conclusão verdadeira. |
+
+`iniciativas` e `priorizado` são movimentos **humanos** (intake e priorização); `descartado` também, com motivo obrigatório. `execucao` e `concluido` são **derivados** e não se arrastam à mão.
+
 ### Invariantes
-- Um `item.cat`/`item.sub` sempre existe como string; `""` significa "sem categoria/subcategoria".
+- Todo `item` tem `ini` apontando para uma iniciativa existente; toda iniciativa fora da coluna `iniciativas` tem **ao menos um** item (no roadmap ou no backlog da squad). Não existe item avulso (17/09/2026).
+- A **categoria é da iniciativa**, nunca do item: os itens de uma iniciativa estão sempre na mesma categoria. `iniciativa.cat` guarda o **nome**; se a squad do quarter não tiver esse nome, a iniciativa fica sem categoria.
+- `iniciativa.sq` é sempre a squad onde os itens dela estão. Mover a iniciativa de squad move os itens junto, em **todos os quarters não arquivados**; o `code` não muda (só tag e cor).
+- `item.arq` e `iniciativa.arq` tiram do roadmap, do Gantt e dos indicadores, **sem** apagar `st`, `pv` e `p` (§4.3).
 - `categories` é a **fonte de ordenação e existência** das categorias (permite categoria vazia). A função `normalizeSquad()` reconstrói/completa `categories` a partir dos `items` ao carregar (retrocompatível com JSON antigo sem `categories`).
 - `backlog` nunca entra no Gantt nem nos KPIs.
 - Datas vazias (`""`) são válidas: o item existe na tabela mas **não renderiza barra** no Gantt.
-- `iniciativas` nunca entra no Gantt nem nos KPIs do roadmap. É uma fila única, fora de `quarters`; o vínculo com itens/categorias do roadmap continua em aberto (Anexo A.1).
+- `iniciativas` é uma fila única, fora de `quarters`; o card em si nunca vira barra no Gantt — quem vira barra são os **itens** dela. O vínculo com o roadmap está **fechado** desde 17/09/2026 (Anexo A.1).
 - `quarter.days` ∈ `{7, 14, 21, 28}` (§7); `normalize()` corrige valores fora da lista para 14.
-- `iniciativa.col` só aceita as cinco chaves fixas de A.2. `normalize()` traduz chaves antigas do protótipo (`discovery` → `priorizado`, `andamento` → `execucao`) e a chave de topo antiga (`demandas` → `iniciativas`).
+- `iniciativa.col` só aceita as cinco chaves fixas de A.2. `normalize()` traduz chaves antigas (`discovery` → `priorizado`, `andamento` → `execucao`, `backlog` → `iniciativas`) e a chave de topo antiga (`demandas` → `iniciativas`).
 - Campo ausente numa iniciativa é `""` (ou `[]`/`0`), nunca `undefined`; obrigatoriedade é condição de passagem entre colunas, não propriedade do card (A.2).
 - `activeQuarter` é o quarter ativo **do board** — estado compartilhado, muda só por "Ativar" em Squads & sprints (§7). O quarter **em visualização** é estado local de cada navegador, **não persiste** em `data`; quando difere do ativo, a interface fica somente leitura (decisão de 07/09/2026, C7).
 
@@ -270,6 +299,18 @@ Regra de implementação: **o código referencia tokens, não hex.** Os hex aqui
 
 Convenção validada: **cor da barra = status**; **dot na ponta = previsão** (só aparece quando ≠ No Prazo/Em Produção). Preenchimento interno da barra = `% de conclusão`.
 
+### 4.3 Circulação (`arq`) — eixo separado do status (17/09/2026)
+
+| Chave | Rótulo | Efeito |
+|---|---|---|
+| `""` | em circulação | comportamento normal |
+| `arquivado` | Arquivado | sai do roadmap, do Gantt e dos indicadores; `st`, `pv` e `p` **preservados**; volta pelo botão Retomar (§7) |
+| `descartado` | Descartado | idem, e a iniciativa fica na coluna Descartado do Kanban, com motivo obrigatório (A.2) e `nota` livre |
+
+**Por que não é um status.** Arquivar não é uma etapa da entrega: um item arquivado estava em desenvolvimento, em QA ou no backlog, e precisa lembrar disso para ser retomado. Se `arquivado` fosse um valor de `st`, a informação de onde ele parou seria sobrescrita.
+
+**Não confundir com `pv: bloq`.** Bloqueado é item que segue no plano e no Gantt, travado por algo externo agora. Arquivado saiu do plano.
+
 ---
 
 ## 5. Funcionalidades — View Roadmap (tabela)
@@ -278,28 +319,34 @@ Abas por squad no topo (+ "+ Squad"). Cada squad tem duas tabelas: **roadmap** e
 
 ### 5.1 Tabela de roadmap
 - Toggle **"Agrupar por categoria"** (`groupByCat`), por squad. **Padrão: ligado em todas as squads.**
-- **Visão agrupada:** cabeçalhos de categoria e subcategoria com **rollup %** (média simples dos itens do grupo). Colunas: Pilar/Item, Início, Fim, Status, Previsão, % Conclusão. Itens sem categoria caem num grupo **"Sem categoria"** — grupo virtual: tem rollup e recebe arraste (soltar ali limpa categoria e subcategoria), mas não tem renomear, `+ sub` nem remover. No Gantt vira layer com o mesmo nome (B4).
-- **Visão plana:** colunas incluem Categoria e Subcat. como inputs de texto editáveis.
+- **Três tipos de linha** (17/09/2026), nesta ordem de aninhamento: **categoria** → **iniciativa** → **item**.
+  - **Iniciativa com vários itens** vira linha de grupo, no lugar que era da subcategoria: `code`, título, contador "N de M entregues", datas por envelope e % derivado. Os itens ficam indentados sob ela.
+  - **Iniciativa com um item só** é renderizada como a **própria linha do item**, com o `code` em selo discreto. Não vira grupo — senão todo item do roadmap viraria uma pasta com um arquivo dentro.
+  - Iniciativas sem categoria caem num grupo **virtual**, que tem rollup e recebe arraste, mas não tem renomear nem remover. No Gantt vira layer com o mesmo nome (B4). Rótulo a definir no passo 5; "Sem categoria" hoje.
+- **Visão plana:** coluna Categoria como input de texto editável, aplicada à iniciativa.
 - Campos editáveis inline: nome (texto), início/fim (date pickers), status/previsão (selects coloridos), % (número 0–100 com barra).
 - Por linha: **enviar ao backlog** (↓) e **remover** (🗑).
-- Rodapé: **+ Adicionar item ao roadmap** (o item nasce **sem datas** — ver §5.4 e §6.2) e **+ Nova categoria** (sempre visível; cria categoria e liga o agrupamento).
+- Rodapé: **+ Adicionar item ao roadmap** (o item nasce **sem datas** — ver §5.4 e §6.2; pede a iniciativa como no backlog) e **+ Nova categoria** (sempre visível; cria categoria e liga o agrupamento).
 
-### 5.2 CRUD de categorias e subcategorias
+### 5.2 CRUD de categorias
 Nos cabeçalhos, na visão agrupada:
-- **Categoria:** ✎ renomear (propaga para todos os itens), ＋ nova subcategoria, 🗑 remover (itens ficam sem categoria — **não são excluídos**).
-- **Subcategoria:** ✎ renomear (propaga), 🗑 remover (itens ficam sem subcategoria).
+- **Categoria:** ✎ renomear (propaga para as iniciativas dela), 🗑 remover (as iniciativas ficam sem categoria — **não são excluídas**).
 - Nomes duplicados são rejeitados.
+- Não há mais `+ nova subcategoria`: agrupar itens é papel da iniciativa (17/09/2026).
 
 ### 5.3 Drag & drop (HTML5)
 - Alça ⠿ por linha. Arrastar permite:
   - **Reordenar** dentro da tabela (indicador na metade de cima/baixo da linha alvo).
-  - **Mover entre categorias/subcategorias:** soltar sobre um item herda a `cat`/`sub` daquele item; soltar sobre um cabeçalho de categoria/subcategoria atribui aquela classificação e move para o fim do grupo.
-- Funciona nas visões agrupada e plana. Implementação por delegação de eventos em `#squad-area` (`dragstart`/`dragover`/`drop`), reatribuindo posição no array `items` + `cat`/`sub`.
+  - **Mover item entre iniciativas:** soltar o item sobre a linha de uma iniciativa. O item herda a squad e a categoria do destino. É o mesmo gesto que antes movia item para subcategoria, no mesmo lugar da tela.
+  - **Mover iniciativa entre categorias:** soltar a linha da iniciativa sobre um cabeçalho de categoria. Todos os itens dela seguem juntos.
+- **Recusas** (17/09/2026), cada uma com a mensagem de §1.2: arrastar um **item** direto para uma categoria, porque a categoria é da iniciativa; e mover o **último** item de uma iniciativa, porque ela ficaria sem itens.
+- **Duas operações fora do arraste**, na linha da iniciativa e do item: **extrair item** (o item vira iniciativa própria, com card novo no Kanban, mantendo datas, status e progresso) e **juntar iniciativas** (duas viram uma; a de destino passa a exigir a entrega de todos os itens). São o caminho de ida e volta da regra "o que pode ser entregue em separado é iniciativa separada".
 
 ### 5.4 Backlog (fora do roadmap)
-- Tabela separada por squad. Colunas: Item, Categoria, Observação.
+- Tabela separada por squad. Colunas: Item, Iniciativa, Observação. A categoria vem da iniciativa e não é editável aqui.
+- **Equivale à coluna Backlog Priorizado do Kanban** (17/09/2026): mover o card para lá cria a entrada aqui, e promover ao roadmap manda o card para Execução. São o mesmo ato visto de dois lugares.
 - Ações: **promover ao roadmap** (↑ — vira item **sem datas**: `s` = `e` = `""`, status `backlog`, previsão `nao`; a barra só aparece no Gantt quando o PM definir as datas — decisão de 07/09/2026, C9) e remover. O protótipo cria o item com início = fim = início do quarter; conserto após a reescrita.
-- Rodapé: **+ Adicionar item ao backlog** (cria linha vazia — Item, Categoria, Observação — direto no backlog, sem passar pelo roadmap).
+- Rodapé: **+ Adicionar item ao backlog**. Como todo item precisa de iniciativa, o botão pede a iniciativa: ou escolhe uma existente da squad, ou cria uma nova, que nasce como card no Kanban em Backlog Priorizado, já com PM e TL padrão da squad (§7).
 - **Não** aparece no Gantt nem nos KPIs.
 
 ---
@@ -310,11 +357,12 @@ Nos cabeçalhos, na visão agrupada:
 - Banda do **quarter** (topo, verde escuro).
 - Banda de **mês** (Julho/Agosto/Setembro…) — derivada agrupando sprints contíguas pelo mês da data de início.
 - Banda de **sprints**: `Sprint 01 … Sprint NN` (zero à esquerda) + intervalo de datas `dd/mm–dd/mm`. Coluna da sprint atual destacada.
-- **Swimlanes por squad**; dentro de cada squad, se `groupByCat`, as **categorias viram layers** (faixas) e as **subcategorias, sub-layers**. Squad sem categorias renderiza itens direto.
+- **Swimlanes por squad**; dentro de cada squad, se `groupByCat`, as **categorias viram layers** (faixas) e as **iniciativas com vários itens, sub-layers** — o lugar que era das subcategorias (17/09/2026). Squad sem categorias renderiza as iniciativas direto.
+- A iniciativa com vários itens ganha uma **barra envelope**, mais clara, do menor início ao maior fim dos itens. Recolhida, mostra só o envelope; expandida, mostra os itens dentro. Iniciativa de um item só tem a barra do próprio item.
 - Squads e layers são **colapsáveis** (clique no cabeçalho).
 - **Linha verde vertical = hoje** (`new Date()` posicionado na timeline).
 - **Legenda** de status e previsão no rodapé.
-- **4 KPIs** no topo: itens no roadmap; em desenvolvimento (`st = dev`); em risco/atrasados (`pv ∈ {risco, atraso}`); **concluídos = `st = entregue`, exclusivamente**, com % sobre o total (decisão de 07/09/2026, C10 — o percentual do item é progresso, não conclusão). O protótipo conta também `p ≥ 100`; conserto após a reescrita.
+- **4 KPIs** no topo: itens no roadmap; em desenvolvimento (`st = dev`); em risco/atrasados (`pv ∈ {risco, atraso}`); **concluídos = `st = entregue`, exclusivamente**, com % sobre o total (decisão de 07/09/2026, C10 — o percentual do item é progresso, não conclusão). Contam **itens**, nunca a linha da iniciativa, e **excluem** arquivados e descartados (17/09/2026). O protótipo conta também `p ≥ 100`; conserto após a reescrita.
 
 ### 6.2 Posicionamento das barras — **por data exata**
 - `timeline.min = quarter.start`; `timeline.max = start + days*count`.
@@ -334,14 +382,15 @@ Chips: Todas as squads / Em risco/atrasado / Em desenvolvimento.
 
 - **Calendário do quarter:** rótulo, **data de início da Sprint 01**, **duração da sprint** em seletor `7 · 14 · 21 · 28` dias (1 a 4 semanas; default 14 — decisão C11, 09/09/2026; valor fora da lista num board antigo vira 14 em `normalize()`), **nº de sprints** (1–16). As sprints e datas são geradas a partir daí; preview das sprints exibido.
 - **Quarters:** lista com ativo/arquivado; **rótulo editável inline**; ações Ativar, Arquivar/Desarquivar e **Excluir** (× — duas travas: só quarter sem nenhum item no roadmap, e nunca o quarter ativo; cada trava responde com mensagem, §1.2); **+ Novo quarter** (rótulo + início + nº de sprints; herda squads e categorias com itens vazios; numeração reinicia em Sprint 01).
-- **Squads:** nome, cor, **prefixo** (único no quarter), toggle de categorias; **+ Adicionar squad**; **Arquivar/Desarquivar** e **Excluir** (só sem histórico em outros quarters), ambos travados enquanto houver itens no roadmap, no backlog ou iniciativas no Kanban — a mensagem nomeia o que impede (§3, "Squads: estrutura e prefixo").
+- **Squads:** nome, cor, **prefixo** (único no quarter), **PM padrão** e **Tech Lead padrão** (texto; copiados para toda iniciativa nova da squad, e editáveis no card — 17/09/2026), toggle de categorias; **+ Adicionar squad**; **Arquivar/Desarquivar** e **Excluir** (só sem histórico em outros quarters), ambos travados enquanto houver itens no roadmap, no backlog ou iniciativas no Kanban — a mensagem nomeia o que impede (§3, "Squads: estrutura e prefixo").
 - **Seletor de quarter** no header lista **todos** os quarters, com os arquivados em seção própria e marcados. Selecionar qualquer quarter que não seja o ativo muda só a **visualização de quem clicou**, em modo **somente leitura**, com banner "Quarter arquivado — somente leitura" (ou "Quarter não ativo — somente leitura"); não altera `data.activeQuarter` nem o que os outros PMs veem. O ativo aparece marcado "· ativo" no seletor. **Ativar**, aqui em Squads & sprints, é a única ação que muda o quarter ativo do board (decisão de 07/09/2026, C7). Implica separar "quarter ativo" (compartilhado) de "quarter em visualização" (local) — invariante em §3.
+- **Arquivados** (17/09/2026): seção própria listando iniciativas e itens fora de circulação (§4.3), com de onde vieram, a `nota` do arquivamento ou descarte e o botão **Retomar**. Retomar devolve a iniciativa ao Backlog Priorizado da squad original ou de outra, com os itens voltando no status em que pararam.
 
 ---
 
 ## 8. Import / Export
 
-- **Importar planilha (.xlsx):** parser **header-aware** no cliente (SheetJS). Para cada aba: acha a linha de cabeçalho que contém "Item", mapeia colunas por nome (`Item`, `Pilar`/`Categoria`, `Início`, `Fim`, `Status`, `Previsão`, `% Conclusão`), lê até a primeira linha em branco (1º bloco da aba). Traduz status/previsão por regex, extrai % e datas; `Pilar` → `cat`. Cada aba vira uma squad. **Comportamento atual: substitui todas as squads do quarter ativo.** A intenção original é carga inicial a partir da planilha, e o comportamento desejado é **aditivo** — adicionar itens ao roadmap, não substituir; o redesenho fica como evolução pós-validação (§11). Proteção mínima enquanto isso (após a reescrita): confirmação antes de substituir, nomeando o que será perdido — "Substituir o quarter {rótulo} ({N} squads, {M} itens)? Salve antes se quiser voltar." (decisão de 07/09/2026, A11 + B2).
+- **Importar planilha (.xlsx):** parser **header-aware** no cliente (SheetJS). Para cada aba: acha a linha de cabeçalho que contém "Item", mapeia colunas por nome (`Item`, `Pilar`/`Categoria`, `Início`, `Fim`, `Status`, `Previsão`, `% Conclusão`), lê até a primeira linha em branco (1º bloco da aba). Traduz status/previsão por regex, extrai % e datas. Desde 17/09/2026, como todo item precisa de iniciativa, **cada linha importada vira uma iniciativa de um item**, e `Pilar` vira a **categoria dessa iniciativa** — a mesma regra da migração de arquivos antigos (`docs/decisions.md`, 17/09/2026). Cada aba vira uma squad. **Comportamento atual: substitui todas as squads do quarter ativo.** A intenção original é carga inicial a partir da planilha, e o comportamento desejado é **aditivo** — adicionar itens ao roadmap, não substituir; o redesenho fica como evolução pós-validação (§11). Proteção mínima enquanto isso (após a reescrita): confirmação antes de substituir, nomeando o que será perdido — "Substituir o quarter {rótulo} ({N} squads, {M} itens)? Salve antes se quiser voltar." (decisão de 07/09/2026, A11 + B2).
 - **Backup ↓:** baixa o `data` completo como JSON.
 - **Carregar ↑:** carrega JSON de backup, **substitui o board inteiro** e **republica** no servidor (quando §9 existir). Confirmação antes de substituir: "Substituir o board inteiro ({N} quarters, {M} itens)? Salve antes se quiser voltar."
 - **PDF:** `window.print()` com CSS de impressão que mostra só o Gantt (esconde sidebar/header/filtros).
@@ -399,11 +448,12 @@ Fora do escopo atual (validação sem auth), já mapeado:
    - **Manager:** edita o painel de itens; **não** adiciona/remove pessoas.
    - **Viewer:** apenas visualiza.
    - Autorização aplicada **no servidor**, não só escondendo botões.
-3. **Modelo relacional no Postgres** (Supabase/Neon) quando o formato estabilizar. A hierarquia atual mapeia direto: `quarters`, `squads`, `categories`, `items`, `backlog_items`, `users`, `audit_log`.
+3. **Modelo relacional no Postgres** (Supabase/Neon) quando o formato estabilizar. A hierarquia atual mapeia direto: `quarters`, `squads`, `categories`, `initiatives`, `items`, `backlog_items`, `users`, `audit_log`.
 4. **Audit log** (quem alterou o quê e quando) — recomendado ao sair da validação.
 5. Concorrência fina (edição por item, sem last-write-wins) quando houver muitos editores simultâneos.
 6. **Importar em modo aditivo** — Importar planilha adiciona itens ao roadmap em vez de substituir o quarter (decisão de 07/09/2026; ver §8).
 7. **Reordenar squads e quarters** pela interface (`divergences.md`, B9).
+8. **Cadastro de pessoas** (17/09/2026): PMs e Tech Leads cadastrados na plataforma e associados às squads, substituindo o texto livre de `pm`/`tl`; uma squad pode ter mais de um TL de apoio, com um deles como padrão. O passo 4b entrega só o mínimo — PM e TL padrão por squad, como texto (§7) — porque empilhar uma entidade nova e uma tela de cadastro sobre a remodelagem do vínculo dobraria o tamanho do passo. Converge com o item 2 (perfis).
 
 Storage definitivo: **Postgres (Supabase)**, decidido em 09/09/2026 (§2.1). A passagem de documento (`data jsonb`) para tabelas relacionais é o item 3 acima, e depende do modelo do 4b.
 
@@ -429,42 +479,39 @@ Nenhum passo altera comportamento — só apresentação. Screenshot antes/depoi
 
 Mesmo projeto, interface distinta, definida em 02/09/2026. É a **quarta view** do protótipo (ver `docs/divergences.md`, A1), mas **não é descrita nesta spec** — a fonte é `docs/decisions.md`. Fonte complementar: o artifact "Card do Roadmap Cakto", a exportar para `docs/kanban-card-spec.md`.
 
-### A.1 Vínculo Iniciativa → Roadmap — decisão em aberto
+### A.1 Vínculo Iniciativa → Roadmap — **fechado em 17/09/2026**
 
-Três hipóteses registradas, a testar no protótipo:
+Três hipóteses foram registradas e testadas em cima de um caso concreto (o programa de parceiros da Platform, com dois itens). Venceu a H3, na forma detalhada ao fim desta seção.
 
 **H1 — Associação polimórfica.** A iniciativa carrega `vinculo: { tipo: 'categoria' | 'item' | null, id }`. No Backlog do Kanban é `null` (coerente com a regra de campos ausentes por estágio). Ao ser priorizada, aponta para uma categoria existente (iniciativa grande) ou para um item (iniciativa pequena). A iniciativa e o objeto do roadmap coexistem.
 
 **H2 — Materialização.** A iniciativa não se associa — ela *se transforma* ao sair do Backlog. Grande → gera uma categoria (itens a detalhar pelo PM); pequena → gera um item sob categoria existente. O Kanban é a fase pré-roadmap; o gate Backlog → Priorizado é onde a intenção vira estrutura. A granularidade é decidida pelo PM na priorização, não imposta pelo modelo.
 
-**H3 — Unificação** (hipótese preferida; decisão de 04/09/2026, GPM, confirmada em 07/09/2026; ver `docs/kanban-card-spec.md` §1.1 e §4). Iniciativa e item são **a mesma entidade em estágios de vida distintos**. Kanban e roadmap são duas portas de entrada — a de negócio (intake) e a técnica (planejamento por sprint) — e duas vistas sobre o mesmo dado. Priorizar é ganhar squad e período e, com isso, entrar no Gantt. **Status: hipótese de trabalho preferida, não validada — §3 não muda até a validação.** H1 e H2 permanecem como alternativas.
+**H3 — Unificação** (**escolhida**; 04/09/2026, confirmada em 07/09/2026, fechada em 17/09/2026; ver `docs/kanban-card-spec.md` §1.1 e §4). Iniciativa e item são **a mesma entidade em estágios de vida distintos**. Kanban e roadmap são duas portas de entrada — a de negócio (intake) e a técnica (planejamento por sprint) — e duas vistas sobre o mesmo dado. Priorizar é ganhar squad e período e, com isso, entrar no Gantt. **Status: escolhida e fechada em 17/09/2026**; §3 passa a descrever este modelo. H1 e H2 ficam registradas como alternativas descartadas.
 
-**Critério de validação de H3:** depois do backend, implementar uma ponte mínima "Promover ao roadmap" (card priorizado → cria item de roadmap, com referência gravada nos dois lados). H3 valida se, em uso real, os PMs esperarem sincronização entre card e item e a ausência dela for percebida como falha. Se ninguém sentir falta da sincronização, H1 ou H2 bastam.
+**Como foi decidida.** O critério registrado era esperar o uso real de uma ponte mínima "Promover ao roadmap" e ver se os PMs sentiriam falta da sincronização. Foi dispensado em 17/09/2026: o GPM percorreu o ciclo inteiro de uma iniciativa concreta, do intake à entrega, e a sincronização entre card e item apareceu como requisito explícito antes de a ponte existir. O que o experimento testaria já estava respondido.
 
-**H3 refinada — definição de trabalho (09/09/2026, GPM).** Válida para a modelagem do passo 4b; não altera §3 até lá:
+**H3 fechada — 1 iniciativa = N itens (17/09/2026, GPM).** A definição de trabalho de 09/09 ("1 iniciativa = 1 item, com sub-itens") foi **superada**: não há sub-item nem quarto nível. O modelo é:
 
-1. **1 iniciativa = 1 item no roadmap** (abaixo de uma categoria ou não).
-2. Esse item/iniciativa pode ter **sub-itens** no roadmap.
-3. Uma iniciativa com sub-itens só está **concluída quando todos os sub-itens estiverem** concluídos.
-4. É possível **mover um sub-item entre iniciativas**.
+1. **Uma iniciativa agrupa um ou mais itens** e só está concluída quando **todos** estiverem entregues. É essa exigência que a distingue de duas iniciativas na mesma categoria, que se entregam de forma independente.
+2. **Todo item pertence a uma iniciativa.** Não existe item avulso. Itens pequenos e soltos se agrupam numa iniciativa guarda-chuva.
+3. **A categoria é da iniciativa**, e é sempre opcional. Categoria agrupa iniciativas; iniciativa agrupa itens. Sobram três níveis, os mesmos de antes, com a subcategoria substituída pela iniciativa.
+4. **A criação vale nos dois sentidos.** Criar no Kanban e priorizar cria o item; criar no roadmap cria o card. Um item a mais numa iniciativa existente não cria card nenhum.
+5. **Quatro movimentos:** mover iniciativa entre squads (leva os itens; `code` imutável), mover iniciativa entre categorias, mover item entre iniciativas, e o par **extrair item / juntar iniciativas**, que dá ida e volta para a regra "o que pode ser entregue em separado é iniciativa separada".
+6. **Saída de circulação em dois modos**, sem virar status: arquivado (perdeu prioridade, retomável) e descartado (§4.3), com `nota` livre e, no descarte, o motivo em lista que já existia.
 
-A resolver antes de modelar (GPM decide, partindo de `docs/kanban-card-spec.md` §4 como proposta a adotar ou descartar explicitamente):
+Os pontos que estavam em aberto foram respondidos assim: a **iniciativa absorve** o item como filho, e não o contrário — `items[]` continua em `quarter → squad` e ganha `ini`; a **coluna do Kanban é derivada** do estado dos itens em Execução e Concluído, e humana em Iniciativas, Backlog Priorizado e Descartado; os **dois "Backlog" viraram um**, com a coluna renomeada para Backlog Priorizado; a **conclusão derivada** convive com C10 porque os KPIs contam itens, nunca a linha da iniciativa.
 
-- **Qual estrutura absorve qual, e onde mora.** `iniciativas[]` é fila global fora dos quarters, com ~20 campos; `items[]` vive em `quarter → squad`, com 8. Uma iniciativa no Backlog do Kanban (sem squad, sem período) não tem quarter — se o item absorve a iniciativa, precisa de um lugar; se a iniciativa absorve o item, o roadmap vira projeção (o modelo `cards{}` da card-spec §4).
-- **Coluna do Kanban × status do item.** `Backlog · Priorizado · Execução · Concluído · Descartado` de um lado, `backlog · stories · dev · qa · homolog · entregue` do outro: um deriva do outro, ou são dois campos que podem discordar. A card-spec §4.4 propõe uma tabela de mapeamento.
-- **Sub-itens são um quarto nível** (squad → categoria → subcategoria → item → sub-item): aparecem no Gantt como barra? têm datas, status e % próprios? a tabela aninha linhas? o rollup soma sub-itens?
-- **Conclusão derivada.** Com sub-itens, o status do item deixa de ser manual — precisa conviver com C10 (concluído = `entregue`) e ser dito em §4 e §6.1.
-- **Dois "Backlog".** O glossário separa Backlog do roadmap e coluna Backlog do Kanban; com iniciativa = item, ou viram a mesma coisa ou um desaparece (a card-spec §4.4 funde os dois).
-- **Squads por quarter × iniciativas globais** — a mesma restrição já anotada abaixo para categorias passa a valer para tudo.
+Isso adota parcialmente `docs/kanban-card-spec.md` §4: fica o princípio de fonte única e de campos derivados; **descarta-se** o `cards{}` como dicionário-raiz, porque manter `items[]` onde está preserva o Gantt, o arraste e o `normalize()` já validados.
 
-**Restrição do modelo atual que pesa nas três:** categorias vivem em `quarter → squad` e são **copiadas** ao criar novo quarter (§7). "Assinatura" no Q3 e "Assinatura" no Q4 são objetos distintos com o mesmo nome. Um vínculo por categoria que precise sobreviver à troca de quarter exige que a categoria suba um nível (existir fora do quarter, com o quarter apenas referenciando). Isso vale para H1, H2 e H3. Registrar em `docs/decisions.md` quando for decidido; não tocar no modelo antes.
+**Restrição do modelo atual que pesa nas três:** categorias vivem em `quarter → squad` e são **copiadas** ao criar novo quarter (§7). "Assinatura" no Q3 e "Assinatura" no Q4 são objetos distintos com o mesmo nome. Um vínculo por categoria que precise sobreviver à troca de quarter exige que a categoria suba um nível (existir fora do quarter, com o quarter apenas referenciando). Isso valia para H1, H2 e H3. **Resolvido em 17/09/2026:** a categoria continua morando em `quarter → squad`, e a iniciativa guarda o **nome** dela, não uma referência — do mesmo jeito que os itens já faziam. Ao trocar de quarter, a categoria é reencontrada pelo nome; se não existir no destino, a iniciativa fica sem categoria, com aviso (§1.2). A categoria **não** sobe de nível.
 
 ### A.2 Resumo das decisões do Kanban
 
 - **Board de entrada de iniciativas** (não de execução). Cards criados só na 1ª coluna.
-- **Colunas fixas** (decisão de 07/09/2026): `Backlog · Priorizado · Execução · Concluído · Descartado`, identificadas por `role` (`entrada` / `fluxo` / `execucao` / `concluido` / `descartado`), **não editáveis em runtime**. Não existe chave `kcols` no modelo. O protótipo atual permite renomear, criar e remover colunas (`divergences.md`, A3) — isso sai no passo 3. Racional: o board consolidado das seis squads só funciona com colunas iguais para todas.
-- Card de Backlog legitimamente **sem** PM/Tech Lead/squad/período — obrigatoriedade é **condição de passagem** entre colunas, não propriedade do card. Campo ausente por estágio **não** renderiza (sem placeholder/tracejado).
-- **Gate de saída do Backlog:** 6 campos (`squad · pm · tech_lead · tipo · estimativa · periodo`); recusa nomeia o campo faltante.
+- **Colunas fixas** (07/09/2026; renomeadas em 17/09/2026): `Iniciativas · Backlog Priorizado · Execução · Concluído · Descartado`, identificadas por `role` (`entrada` / `fluxo` / `execucao` / `concluido` / `descartado`), **não editáveis em runtime**. As chaves são `iniciativas · priorizado · execucao · concluido · descartado`; a primeira deixou de se chamar `backlog` para acabar com os dois backlogs de mesmo nome, e nenhuma chave foi reaproveitada para outra coluna. Não existe chave `kcols` no modelo. O protótipo atual permite renomear, criar e remover colunas (`divergences.md`, A3) — isso sai no passo 3. Racional: o board consolidado das seis squads só funciona com colunas iguais para todas.
+- Card em Iniciativas legitimamente **sem** PM/Tech Lead/squad/período — obrigatoriedade é **condição de passagem** entre colunas, não propriedade do card. Desde 17/09/2026 o gate se resolve quase sozinho: ao ganhar squad, o card herda o PM e o TL padrão dela (§7). Campo ausente por estágio **não** renderiza (sem placeholder/tracejado).
+- **Gate de saída de Iniciativas:** 6 campos (`squad · pm · tech_lead · tipo · estimativa · periodo`); recusa nomeia o campo faltante. Com PM e TL padrão por squad (§7, 17/09/2026), na prática sobram tipo, estimativa e período.
 - **Estados por 6 eixos independentes**, cada um com canal visual exclusivo (ciclo de vida, saúde temporal, impedimento, idade no backlog, interação).
 - **Card aging invertido** (iniciativa esquecida fica mais visível; faixas 14/45 dias, âmbar).
 - **Descartado com motivo obrigatório** (enum de 5 motivos).

@@ -185,3 +185,24 @@ Registrada em `SPEC.md` A.1 como **H3 refinada**. Vale para a modelagem do passo
 **Racional:** o dado é um documento e vai continuar sendo até a remodelagem do 4b — guardar um JSON numa coluna `jsonb` custa o mesmo que num chave-valor. Supabase cobre o passo seguinte (autenticação Google restrita ao domínio, §11) e o relacional no mesmo banco quando o modelo estabilizar: uma ferramenta a menos ao longo do tempo. Descartadas: Upstash Redis (mais simples hoje, mas não evolui para relacional nem para auth) e Supabase completo (hospedagem estática menos madura que a Vercel).
 
 **Consequência para quem usa:** o board passa a ser um só, compartilhado — o que um PM salva, os outros veem em até 15 s; duas edições simultâneas na mesma versão são detectadas (409) e resolvidas com confirmação, conforme §9.2. O JSON no navegador deixa de ser a fonte da verdade e vira cache.
+
+---
+
+## 1 iniciativa = N itens — modelo fechado (17/09/2026)
+
+Fecha o Anexo A.1 da spec e define o passo 4b. Decidido pelo GPM em cima de um caso concreto, o programa de parceiros da squad Platform, percorrido do intake à entrega.
+
+**O modelo.** Uma iniciativa agrupa um ou mais itens e só conclui quando todos estiverem entregues. Todo item pertence a uma iniciativa; não existe item avulso. A categoria pertence à iniciativa e continua opcional. A subcategoria deixa de existir: a iniciativa ocupa esse nível, e a tabela segue com três.
+
+**Racional.** O seed que está em produção mostra a subcategoria já fazendo esse papel sem ter nome para isso: em Payment, "Novos Métodos" reúne cinco meios de pagamento; em Assinatura, quatro itens nomeados "FASE 0" a "FASE 3" são um trabalho só, dividido por quem não tinha onde dizer isso. Dar o nome certo ao nível não tira expressividade, e liga o roadmap ao Kanban sem inventar hierarquia nova.
+
+**O que foi descartado, e por quê.**
+- **Pai e filho entre itens.** Duplicaria o que a iniciativa já expressa e levaria a tabela a quatro níveis, mais fundo que hoje. Sequência entre itens é calendário, e já está nas datas. Dependência que trava é outro conceito, fica para depois no campo `dep`.
+- **Arquivado como valor de status.** Sobrescreveria a etapa em que o item parou, e o requisito é justamente poder retomar. Virou um eixo separado (`arq`).
+- **`cards{}` como dicionário-raiz**, proposto em `kanban-card-spec.md` §4. Manter `items[]` em `quarter → squad` preserva Gantt, arraste e `normalize()` já validados.
+
+**Consequências para quem usa.** O PM deixa de criar subcategoria e passa a criar iniciativa, que aparece nos dois quadros. Criar item no roadmap cria o card no Kanban, e vice-versa. O percentual da iniciativa é a média simples dos itens, com dois efeitos conhecidos e aceitos: item pequeno pesa igual a item grande, e item novo entra com zero e derruba a barra. A primeira coluna do Kanban passa a se chamar Iniciativas e a segunda, Backlog Priorizado, que é literalmente o backlog do roadmap visto do outro lado. PM e Tech Lead ganham um padrão por squad, o que resolve sozinho a obrigatoriedade de campos na passagem de coluna.
+
+**Escopo do 4b:** o vínculo entre iniciativa e item, o arquivamento com a seção de consulta em Squads & sprints, e os rótulos do Kanban. O cadastro de pessoas fica como passo próprio (`SPEC.md` §11, item 8).
+
+**Migração:** nada a preservar. Os itens e os cards que estão no ar são dados de teste, e o GPM decidiu descartá-los; o board renasce vazio, com as cinco squads e o quarter configurado. A regra para arquivos antigos carregados pelo botão Carregar é a mais simples possível: cada item vira uma iniciativa de um item, cada subcategoria vira categoria. Nada vira iniciativa de vários itens automaticamente, porque errar para o lado da categoria é reversível em dois cliques, e errar para o lado da iniciativa trava a conclusão de coisas independentes.

@@ -71,8 +71,8 @@ Toda ação relevante responde com uma mensagem curta no rodapé, centralizada, 
 | Editar em quarter que não é o ativo (C7) | Quarter em visualização — somente leitura |
 | Mover iniciativa para squad sem a categoria dela | Iniciativa movida — {squad} não tem a categoria {nome}; ficou sem categoria |
 | Arrastar item avulso para outra categoria | A categoria é da iniciativa — arraste a iniciativa |
-| Mover o último item de uma iniciativa | A iniciativa ficaria sem itens — mova a iniciativa inteira |
 | Extrair item · juntar iniciativas | Item extraído — nova iniciativa {code} · Iniciativas juntadas em {code} |
+| Remover o último item de uma iniciativa | Item e iniciativa removidos |
 | Arquivar · descartar · retomar | Iniciativa arquivada — veja em Squads & sprints · Iniciativa descartada · Iniciativa retomada |
 
 Substitui o preenchimento manual em planilha (`Q2 Weekly Review.xlsx`), preservando as mesmas colunas de entrada (Item, Início, Fim, Status, Previsão, % Conclusão) e adicionando estrutura (quarters, categorias, backlog) e uma visualização rica.
@@ -339,7 +339,9 @@ Nos cabeçalhos, na visão agrupada:
   - **Reordenar** dentro da tabela (indicador na metade de cima/baixo da linha alvo).
   - **Mover item entre iniciativas:** soltar o item sobre a linha de uma iniciativa. O item herda a squad e a categoria do destino. É o mesmo gesto que antes movia item para subcategoria, no mesmo lugar da tela.
   - **Mover iniciativa entre categorias:** soltar a linha da iniciativa sobre um cabeçalho de categoria. Todos os itens dela seguem juntos.
-- **Recusas** (17/09/2026), cada uma com a mensagem de §1.2: arrastar um **item** direto para uma categoria, porque a categoria é da iniciativa; e mover o **último** item de uma iniciativa, porque ela ficaria sem itens.
+  - **Juntar iniciativas:** soltar a linha de uma iniciativa sobre outra. Como a iniciativa de um item só é renderizada como a própria linha do item, soltar **essa** linha sobre outra iniciativa também junta as duas — por isso mover o último item de uma iniciativa nunca é recusado: vira fusão, que dá o mesmo resultado (18/09/2026, decidido na implementação).
+- **Recusa** (17/09/2026), com a mensagem de §1.2: arrastar um **item** direto para uma categoria, porque a categoria é da iniciativa.
+- **Remover o último item** de uma iniciativa remove também o card dela, com aviso (18/09/2026). Sem isso, não haveria como apagar pelo roadmap uma iniciativa de um item só.
 - **Duas operações fora do arraste**, na linha da iniciativa e do item: **extrair item** (o item vira iniciativa própria, com card novo no Kanban, mantendo datas, status e progresso) e **juntar iniciativas** (duas viram uma; a de destino passa a exigir a entrega de todos os itens). São o caminho de ida e volta da regra "o que pode ser entregue em separado é iniciativa separada".
 
 ### 5.4 Backlog (fora do roadmap)

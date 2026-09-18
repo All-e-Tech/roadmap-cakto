@@ -54,64 +54,24 @@ export const KCOLS_DEFAULT = [
   { k: 'concluido',  label: 'Concluído',  role: 'concluido' },
   { k: 'descartado', label: 'Descartado', role: 'descartado' },
 ];
-export const SEED_DEMANDAS = (() => {
-  const out = []; let id = 1;
-  ['Payment', 'Platform', 'Cakto Members', 'Bank & App', 'MRR & Fiscal'].forEach(sq => {
-    for (let i = 1; i <= 3; i++) out.push({ id: id++, t: sq + ' - Item ' + i, d: '', sq, col: 'backlog', link: '' });
-  });
-  return out;
-})();
+// Coluna de entrada do Kanban: a primeira, seja qual for a chave (a renomeação é a 3ª entrega do 4b).
+export function chaveEntrada(data) { const c = colunasKanban(data).find(x => (x.role || '') === 'entrada'); return c ? c.k : 'backlog'; }
+// Colunas calculadas a partir dos itens (SPEC §3, Derivados): não recebem arraste.
+export const COLUNAS_DERIVADAS = ['execucao', 'concluido'];
 
-// ---------- Seed (SPEC §3) — dado inicial, não regra; cores e prefixos de squad são DADO ----------
-export const SEED = { activeQuarter: 'q3-2026', order: ['q3-2026', 'q2-2026'], quarters: {
-  'q3-2026': { label: 'Q3 2026', start: '2026-07-07', days: 14, count: 6, archived: false, squads: [
-    { name: 'Payment', prefix: 'PAY', color: '#36b37e', groupByCat: true,
-      categories: [{ name: 'Assinatura', subs: [] }, { name: 'Internacional', subs: ['Novos Métodos', 'Arquitetura', 'México'] }],
-      items: [
-        { n: 'FASE 0 · Arrumar a casa', s: '2026-07-07', e: '2026-07-20', st: 'entregue', pv: 'prod', p: 100, cat: 'Assinatura', sub: '' },
-        { n: 'FASE 1 · MVP comercial', s: '2026-07-21', e: '2026-08-17', st: 'dev', pv: 'prazo', p: 15, cat: 'Assinatura', sub: '' },
-        { n: 'FASE 2 · API + MCP', s: '2026-08-18', e: '2026-09-14', st: 'backlog', pv: 'nao', p: 0, cat: 'Assinatura', sub: '' },
-        { n: 'FASE 3 · Inteligência', s: '2026-09-15', e: '2026-09-28', st: 'backlog', pv: 'nao', p: 0, cat: 'Assinatura', sub: '' },
-        { n: 'Ebanx — MercadoPago', s: '2026-04-30', e: '2026-05-15', st: 'homolog', pv: 'bloq', p: 100, cat: 'Internacional', sub: 'Novos Métodos' },
-        { n: 'Ebanx — Debit Card Internacional', s: '2026-07-20', e: '2026-07-29', st: 'homolog', pv: 'prod', p: 100, cat: 'Internacional', sub: 'Novos Métodos' },
-        { n: 'LATAM — Colômbia (NEQUI · PSE)', s: '2026-08-04', e: '2026-08-17', st: 'backlog', pv: 'nao', p: 0, cat: 'Internacional', sub: 'Novos Métodos' },
-        { n: 'LATAM — Chile (Webpay)', s: '2026-08-04', e: '2026-08-17', st: 'backlog', pv: 'nao', p: 0, cat: 'Internacional', sub: 'Novos Métodos' },
-        { n: 'LATAM — Peru e Equador (Yape)', s: '2026-08-18', e: '2026-08-31', st: 'backlog', pv: 'nao', p: 0, cat: 'Internacional', sub: 'Novos Métodos' },
-        { n: 'Checkout por Country Code', s: '2026-07-21', e: '2026-08-06', st: 'dev', pv: 'prazo', p: 50, cat: 'Internacional', sub: 'Arquitetura' },
-        { n: 'Smart Routing', s: '2026-08-18', e: '2026-08-31', st: 'backlog', pv: 'nao', p: 0, cat: 'Internacional', sub: 'Arquitetura' },
-        { n: 'CAKTO USD — Câmbio para Saque', s: '2026-07-20', e: '2026-07-29', st: 'homolog', pv: 'prod', p: 100, cat: 'Internacional', sub: 'México' },
-      ],
-      backlog: [
-        { n: 'Order Bump e Add-ons na Assinatura', cat: 'Assinatura', note: 'aguardando discovery' },
-        { n: 'Parcelamento Cartão de Crédito', cat: 'Internacional', note: 'depende de adquirente' },
-        { n: 'Cartão de crédito Cakto', cat: '', note: 'ideia — sem prioridade' },
-      ] },
-    { name: 'Platform', prefix: 'PLA', color: '#0f7864', groupByCat: true, categories: [], items: [
-        { n: 'Fluxo de Saque USD', s: '2026-07-14', e: '2026-08-04', st: 'dev', pv: 'prazo', p: 70, cat: '', sub: '' },
-        { n: 'Partnership — Plataforma', s: '2026-08-04', e: '2026-08-25', st: 'dev', pv: 'prazo', p: 5, cat: '', sub: '' },
-        { n: 'Partnership — ADMIN', s: '2026-08-25', e: '2026-09-08', st: 'backlog', pv: 'nao', p: 0, cat: '', sub: '' },
-      ], backlog: [] },
-    { name: 'Cakto Members', prefix: 'MEM', color: '#fdd465', groupByCat: true, categories: [], items: [
-        { n: 'Novo Fluxo de Área de Membros', s: '2026-06-23', e: '2026-08-03', st: 'dev', pv: 'prazo', p: 50, cat: '', sub: '' },
-        { n: '[BASE] Enablement de dados', s: '2026-07-07', e: '2026-08-03', st: 'qa', pv: 'prazo', p: 50, cat: '', sub: '' },
-        { n: '[BASE] Consumir Conteúdo da V3', s: '2026-06-22', e: '2026-08-03', st: 'qa', pv: 'atraso', p: 50, cat: '', sub: '' },
-      ], backlog: [] },
-    { name: 'Bank & App', prefix: 'BNK', color: '#f4cd97', groupByCat: true, categories: [], items: [
-        { n: 'Onboarding & KYC | Sustentação', s: '2026-07-20', e: '2026-08-31', st: 'dev', pv: 'prazo', p: 60, cat: '', sub: '' },
-        { n: 'App | Portabilidade chave Pix', s: '2026-07-06', e: '2026-08-14', st: 'dev', pv: 'bloq', p: 70, cat: '', sub: '' },
-        { n: 'Multicontas | Evolução', s: '2026-09-01', e: '2026-09-28', st: 'backlog', pv: 'nao', p: 0, cat: '', sub: '' },
-      ], backlog: [] },
-    { name: 'MRR & Fiscal', prefix: 'MRR', color: '#65a76b', groupByCat: true, categories: [], items: [
-        { n: 'Reembolso', s: '2026-07-21', e: '2026-09-28', st: 'dev', pv: 'prazo', p: 40, cat: '', sub: '' },
-        { n: 'Emissão NFSe (Cakto — interno)', s: '2026-07-21', e: '2026-08-03', st: 'qa', pv: 'risco', p: 90, cat: '', sub: '' },
-        { n: 'Emissão NFSe (Produtor)', s: '2026-07-21', e: '2026-09-28', st: 'stories', pv: 'nao', p: 0, cat: '', sub: '' },
-      ], backlog: [] },
-  ] },
-  'q2-2026': { label: 'Q2 2026', start: '2026-04-07', days: 14, count: 6, archived: true, squads: [
-    { name: 'Payment', prefix: 'PAY', color: '#36b37e', groupByCat: true, categories: [], items: [
-      { n: 'Worldpay — Integração', s: '2026-04-07', e: '2026-05-04', st: 'entregue', pv: 'prod', p: 100, cat: '', sub: '' },
-    ], backlog: [] },
-  ] },
+// ---------- Seed (SPEC §3) — quadro vazio ----------
+// Decisão de 17/09/2026: o board nasce sem conteúdo. As cinco squads e o calendário do quarter são
+// a estrutura mínima para começar; itens e iniciativas são criados pelos PMs. Cores e prefixos são DADO.
+const SQUADS_INICIAIS = [
+  ['Payment', 'PAY', '#36b37e'],
+  ['Platform', 'PLA', '#0f7864'],
+  ['Cakto Members', 'MEM', '#fdd465'],
+  ['Bank & App', 'BNK', '#f4cd97'],
+  ['MRR & Fiscal', 'MRR', '#65a76b'],
+];
+export const SEED = { activeQuarter: 'q3-2026', order: ['q3-2026'], iniciativas: [], quarters: {
+  'q3-2026': { label: 'Q3 2026', start: '2026-07-07', days: 14, count: 6, archived: false,
+    squads: SQUADS_INICIAIS.map(([name, prefix, color]) => ({ name, prefix, archived: false, color, groupByCat: true, categories: [], items: [], backlog: [] })) },
 } };
 
 // ---------- Datas e utilitários ----------
@@ -125,13 +85,48 @@ export function avg(arr) { return arr.length ? Math.round(arr.reduce((a, b) => a
 export function normalizeSquad(sq) {
   if (!sq.categories) sq.categories = []; if (!sq.backlog) sq.backlog = []; if (!sq.items) sq.items = [];
   if (sq.groupByCat === undefined) sq.groupByCat = true;
-  sq.items.forEach(it => { if (it.cat) { let c = sq.categories.find(x => x.name === it.cat); if (!c) { c = { name: it.cat, subs: [] }; sq.categories.push(c); } if (it.sub && !c.subs.includes(it.sub)) c.subs.push(it.sub); } });
+  // `subs` não é apagado aqui: a migração abaixo precisa lê-lo para converter subcategoria em categoria.
+}
+
+// ---------- Migração 4b (17/09/2026): "1 iniciativa = N itens" ----------
+// Regra decidida (docs/decisions.md): cada item vira uma iniciativa de UM item e cada subcategoria vira
+// categoria. Nada vira iniciativa de vários itens automaticamente — errar para o lado da categoria é
+// reversível em dois cliques; errar para o lado da iniciativa travaria a conclusão de coisas independentes.
+function migraVinculo(d) {
+  const nova = (sqName, titulo, cat) => criaIniciativa(d, sqName, titulo || 'Sem nome', cat, 'priorizado').code;
+  Object.values(d.quarters).forEach(q => {
+    q.squads.forEach(sq => {
+      // 1. Subcategoria vira categoria, na posição seguinte à categoria mãe.
+      const comSub = sq.categories.filter(c => (c.subs || []).length);
+      comSub.forEach(c => {
+        (c.subs || []).forEach(s => { if (s && !sq.categories.some(x => x.name === s)) sq.categories.push({ name: s }); });
+      });
+      // 2. A categoria mãe some se todos os itens dela estavam sob subcategorias.
+      comSub.forEach(c => {
+        const direto = sq.items.some(it => (it.cat || '') === c.name && !it.sub) || sq.backlog.some(b => (b.cat || '') === c.name);
+        if (!direto) { const i = sq.categories.findIndex(x => x.name === c.name); if (i >= 0) sq.categories.splice(i, 1); }
+      });
+      sq.categories.forEach(c => { delete c.subs; });
+      // 3. Cada item (roadmap e backlog) ganha a iniciativa dele.
+      sq.items.forEach(it => {
+        if (!it.ini) it.ini = nova(sq.name, it.n, it.sub || it.cat || '');
+        delete it.cat; delete it.sub;
+        if (it.arq === undefined) it.arq = ''; if (it.nota === undefined) it.nota = '';
+      });
+      sq.backlog.forEach(b => {
+        if (!b.ini) b.ini = nova(sq.name, b.n, b.cat || '');
+        delete b.cat;
+      });
+    });
+  });
 }
 export function normalize(d) {
   if (!d.quarters && d.config && d.squads) {
     d = { activeQuarter: 'q1', order: ['q1'], quarters: { q1: { label: d.config.quarter || 'Quarter', start: d.config.start || '2026-07-07', days: d.config.days || 14, count: d.config.count || 6, archived: false, squads: d.squads.map(s => ({ name: s.name, color: s.color, groupByCat: false, categories: [], items: (s.items || []).map(it => ({ ...it, cat: it.cat || '', sub: it.sub || '' })), backlog: [] })) } }, demandas: d.demandas };
   }
-  if (!d.demandas) d.demandas = JSON.parse(JSON.stringify(SEED_DEMANDAS));
+  // A2 (17/09/2026): a fila do Kanban passa a se chamar `iniciativas`; `demandas` é a chave antiga.
+  if (!d.iniciativas) d.iniciativas = d.demandas || [];
+  delete d.demandas;
   if (!d.kcols || !d.kcols.length) d.kcols = JSON.parse(JSON.stringify(KCOLS_DEFAULT));
   const ROLE_BY_KEY = { backlog: 'entrada', discovery: 'fluxo', priorizado: 'fluxo', andamento: 'execucao', execucao: 'execucao', concluido: 'concluido', descartado: 'descartado' };
   d.kcols.forEach(c => { if (!c.role) c.role = ROLE_BY_KEY[c.k] || 'fluxo'; });
@@ -146,7 +141,16 @@ export function normalize(d) {
     q.squads.forEach(normalizeSquad);
   });
   // A4 (09/09/2026): anexo é link — os campos de arquivo embutido são descartados ao carregar.
-  d.demandas.forEach(dm => { delete dm.anexoNome; delete dm.anexoConteudo; if (!dm.createdAt) dm.createdAt = Date.now(); if (!dm.code) dm.code = prefixoSquad(d, dm.sq) + '-' + (100 + dm.id); });
+  d.iniciativas.forEach(dm => {
+    delete dm.anexoNome; delete dm.anexoConteudo; delete dm.subsTotal; delete dm.subsDone;   // progresso vem dos itens (17/09/2026)
+    if (!dm.createdAt) dm.createdAt = Date.now();
+    if (!dm.code) dm.code = prefixoSquad(d, dm.sq) + '-' + (100 + dm.id);
+    if (dm.cat === undefined) dm.cat = ''; if (dm.nota === undefined) dm.nota = ''; if (dm.arq === undefined) dm.arq = '';
+  });
+  migraVinculo(d);
+  // Invariante (§3): iniciativa fora da coluna de entrada tem ao menos um item. Card antigo sem item volta à entrada.
+  const entrada = chaveEntrada(d);
+  d.iniciativas.forEach(dm => { if (dm.col !== entrada && !temItens(d, dm.code)) dm.col = entrada; });
   return d;
 }
 export function seedNovo() { return normalize(JSON.parse(JSON.stringify(SEED))); }
@@ -170,8 +174,97 @@ export function monthBands(q) {
 // ---------- Acesso a dados (CLAUDE.md: componentes não leem `data` direto) ----------
 export function quarterAtivo(data) { return data.quarters[data.activeQuarter]; }
 export function squadAtiva(data, i) { return quarterAtivo(data).squads[i]; }
-export function iniciativas(data) { return data.demandas || []; }   // chave antiga `demandas` até a remodelagem (4b, A2)
-export function colunasKanban(data) { return data.kcols || []; }     // estrutura fixa (A3); a chave sai na remodelagem (4b)
+export function iniciativas(data) { return data.iniciativas || []; }
+export function colunasKanban(data) { return data.kcols || []; }     // estrutura fixa (A3)
+
+// ---------- Vínculo iniciativa ↔ item (SPEC §3, 17/09/2026) ----------
+export function iniciativaPorCode(data, code) { return iniciativas(data).find(x => x.code === code) || null; }
+export function itensDaIniciativa(sq, code) { return (sq.items || []).filter(it => it.ini === code); }
+export function backlogDaIniciativa(sq, code) { return (sq.backlog || []).filter(b => b.ini === code); }
+// Todos os itens de uma iniciativa, em qualquer squad e quarter — usado pelas travas e pelos derivados.
+export function itensGlobais(data, code) {
+  const out = [];
+  Object.values(data.quarters).forEach(q => q.squads.forEach(sq => {
+    (sq.items || []).forEach(it => { if (it.ini === code) out.push({ it, sq, q, backlog: false }); });
+    (sq.backlog || []).forEach(b => { if (b.ini === code) out.push({ it: b, sq, q, backlog: true }); });
+  }));
+  return out;
+}
+export function temItens(data, code) { return itensGlobais(data, code).length > 0; }
+// Derivados (SPEC §3): média simples do progresso, envelope de datas, contagem de entregues.
+export function derivadosDaIniciativa(data, code) {
+  const todos = itensGlobais(data, code).filter(x => !x.backlog).map(x => x.it);
+  const vivos = todos.filter(it => !it.arq);
+  const datas = vivos.filter(it => it.s && it.e);
+  return {
+    total: vivos.length,
+    entregues: vivos.filter(it => it.st === 'entregue').length,
+    pct: avg(vivos.map(it => it.p)),
+    s: datas.length ? datas.map(it => it.s).sort()[0] : '',
+    e: datas.length ? datas.map(it => it.e).sort().slice(-1)[0] : '',
+  };
+}
+// Coluna em que o card aparece: Descartado e a entrada são humanos; Execução e Concluído vêm dos itens.
+export function colunaDe(data, ini) {
+  if (!ini) return chaveEntrada(data);
+  if (ini.col === 'descartado') return 'descartado';
+  const ligados = itensGlobais(data, ini.code);
+  if (!ligados.length) return ini.col;
+  const noRoadmap = ligados.filter(x => !x.backlog);
+  if (!noRoadmap.length) return 'priorizado';
+  const vivos = noRoadmap.filter(x => !x.it.arq);
+  if (vivos.length && vivos.every(x => x.it.st === 'entregue')) return 'concluido';
+  return 'execucao';
+}
+// Categoria de um item, resolvida pela iniciativa (a categoria é dela — §3). "" = sem categoria.
+export function categoriaDoItem(data, sq, it) {
+  const ini = iniciativaPorCode(data, it.ini);
+  if (!ini || !ini.cat) return '';
+  return (sq.categories || []).some(c => c.name === ini.cat) ? ini.cat : '';
+}
+// Iniciativas com presença nesta squad, na ordem em que os itens aparecem na tabela.
+export function iniciativasNaSquad(data, sq) {
+  const vistos = [], out = [];
+  (sq.items || []).forEach(it => { if (it.ini && !vistos.includes(it.ini)) { vistos.push(it.ini); out.push(iniciativaPorCode(data, it.ini)); } });
+  return out.filter(Boolean);
+}
+
+// Modelo de linhas do roadmap (SPEC §5.1): categoria → iniciativa → item, na mesma ordem para a
+// tabela e para o Gantt, que consomem daqui para nunca discordarem.
+// Tipos: 'categoria' | 'iniciativa' (grupo, 2+ itens) | 'item' (sozinho = iniciativa de um item) | 'vazio'
+export function linhasRoadmap(data, sq, filtro) {
+  const passa = filtro || (() => true);
+  const idx = (sq.items || []).map((it, j) => ({ it, j })).filter(x => passa(x.it));
+  const linhas = [];
+  const daCategoria = nome => {
+    const codes = [];
+    idx.forEach(x => { const c = categoriaDoItem(data, sq, x.it); if (c === nome && !codes.includes(x.it.ini)) codes.push(x.it.ini); });
+    return codes;
+  };
+  const empilha = codes => codes.forEach(code => {
+    const ini = iniciativaPorCode(data, code);
+    const meus = idx.filter(x => x.it.ini === code);
+    if (meus.length === 1) { linhas.push({ tipo: 'item', code, ini, j: meus[0].j, it: meus[0].it, sozinho: true, nivel: 1 }); return; }
+    const der = derivadosDaIniciativa(data, code);
+    linhas.push({ tipo: 'iniciativa', code, ini, titulo: ini ? ini.t : code, ...der, nivel: 1 });
+    meus.forEach(x => linhas.push({ tipo: 'item', code, ini, j: x.j, it: x.it, sozinho: false, nivel: 2 }));
+  });
+  if (!sq.groupByCat) { empilha(iniciativasNaSquad(data, sq).map(i => i.code).filter(c => idx.some(x => x.it.ini === c))); return linhas; }
+  (sq.categories || []).forEach(c => {
+    const codes = daCategoria(c.name);
+    const itens = idx.filter(x => categoriaDoItem(data, sq, x.it) === c.name);
+    linhas.push({ tipo: 'categoria', nome: c.name, pct: avg(itens.map(x => x.it.p)), total: itens.length, vazia: !codes.length, nivel: 0 });
+    if (!codes.length) linhas.push({ tipo: 'vazio', nivel: 1 });
+    empilha(codes);
+  });
+  const semCat = daCategoria('');
+  if (!semCat.length) return linhas;
+  if (!(sq.categories || []).length) { empilha(semCat); return linhas; }   // squad sem categorias: iniciativas direto (§6.1)
+  const itensSem = idx.filter(x => !categoriaDoItem(data, sq, x.it));
+  linhas.push({ tipo: 'categoria', nome: SEM_CATEGORIA, virtual: true, pct: avg(itensSem.map(x => x.it.p)), total: itensSem.length, vazia: false, nivel: 0 });
+  empilha(semCat);
+  return linhas;
+}
 export function itensDoQuarter(q) { return q.squads.reduce((n, s) => n + (s.items || []).length, 0); }
 export function squadsDoQuarter(q) { return q.squads; }                              // todas, inclusive arquivadas (Config)
 export function squadsAtivas(q) { return q.squads.filter(s => !s.archived); }           // abas, Gantt, Kanban
@@ -228,33 +321,140 @@ export function kpisDeItens(items) { const c = kpisVazios(); items.forEach(it =>
 // ---------- Tabela / Roadmap (SPEC §5) ----------
 // B4 (09/09/2026): grupo virtual dos itens sem categoria — cabeçalho na tabela e layer no Gantt, alvo de arraste; não é uma categoria.
 export const SEM_CATEGORIA = 'Sem categoria';
-export function setCampoItem(sq, j, key, v) { if (key === 'p') v = Math.max(0, Math.min(100, parseInt(v) || 0)); sq.items[j][key] = v; }
-// C9 (09/09/2026): item novo nasce sem datas — só ganha barra no Gantt quando o PM as definir. `q` mantido por compatibilidade de chamada.
-export function novoItem(sq, q) { sq.items.push({ n: '', s: '', e: '', st: 'backlog', pv: 'nao', p: 0, cat: '', sub: '' }); }
-export function removeItem(sq, j) { sq.items.splice(j, 1); }
-export function enviarAoBacklog(sq, j) { const [x] = sq.items.splice(j, 1); sq.backlog.push({ n: x.n, cat: x.cat || '', note: '' }); }
-export function promoverAoRoadmap(sq, k, q) { const [x] = sq.backlog.splice(k, 1); sq.items.push({ n: x.n, s: '', e: '', st: 'backlog', pv: 'nao', p: 0, cat: x.cat || '', sub: '' }); normalizeSquad(sq); }
-export function novoItemBacklog(sq) { sq.backlog.push({ n: '', cat: '', note: '' }); }
-export function removeItemBacklog(sq, k) { sq.backlog.splice(k, 1); }
+// Cria o card da iniciativa. Único lugar que gera `code` — imutável depois de criado (kanban-card-spec §4.5).
+export function criaIniciativa(data, sqName, titulo, cat, col) {
+  const id = iniciativas(data).reduce((mx, x) => Math.max(mx, x.id || 0), 0) + 1;
+  const ini = {
+    id, code: prefixoSquad(data, sqName) + '-' + (100 + id), t: titulo || '', d: '', sq: sqName,
+    col: col || 'priorizado', cat: cat || '', prio: '', tipo: 'Delivery', est: '', perQ: '', perM: '',
+    pm: '', tl: '', origem: '', motivo: '', nota: '', arq: '', link: '', dep: [], createdAt: Date.now(),
+  };
+  data.iniciativas.push(ini);
+  return ini;
+}
+function itemVazio(code) { return { n: '', s: '', e: '', st: 'backlog', pv: 'nao', p: 0, ini: code, arq: '', nota: '' }; }
+// Iniciativa sem nenhum item deixa de existir (invariante de §3). Devolve true se o card foi removido.
+function limpaSeVazia(data, code) {
+  if (temItens(data, code)) return false;
+  data.iniciativas = iniciativas(data).filter(x => x.code !== code);
+  return true;
+}
+
+export function setCampoItem(data, sq, j, key, v) {
+  if (key === 'p') v = Math.max(0, Math.min(100, parseInt(v) || 0));
+  const it = sq.items[j];
+  it[key] = v;
+  // Iniciativa de um item só tem um nome, compartilhado com o card (17/09/2026).
+  if (key === 'n') { const ini = iniciativaPorCode(data, it.ini); if (ini && itensGlobais(data, it.ini).length === 1) ini.t = v; }
+}
+// + Adicionar item ao roadmap: cria a iniciativa e o primeiro item dela (C9: sem datas).
+export function novaIniciativaNoRoadmap(data, sq, cat) {
+  const ini = criaIniciativa(data, sq.name, '', cat || '', 'priorizado');
+  sq.items.push(itemVazio(ini.code));
+  return ini.code;
+}
+// + item numa iniciativa existente: entra logo depois do último item dela. Não cria card.
+export function novoItemNaIniciativa(sq, code) {
+  const last = ultimoIndice(sq.items, it => it.ini === code);
+  sq.items.splice(last >= 0 ? last + 1 : sq.items.length, 0, itemVazio(code));
+}
+// Remover o último item de uma iniciativa remove também o card dela. Devolve true nesse caso.
+export function removeItem(data, sq, j) { const code = sq.items[j].ini; sq.items.splice(j, 1); return limpaSeVazia(data, code); }
+export function enviarAoBacklog(sq, j) { const [x] = sq.items.splice(j, 1); sq.backlog.push({ n: x.n, ini: x.ini, note: '' }); }
+export function promoverAoRoadmap(sq, k) { const [x] = sq.backlog.splice(k, 1); const it = itemVazio(x.ini); it.n = x.n; sq.items.push(it); }
+export function novoItemBacklog(data, sq) { const ini = criaIniciativa(data, sq.name, '', '', 'priorizado'); sq.backlog.push({ n: '', ini: ini.code, note: '' }); }
+export function removeItemBacklog(data, sq, k) { const code = sq.backlog[k].ini; sq.backlog.splice(k, 1); return limpaSeVazia(data, code); }
+export function setNomeBacklog(data, sq, k, v) {
+  const b = sq.backlog[k]; b.n = v;
+  const ini = iniciativaPorCode(data, b.ini); if (ini && itensGlobais(data, b.ini).length === 1) ini.t = v;
+}
 export function alternaAgrupamento(sq) { sq.groupByCat = !sq.groupByCat; }
-export function reordenarItem(sq, from, to, cat, sub) {
+// Reordenar dentro da tabela; `code` (opcional) troca a iniciativa do item.
+export function reordenarItem(sq, from, to, code) {
   const arr = sq.items;
   const [m] = arr.splice(from, 1);
-  if (cat !== undefined) m.cat = cat;
-  if (sub !== undefined) m.sub = sub;
+  if (code !== undefined) m.ini = code;
   if (from < to) to--;
   to = Math.max(0, Math.min(arr.length, to));
   arr.splice(to, 0, m);
-  normalizeSquad(sq);
+}
+// Mover item para outra iniciativa (§5.3). Recusa se for o último item da origem.
+export function moveItemParaIniciativa(data, sq, from, code, to) {
+  const it = sq.items[from];
+  if (it.ini !== code && itensGlobais(data, it.ini).length <= 1) {
+    return { ok: false, msg: 'A iniciativa ficaria sem itens — mova a iniciativa inteira' };
+  }
+  const destino = to !== undefined ? to : (() => { const last = ultimoIndice(sq.items, x => x.ini === code); return last >= 0 ? last + 1 : sq.items.length; })();
+  reordenarItem(sq, from, destino, code);
+  return { ok: true };
+}
+export function moveIniciativaParaCategoria(data, code, cat) { const ini = iniciativaPorCode(data, code); if (ini) ini.cat = cat || ''; }
+export function setTituloIniciativa(data, code, v) {
+  const ini = iniciativaPorCode(data, code); if (!ini) return;
+  ini.t = v;
+  const ligados = itensGlobais(data, code);
+  if (ligados.length === 1) ligados[0].it.n = v;   // iniciativa de um item só: um nome só
+}
+// Visão plana: digitar uma categoria que não existe na squad cria a categoria.
+export function defineCategoriaDaIniciativa(data, sq, code, nome) {
+  const n = (nome || '').trim();
+  if (n && !sq.categories.some(c => c.name === n)) sq.categories.push({ name: n });
+  moveIniciativaParaCategoria(data, code, n);
+}
+// Extrair item: vira iniciativa própria, com card novo, mantendo datas, status e progresso.
+export function extrairItem(data, sq, j) {
+  const it = sq.items[j];
+  if (itensGlobais(data, it.ini).length <= 1) return { ok: false, msg: 'A iniciativa já tem um item só' };
+  const origem = iniciativaPorCode(data, it.ini);
+  const ini = criaIniciativa(data, sq.name, it.n, origem ? origem.cat : '', 'priorizado');
+  if (origem) Object.assign(ini, { pm: origem.pm, tl: origem.tl, tipo: origem.tipo, prio: origem.prio, origem: origem.origem });
+  it.ini = ini.code;
+  return { ok: true, code: ini.code };
+}
+// Juntar iniciativas: os itens da origem passam para o destino e o card da origem some.
+export function juntarIniciativas(data, codeOrigem, codeDestino) {
+  if (!codeOrigem || codeOrigem === codeDestino) return { ok: false, msg: '' };
+  if (!iniciativaPorCode(data, codeDestino)) return { ok: false, msg: '' };
+  itensGlobais(data, codeOrigem).forEach(x => { x.it.ini = codeDestino; });
+  data.iniciativas = iniciativas(data).filter(x => x.code !== codeOrigem);
+  return { ok: true, code: codeDestino };
+}
+// Mover iniciativa de squad: leva os itens em todos os quarters não arquivados; `code` não muda (§3).
+export function moveIniciativaParaSquad(data, code, nome) {
+  const ini = iniciativaPorCode(data, code);
+  if (!ini || ini.sq === nome) return { semCategoria: false };
+  const antiga = ini.sq;
+  ini.sq = nome;
+  let destinoTemCat = true;
+  Object.values(data.quarters).forEach(q => {
+    if (q.archived) return;
+    const de = q.squads.find(s => s.name === antiga), para = q.squads.find(s => s.name === nome);
+    if (!de || !para) return;
+    const separa = arr => { const fica = [], vai = []; arr.forEach(x => (x.ini === code ? vai : fica).push(x)); return [fica, vai]; };
+    const [fi, vi] = separa(de.items || []); de.items = fi; para.items.push(...vi);
+    const [fb, vb] = separa(de.backlog || []); de.backlog = fb; para.backlog.push(...vb);
+    if (ini.cat && !(para.categories || []).some(c => c.name === ini.cat)) destinoTemCat = false;
+  });
+  const semCategoria = !!ini.cat && !destinoTemCat;
+  if (semCategoria) ini.cat = '';
+  return { semCategoria };
 }
 export function ultimoIndice(items, pred) { let idx = -1; items.forEach((it, i) => { if (pred(it)) idx = i; }); return idx; }
-export function novaCategoria(sq) { let n = sq.categories.length + 1, nn = 'Nova categoria'; while (sq.categories.some(c => c.name === nn)) nn = 'Nova categoria ' + (++n); sq.categories.push({ name: nn, subs: [] }); if (!sq.groupByCat) sq.groupByCat = true; }
-// B5 (09/09/2026): devolvem false, sem alterar nada, se já existe outra com o mesmo nome.
-export function renomeiaCategoria(sq, ci, nn) { if (sq.categories.some((c, i) => i !== ci && c.name === nn)) return false; const old = sq.categories[ci].name; sq.items.forEach(it => { if (it.cat === old) it.cat = nn; }); sq.categories[ci].name = nn; return true; }
-export function removeCategoria(sq, ci) { const name = sq.categories[ci].name; sq.items.forEach(it => { if (it.cat === name) { it.cat = ''; it.sub = ''; } }); sq.categories.splice(ci, 1); }
-export function novaSub(sq, ci) { const cc = sq.categories[ci]; let n = cc.subs.length + 1, nn = 'Nova subcategoria'; while (cc.subs.includes(nn)) nn = 'Nova subcategoria ' + (++n); cc.subs.push(nn); }
-export function renomeiaSub(sq, ci, si, nn) { if (sq.categories[ci].subs.some((s, i) => i !== si && s === nn)) return false; const cat = sq.categories[ci].name, old = sq.categories[ci].subs[si]; sq.items.forEach(it => { if (it.cat === cat && it.sub === old) it.sub = nn; }); sq.categories[ci].subs[si] = nn; return true; }
-export function removeSub(sq, ci, si) { const cat = sq.categories[ci].name, s = sq.categories[ci].subs[si]; sq.items.forEach(it => { if (it.cat === cat && it.sub === s) it.sub = ''; }); sq.categories[ci].subs.splice(si, 1); }
+export function novaCategoria(sq) { let n = sq.categories.length + 1, nn = 'Nova categoria'; while (sq.categories.some(c => c.name === nn)) nn = 'Nova categoria ' + (++n); sq.categories.push({ name: nn }); if (!sq.groupByCat) sq.groupByCat = true; }
+// B5 (09/09/2026): devolve false, sem alterar nada, se já existe outra com o mesmo nome.
+// A categoria é da iniciativa (17/09/2026): renomear e remover propagam para os cards, não para os itens.
+export function renomeiaCategoria(data, sq, ci, nn) {
+  if (sq.categories.some((c, i) => i !== ci && c.name === nn)) return false;
+  const old = sq.categories[ci].name;
+  iniciativas(data).forEach(i => { if (i.sq === sq.name && i.cat === old) i.cat = nn; });
+  sq.categories[ci].name = nn;
+  return true;
+}
+export function removeCategoria(data, sq, ci) {
+  const name = sq.categories[ci].name;
+  iniciativas(data).forEach(i => { if (i.sq === sq.name && i.cat === name) i.cat = ''; });
+  sq.categories.splice(ci, 1);
+}
 
 // ---------- Config / quarters / squads (SPEC §7) — mutações ----------
 export function setCampoQuarter(q, key, v, num) { if (num) v = Math.max(num[0], Math.min(num[1], parseInt(v) || num[0])); q[key] = v; }
@@ -303,54 +503,85 @@ export function novaSquad(data) {
   return q.squads.length - 1;
 }
 export function removeSquad(data, i) { quarterAtivo(data).squads.splice(i, 1); }
-export function substituiSquads(data, squads) { quarterAtivo(data).squads = squads; }   // Importar planilha (A11: substitui)
+// Importar planilha (A11: substitui). Cada linha vira uma iniciativa de um item; `Pilar` vira a
+// categoria dela (SPEC §8, 17/09/2026) — o `normalize()` faz a conversão logo em seguida.
+export function substituiSquads(data, squads) {
+  const q = quarterAtivo(data);
+  const nomes = squads.map(s => s.name);
+  data.iniciativas = iniciativas(data).filter(i => !nomes.includes(i.sq) || !q.squads.some(s => s.name === i.sq));
+  q.squads = squads;
+  normalize(data);
+}
 
 // ---------- Kanban (Anexo A) — gate e mutações ----------
 export function podeMover(data, dragId, toKey) {
   const card = iniciativas(data).find(x => x.id === dragId);
   if (!card) return { ok: false, msg: '' };
-  if (toKey === card.col) return { ok: true };
-  const roleOf = k => { const c = colunasKanban(data).find(x => x.k === k); return c ? (c.role || 'fluxo') : 'fluxo'; };
-  const from = roleOf(card.col), to = roleOf(toKey);
+  const atual = colunaDe(data, card);
+  if (toKey === atual) return { ok: true };
+  // Execução e Concluído são derivados dos itens (§3) — não recebem arraste.
+  if (COLUNAS_DERIVADAS.includes(toKey)) return { ok: false, msg: 'Execução e Concluído vêm dos itens no roadmap — mova os itens, não o card' };
+  const entrada = chaveEntrada(data);
+  if (toKey === entrada && temItens(data, card.code)) return { ok: false, msg: 'A iniciativa tem itens no roadmap — remova os itens antes de devolvê-la à entrada' };
   const toCol = colunasKanban(data).find(x => x.k === toKey);
-  if (to === 'descartado') {
+  if (toKey === 'descartado') {
     if (!card.motivo) return { ok: false, msg: 'Falta o motivo do descarte — defina na engrenagem do card' };
     return { ok: true };
   }
-  if (from === 'entrada' && to !== 'entrada') {
+  if (atual === entrada) {
     const req = [['sq', 'Squad'], ['pm', 'PM'], ['tl', 'Tech Lead'], ['tipo', 'Tipo'], ['est', 'Estimativa'], ['perQ', 'Período']];
     const miss = req.filter(([f]) => !card[f]).map(([, l]) => l);
     if (miss.length) return { ok: false, msg: 'Faltam para ' + (toCol ? toCol.label : 'avançar') + ': ' + miss.join(' · ') };
+    const q = quarterAtivo(data);
+    if (!q.squads.some(s => s.name === card.sq && !s.archived)) return { ok: false, msg: 'A squad do card não existe neste quarter' };
   }
-  if (to === 'concluido' && (card.subsTotal || 0) > 0 && (card.subsDone || 0) < card.subsTotal) return { ok: false, msg: 'Progresso precisa estar em 100% para concluir' };
   return { ok: true };
 }
 // Move o card para `col`; se `targetId` for outro card, entra na posição dele; se null, vai ao fim.
+// Priorizar cria a entrada no backlog do roadmap — priorizar e entrar no backlog são o mesmo ato (§5.4).
 export function moverIniciativa(data, dragId, targetId, col) {
-  const d = data;
-  const from = d.demandas.findIndex(x => x.id === dragId);
+  const arr = data.iniciativas;
+  const from = arr.findIndex(x => x.id === dragId);
   if (from < 0) return;
-  const [card] = d.demandas.splice(from, 1);
+  const [card] = arr.splice(from, 1);
   card.col = col;
   if (targetId != null && targetId !== dragId) {
-    const to = d.demandas.findIndex(x => x.id === targetId);
-    d.demandas.splice(to < 0 ? d.demandas.length : to, 0, card);
+    const to = arr.findIndex(x => x.id === targetId);
+    arr.splice(to < 0 ? arr.length : to, 0, card);
   } else if (targetId == null) {
-    d.demandas.push(card);
+    arr.push(card);
   } else {
-    d.demandas.splice(from, 0, card);
+    arr.splice(from, 0, card);
+  }
+  if (col === 'priorizado' && !temItens(data, card.code)) {
+    const sq = quarterAtivo(data).squads.find(s => s.name === card.sq);
+    if (sq) { if (!sq.backlog) sq.backlog = []; sq.backlog.push({ n: card.t, ini: card.code, note: '' }); }
   }
 }
 export function novaIniciativa(data, m) {
-  const d = data;
-  const nid = d.demandas.reduce((mx, x) => Math.max(mx, x.id), 0) + 1;
-  d.demandas.push({ id: nid, t: m.t.trim(), d: m.d.trim(), sq: m.sq, col: d.kcols[0] ? d.kcols[0].k : 'backlog', link: m.link.trim(), prio: m.prio, tipo: m.tipo, est: m.est, perQ: m.perQ, perM: m.perM, pm: m.pm, tl: m.tl, origem: m.origem, motivo: m.motivo, createdAt: Date.now() });
-  normalize(d);
+  const ini = criaIniciativa(data, m.sq, m.t.trim(), '', chaveEntrada(data));
+  Object.assign(ini, { d: m.d.trim(), link: m.link.trim(), prio: m.prio, tipo: m.tipo, est: m.est, perQ: m.perQ, perM: m.perM, pm: m.pm, tl: m.tl, origem: m.origem, motivo: m.motivo });
+  return ini;
 }
+// Trocar a squad no card move os itens junto (§3). Devolve { semCategoria } para a interface avisar.
 export function atualizaIniciativa(data, id, m) {
-  const dm = data.demandas.find(x => x.id === id);
-  if (dm) Object.assign(dm, { t: m.t.trim(), d: m.d.trim(), sq: m.sq, link: m.link.trim(), prio: m.prio, tipo: m.tipo, est: m.est, perQ: m.perQ, perM: m.perM, pm: m.pm, tl: m.tl, origem: m.origem, motivo: m.motivo });
-  normalize(data);
+  const dm = iniciativas(data).find(x => x.id === id);
+  if (!dm) return { semCategoria: false };
+  const novoNome = m.sq, mudouSquad = novoNome && novoNome !== dm.sq;
+  Object.assign(dm, { t: m.t.trim(), d: m.d.trim(), link: m.link.trim(), prio: m.prio, tipo: m.tipo, est: m.est, perQ: m.perQ, perM: m.perM, pm: m.pm, tl: m.tl, origem: m.origem, motivo: m.motivo });
+  // Iniciativa de um item só: o nome do card e o do item são o mesmo (17/09/2026).
+  const ligados = itensGlobais(data, dm.code);
+  if (ligados.length === 1) ligados[0].it.n = dm.t;
+  if (!mudouSquad) { dm.sq = novoNome || dm.sq; return { semCategoria: false }; }
+  dm.sq = dm.sq;   // moveIniciativaParaSquad cuida da troca e do remanejo dos itens
+  return moveIniciativaParaSquad(data, dm.code, novoNome);
 }
-export function removeIniciativa(data, id) { data.demandas = data.demandas.filter(x => x.id !== id); }
+export function removeIniciativa(data, id) {
+  const dm = iniciativas(data).find(x => x.id === id);
+  if (dm) itensGlobais(data, dm.code).forEach(x => {
+    const arr = x.backlog ? x.sq.backlog : x.sq.items;
+    const i = arr.indexOf(x.it); if (i >= 0) arr.splice(i, 1);
+  });
+  data.iniciativas = iniciativas(data).filter(x => x.id !== id);
+}
 // A3 (09/09/2026): colunas fixas — não há criar, renomear nem remover coluna. `kcols` permanece no dado até a remodelagem (4b, A2).

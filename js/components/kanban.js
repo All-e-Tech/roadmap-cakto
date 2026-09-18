@@ -3,11 +3,12 @@
 // drag & drop com gate de passagem (podeMover), modal de criar/editar.
 // 3b Kanban (09/09/2026): "Kanban de iniciativas" e textos sem "demanda" (C5/C6); colunas fixas, sem criar/renomear/
 // remover (A3); anexo é link — sem arquivo embutido (A4); squads do quarter, não arquivadas (C8 revisada).
-// A chave `demandas` → `iniciativas` fica para a remodelagem (4b, A2).
+// 4b entrega 1 (17/09/2026): a chave passou a ser `iniciativas`; o progresso do card vem dos itens do
+// roadmap (média simples, SPEC §3) e as colunas Execução e Concluído são derivadas — não recebem arraste.
 import { html, Button, Icon } from '../ui.js';
 import { state, set, mut, toast, quarterAtual } from '../app.js';
 import {
-  KPRIO, squadsAtivas, iniciativas, colunasKanban,
+  KPRIO, squadsAtivas, iniciativas, colunasKanban, colunaDe, derivadosDaIniciativa, COLUNAS_DERIVADAS,
   podeMover, moverIniciativa, novaIniciativa, atualizaIniciativa, removeIniciativa,
 } from '../data.js';
 
@@ -56,9 +57,11 @@ export function KanbanView() {
   const enviar = () => {
     const m = state.modal; if (!m) return;
     if (!m.t.trim()) { toast('Dê um título à iniciativa'); return; }
-    if (m.editId != null) mut(d => atualizaIniciativa(d, m.editId, m)); else mut(d => novaIniciativa(d, m));
+    let r = null;
+    if (m.editId != null) mut(d => { r = atualizaIniciativa(d, m.editId, m); }); else mut(d => novaIniciativa(d, m));
     set({ modal: null });
-    toast(m.editId != null ? 'Iniciativa atualizada' : 'Iniciativa adicionada ao fim da fila de backlog');
+    if (r && r.semCategoria) { toast('Iniciativa movida — a squad de destino não tem a categoria; ficou sem categoria'); return; }
+    toast(m.editId != null ? 'Iniciativa atualizada' : 'Iniciativa adicionada ao fim da fila de entrada');
   };
 
   // ---- um card ----
@@ -66,14 +69,14 @@ export function KanbanView() {
     const key = kc.k, role = kc.role || 'fluxo';
     const sqc = dm.sq ? squadColor(dm.sq) : null;
     const pr = KPRIO[dm.prio];
-    const subsT = dm.subsTotal || 0, subsD = Math.min(dm.subsDone || 0, subsT);
+    const der = derivadosDaIniciativa(data, dm.code);
     const deps = Array.isArray(dm.dep) ? dm.dep : (dm.dep ? [dm.dep] : []);
     const isBacklog = role === 'entrada', isDone = role === 'concluido', isDisc = role === 'descartado';
     const terminal = isDone || isDisc;
     const blocked = deps.length > 0 && !terminal;
     const days = Math.max(0, Math.floor((Date.now() - (dm.createdAt || Date.now())) / 86400000));
     const late = !!dm.perM && MIDX[dm.perM] !== undefined && MIDX[dm.perM] < now.getMonth() && !isDone;
-    const showProg = subsT > 0 && !isBacklog && !isDisc;
+    const showProg = der.total > 0 && !isBacklog && !isDisc;
     const showDep = deps.length > 0 && !isDisc;
     const avatars = [dm.pm && { ini: iniciais(dm.pm), cls: 'k-av k-av-pm' }, dm.tl && { ini: iniciais(dm.tl), cls: 'k-av k-av-tl' }].filter(Boolean);
     const showAv = !isBacklog && avatars.length > 0;
@@ -106,7 +109,7 @@ export function KanbanView() {
         </div>
         ${!isBacklog && (showProg || showDep || showAv) && html`
           <div class="k-footer">
-            ${showProg && html`<span class="k-prog"><span class="k-prog-track"><i class=${'k-prog-fill' + (subsD >= subsT ? ' done' : '')} style=${`width:${subsT ? subsD / subsT * 100 : 0}%`}></i></span><span class="k-progtxt">${subsD + '/' + subsT}</span></span>`}
+            ${showProg && html`<span class="k-prog" title=${der.entregues + ' de ' + der.total + ' itens entregues · ' + der.pct + '%'}><span class="k-prog-track"><i class=${'k-prog-fill' + (der.entregues >= der.total ? ' done' : '')} style=${`width:${der.pct}%`}></i></span><span class="k-progtxt">${der.entregues + '/' + der.total}</span></span>`}
             <span class="k-footer-right">
               ${showDep && html`<span class="k-dep" title=${'Bloqueado por ' + deps.join(', ')}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>${deps.length === 1 ? deps[0] : String(deps.length)}</span>`}
               ${showAv && html`<span class="k-avatars">${avatars.map(a => html`<span class=${a.cls}>${a.ini}</span>`)}</span>`}
@@ -119,11 +122,12 @@ export function KanbanView() {
   // ---- uma coluna ----
   const renderCol = kc => {
     const key = kc.k;
-    const visiveis = cards.filter(dm => dm.col === key && kPass(dm));
+    const visiveis = cards.filter(dm => colunaDe(data, dm) === key && kPass(dm));
     const bad = kMark && kMark.key === key && !kMark.ok;
     return html`
       <div class=${'kcol' + (bad ? ' kcol-bad' : '')}
         onDragOver=${e => { if (dragId == null) return; e.preventDefault(); const ok = podeMover(state.data, dragId, key).ok; const m = state.kMark; if (!m || m.key !== key || m.ok !== ok) set({ kMark: { key, ok } }); }}
+        title=${COLUNAS_DERIVADAS.includes(key) ? 'Coluna calculada a partir dos itens no roadmap' : ''}
         onDrop=${e => { e.preventDefault(); dropOn(null, key); }}>
         <div class="kcol-head">
           <span class="kcol-label">${kc.label}</span>

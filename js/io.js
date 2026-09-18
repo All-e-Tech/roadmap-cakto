@@ -50,7 +50,13 @@ export function squadsDaPlanilha(wb) {
       started = true;
       items.push({ n: nm, s: col.ini >= 0 ? xlDate(row[col.ini]) : '', e: col.fim >= 0 ? xlDate(row[col.fim]) : '', st: mapStatus(col.st >= 0 ? row[col.st] : ''), pv: mapPrev(col.pv >= 0 ? row[col.pv] : ''), p: mapPct(col.pct >= 0 ? row[col.pct] : ''), cat: col.cat >= 0 ? String(row[col.cat] || '').trim() : '', sub: '' });
     }
-    if (items.length) { const sq = { name, color: PALETTE[idx % PALETTE.length], groupByCat: items.some(i => i.cat), categories: [], items, backlog: [] }; normalizeSquad(sq); newSquads.push(sq); }
+    // A coluna Pilar vira a categoria da iniciativa criada para cada linha (SPEC §8, 17/09/2026);
+    // as categorias da squad saem daqui, porque `normalize()` não as reconstrói a partir dos itens.
+    if (items.length) {
+      const cats = [...new Set(items.map(i => i.cat).filter(Boolean))].map(name => ({ name }));
+      const sq = { name, color: PALETTE[idx % PALETTE.length], groupByCat: cats.length > 0, categories: cats, items, backlog: [] };
+      normalizeSquad(sq); newSquads.push(sq);
+    }
   });
   return newSquads;
 }

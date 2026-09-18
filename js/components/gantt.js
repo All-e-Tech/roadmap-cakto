@@ -5,8 +5,8 @@
 import { html } from '../ui.js';
 import { state, set, MOSTRAR_ROTULO_BARRA, DESTACAR_HOJE, quarterAtual } from '../app.js';
 import {
-  STATUS, PREV, SEM_CATEGORIA, squadsDoQuarter, itensDaSquad, categoriasDaSquad, normalizeSquad,
-  sprintsOf, timelineOf, monthBands, addDays, passaFiltro, geometriaBarra, kpisDeItens,
+  STATUS, PREV, squadsDoQuarter, itensDaSquad, normalizeSquad,
+  sprintsOf, timelineOf, monthBands, addDays, passaFiltro, geometriaBarra, kpisDeItens, linhasRoadmap,
 } from '../data.js';
 
 const FILTROS = [['all', 'Todas as squads'], ['risco', 'Em risco / atrasado'], ['dev', 'Em desenvolvimento']];
@@ -23,7 +23,8 @@ export function GanttView() {
   squadsDoQuarter(q).forEach(normalizeSquad);
   const counts = kpisDeItens(squadsDoQuarter(q).filter(s => !s.archived).flatMap(sqd => itensDaSquad(sqd).filter(it => passaFiltro(it, filter))));
 
-  // ---- varredura: swimlanes, layers, sub-layers e linhas (o `glanes` do protótipo) ----
+  // ---- varredura: swimlanes, camadas de categoria, iniciativas e itens ----
+  // As linhas vêm de linhasRoadmap(), a mesma fonte da tabela (SPEC §5.1) — as duas telas nunca discordam.
   const lanes = [];
   const row = (it, indent) => ({ kind: 'row', label: it.n || 'sem nome', indent, p: it.p, geo: geometriaBarra(it, tl, q, MOSTRAR_ROTULO_BARRA) });
   squadsDoQuarter(q).forEach((sqd, si) => {
@@ -33,30 +34,29 @@ export function GanttView() {
     const sqKey = 'sq' + si, sqCol = collapsed[sqKey];
     lanes.push({ kind: 'squad', name: sqd.name, color: sqd.color, meta: items.length + ' itens' + (sqd.groupByCat ? ' · categorias' : ''), arrow: sqCol ? '▸' : '▾', onClick: toggle(sqKey) });
     if (sqCol) return;
-    if (sqd.groupByCat) {
-      categoriasDaSquad(sqd).forEach((c, ci) => {
-        const inCat = items.filter(i => (i.cat || '') === c.name);
-        const ck = sqKey + 'c' + ci, cCol = collapsed[ck];
-        lanes.push({ kind: 'layer', name: c.name, count: inCat.length, arrow: cCol ? '▸' : '▾', onClick: toggle(ck) });
-        if (cCol) return;
-        c.subs.forEach(s => {
-          const inSub = inCat.filter(i => (i.sub || '') === s);
-          if (inSub.length) { lanes.push({ kind: 'sublayer', name: s, count: inSub.length }); inSub.forEach(i => lanes.push(row(i, 56))); }
-        });
-        const loose = inCat.filter(i => !i.sub || !c.subs.includes(i.sub));
-        loose.forEach(i => lanes.push(row(i, 40)));
-        if (!inCat.length) lanes.push({ kind: 'empty', label: '— sem itens —', indent: 40 });
-      });
-      const unc = items.filter(i => !i.cat);   // B4: layer virtual "Sem categoria", colapsável como as outras
-      if (unc.length && !categoriasDaSquad(sqd).length) unc.forEach(i => lanes.push(row(i, 24)));   // squad sem categorias: itens direto (§6.1)
-      else if (unc.length) {
-        const uk = sqKey + 'cu', uCol = collapsed[uk];
-        lanes.push({ kind: 'layer', name: SEM_CATEGORIA, count: unc.length, arrow: uCol ? '▸' : '▾', onClick: toggle(uk), virtual: true });
-        if (!uCol) unc.forEach(i => lanes.push(row(i, 40)));
+    let catKey = null, catCol = false, iniKey = null, iniCol = false, ci = 0;
+    linhasRoadmap(state.data, sqd, it => passaFiltro(it, filter)).forEach(l => {
+      if (l.tipo === 'categoria') {
+        catKey = sqKey + 'c' + (l.virtual ? 'u' : ci++); catCol = !!collapsed[catKey]; iniKey = null; iniCol = false;
+        lanes.push({ kind: 'layer', name: l.nome, count: l.total, arrow: catCol ? '▸' : '▾', onClick: toggle(catKey), virtual: !!l.virtual });
+        return;
       }
-    } else {
-      items.forEach(i => lanes.push(row(i, 24)));
-    }
+      if (catCol) return;
+      if (l.tipo === 'vazio') { lanes.push({ kind: 'empty', label: '— sem itens —', indent: 40 }); return; }
+      if (l.tipo === 'iniciativa') {
+        // Barra envelope: do menor início ao maior fim dos itens (SPEC §6.1).
+        iniKey = sqKey + 'i' + l.code; iniCol = !!collapsed[iniKey];
+        const geo = geometriaBarra({ s: l.s, e: l.e, st: 'backlog', pv: 'prazo', p: l.pct, n: l.titulo }, tl, q, false);
+        lanes.push({
+          kind: 'sublayer', name: l.titulo || l.code, code: l.code, count: l.total,
+          meta: l.entregues + '/' + l.total, arrow: iniCol ? '▸' : '▾', onClick: toggle(iniKey),
+          envelope: geo.hasBar ? { left: geo.left, width: geo.width, pct: l.pct, title: (l.titulo || l.code) + ' · ' + l.entregues + ' de ' + l.total + ' entregues · ' + l.pct + '%' } : null,
+        });
+        return;
+      }
+      if (l.sozinho) { lanes.push(row(l.it, sqd.groupByCat && catKey ? 40 : 24)); return; }
+      if (!iniCol) lanes.push(row(l.it, 56));
+    });
   });
   const pctDone = counts.total ? Math.round(counts.done / counts.total * 100) : 0;
 
@@ -82,7 +82,19 @@ export function GanttView() {
   const renderLane = g => {
     if (g.kind === 'squad') return html`<div class="g-squad" onClick=${g.onClick}><span class="g-squad-dot" style=${`background:${g.color}`}></span>${g.name}<span class="g-squad-meta">${g.meta} ${g.arrow}</span></div>`;
     if (g.kind === 'layer') return html`<div class=${'g-layer' + (g.virtual ? ' g-layer-virtual' : '')} onClick=${g.onClick}><span>${g.arrow}</span>${g.name}<span class="g-count">${g.count}</span></div>`;
-    if (g.kind === 'sublayer') return html`<div class="g-sublayer"><span class="g-sublayer-arrow">▾</span>${g.name}<span class="g-count">${g.count}</span></div>`;
+    // Iniciativa: rótulo à esquerda e barra envelope na trilha, mais clara que a dos itens.
+    if (g.kind === 'sublayer') return html`
+      <div class="g-row g-row-ini">
+        <div class="g-sublayer" onClick=${g.onClick}><span class="g-sublayer-arrow">${g.arrow}</span>${g.name}<span class="g-count">${g.meta}</span></div>
+        <div class="g-track">
+          ${sp.map(() => html`<span class="g-col"></span>`)}
+          <div class="g-today" style=${`left:${todayPct}%;display:${DESTACAR_HOJE ? 'block' : 'none'}`}></div>
+          ${g.envelope && html`
+            <div class="g-env" title=${g.envelope.title} style=${`left:${g.envelope.left.toFixed(3)}%;width:${g.envelope.width.toFixed(3)}%`}>
+              <span class="g-env-fill" style=${`width:${g.envelope.pct}%`}></span>
+            </div>`}
+        </div>
+      </div>`;
     return renderRow(g);
   };
 

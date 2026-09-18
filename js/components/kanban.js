@@ -220,7 +220,7 @@ export function KanbanView() {
             <div class="m-title">${modalNota.acao === 'arquivar' ? 'Arquivar iniciativa' : 'Descartar iniciativa'}</div>
             <div class="card-sub card-sub-18">
               ${modalNota.acao === 'arquivar'
-                ? '“' + (modalNota.titulo || modalNota.code) + '” sai do roadmap e do Gantt, e os itens guardam o status em que pararam. Você a retoma depois em Squads & sprints.'
+                ? '“' + (modalNota.titulo || modalNota.code) + '” sai do roadmap e do Gantt. Ao retomar em Squads & sprints, os itens voltam para o backlog da squad, com o estado em que pararam anotado na observação.'
                 : '“' + (modalNota.titulo || modalNota.code) + '” e os itens dela saem do roadmap e do Gantt. O card fica na coluna Descartado.'}
             </div>
             <div class="m-field"><label class="m-label">Motivo (opcional)</label>

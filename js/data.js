@@ -452,12 +452,23 @@ export function descartaIniciativa(data, code, nota) {
   ini.col = 'descartado';
   return { ok: true, itens: n };
 }
-// Retomar: os itens voltam no status em que pararam, onde estavam. A coluna volta a ser derivada (§3).
+// Retomar devolve a iniciativa ao Backlog Priorizado (§7, 18/09/2026): quem foi despriorizado volta para
+// ser replanejado, não para o Gantt com as datas antigas. Os itens saem do roadmap e vão para o backlog da
+// squad; o estado em que pararam vira observação, para o PM não perder o contexto ao repriorizar.
 export function retomaIniciativa(data, code, squadNome) {
   const ini = iniciativaPorCode(data, code);
   if (!ini) return { semCategoria: false };
-  marcaCirculacao(data, code, '', '');
-  ini.col = 'priorizado';
+  itensGlobais(data, code).forEach(x => {
+    x.it.arq = ''; x.it.nota = '';
+    if (x.backlog) return;
+    const i = x.sq.items.indexOf(x.it);
+    if (i >= 0) x.sq.items.splice(i, 1);
+    const st = STATUS[x.it.st];
+    const andava = x.it.st !== 'backlog' || x.it.p > 0;
+    const resumo = andava && st ? 'estava em ' + st.label + (x.it.p ? ' · ' + x.it.p + '%' : '') : '';
+    x.sq.backlog.push({ n: x.it.n, ini: code, note: resumo, arq: '', nota: '' });
+  });
+  ini.arq = ''; ini.nota = ''; ini.col = 'priorizado';
   return squadNome && squadNome !== ini.sq ? moveIniciativaParaSquad(data, code, squadNome) : { semCategoria: false };
 }
 

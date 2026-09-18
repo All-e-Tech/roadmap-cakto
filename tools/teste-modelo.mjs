@@ -176,24 +176,27 @@ eq(D.derivadosDaIniciativa(da, codeA).total, 0, 'derivados ignoram arquivados');
 eq(D.foraDeCirculacao(da).length, 1, 'aparece na lista de fora de circulação');
 eq(D.foraDeCirculacao(da)[0].ini.nota, 'sem capacidade', 'a nota da ação fica gravada');
 
-const r2 = D.retomaIniciativa(da, codeA);
-eq(itemA.arq, '', 'retomar tira a marca do item');
-eq([itemA.st, itemA.p], ['dev', 20], 'retomar devolve o status em que parou');
-eq(D.colunaDe(da, D.iniciativaPorCode(da, codeA)), 'execucao', 'com o item de volta no roadmap, a coluna volta a ser derivada');
+D.retomaIniciativa(da, codeA);
+ok(!payA.items.includes(itemA), 'retomar tira o item do roadmap');
+const noBacklog = payA.backlog.find(b => b.ini === codeA);
+ok(!!noBacklog, 'retomar devolve o item ao backlog da squad');
+eq(noBacklog.note, 'estava em Em desenvolvimento · 20%', 'o estado em que parou vira observação');
+eq(D.colunaDe(da, D.iniciativaPorCode(da, codeA)), 'priorizado', 'card volta ao Backlog Priorizado');
 eq(D.foraDeCirculacao(da).length, 0, 'sai da lista depois de retomada');
 
 const semMotivo = D.descartaIniciativa(da, codeA, 'nada');
 eq(semMotivo.ok, false, 'descartar sem motivo é recusado');
 D.iniciativaPorCode(da, codeA).motivo = 'fora de estratégia';
 eq(D.descartaIniciativa(da, codeA, 'stakeholder desistiu').ok, true, 'descartar com motivo é aceito');
-eq(itemA.arq, 'descartado', 'itens marcados como descartados');
+eq(payA.backlog.find(b => b.ini === codeA).arq, 'descartado', 'itens marcados como descartados');
 eq(D.colunaDe(da, D.iniciativaPorCode(da, codeA)), 'descartado', 'card vai para a coluna Descartado');
 eq(D.kpisDeItens(payA.items.filter(it => !it.arq)).total, payA.items.filter(it => !it.arq).length, 'KPIs contam só itens em circulação');
 
 const codeOutraSquad = payA.items.find(it => it.n === 'FASE 0').ini;
 D.arquivaIniciativa(da, codeOutraSquad, '');
 D.retomaIniciativa(da, codeOutraSquad, 'Platform');
-eq(da.quarters.q3.squads[1].items.some(it => it.ini === codeOutraSquad), true, 'retomar em outra squad move os itens');
+eq(da.quarters.q3.squads[1].backlog.some(b => b.ini === codeOutraSquad), true, 'retomar em outra squad manda os itens para o backlog dela');
+eq(da.quarters.q3.squads[0].items.some(it => it.ini === codeOutraSquad), false, 'e tira da squad de origem');
 
 bloco('Seed');
 const s = D.seedNovo();

@@ -198,6 +198,31 @@ D.retomaIniciativa(da, codeOutraSquad, 'Platform');
 eq(da.quarters.q3.squads[1].backlog.some(b => b.ini === codeOutraSquad), true, 'retomar em outra squad manda os itens para o backlog dela');
 eq(da.quarters.q3.squads[0].items.some(it => it.ini === codeOutraSquad), false, 'e tira da squad de origem');
 
+bloco('Colunas renomeadas e padrões da squad (entrega 3)');
+const dc = D.normalize(boardAntigo());
+eq(dc.kcols.map(c => c.k), ['iniciativas', 'priorizado', 'execucao', 'concluido', 'descartado'], 'chaves das colunas');
+eq(dc.kcols.map(c => c.label), ['Iniciativas', 'Backlog Priorizado', 'Execução', 'Concluído', 'Descartado'], 'rótulos das colunas');
+eq(D.chaveEntrada(dc), 'iniciativas', 'a coluna de entrada é encontrada pelo papel');
+eq(dc.iniciativas.find(i => i.t === 'Card solto no backlog').col, 'iniciativas', 'card que estava em `backlog` foi remapeado');
+ok(dc.iniciativas.every(i => dc.kcols.some(c => c.k === i.col)), 'nenhum card aponta para coluna inexistente');
+// chave antiga do protótipo continua coberta
+const dAntigo = D.normalize({ ...boardAntigo(), kcols: [{ k: 'backlog', label: 'Backlog' }, { k: 'discovery', label: 'Discovery' }, { k: 'andamento', label: 'Em andamento' }] });
+eq(dAntigo.kcols.map(c => c.k), ['iniciativas', 'priorizado', 'execucao', 'concluido', 'descartado'], 'board com colunas do protótipo é normalizado para as cinco fixas');
+
+const sqPay = dc.quarters.q3.squads[0];
+eq([sqPay.pm, sqPay.tl], ['', ''], 'squad nasce com PM e TL padrão vazios');
+sqPay.pm = 'Alessandro'; sqPay.tl = 'Ulisses';
+const codeNovo = D.novaIniciativaNoRoadmap(dc, sqPay, '');
+const iniNova = D.iniciativaPorCode(dc, codeNovo);
+eq([iniNova.pm, iniNova.tl], ['Alessandro', 'Ulisses'], 'iniciativa criada pelo roadmap herda o PM e o TL da squad');
+// O gate de saída só vale para quem está na coluna de entrada (A.2).
+const iniEntrada = D.criaIniciativa(dc, 'Payment', 'Card de entrada', '', 'iniciativas');
+eq([iniEntrada.pm, iniEntrada.tl], ['Alessandro', 'Ulisses'], 'card do Kanban também herda os padrões');
+eq(D.podeMover(dc, iniEntrada.id, 'priorizado').ok, false, 'sem estimativa e período, o gate ainda recusa');
+ok(!D.podeMover(dc, iniEntrada.id, 'priorizado').msg.includes('PM'), 'e a recusa não cobra PM nem Tech Lead');
+Object.assign(iniEntrada, { est: 'M', perQ: 'Q4' });
+eq(D.podeMover(dc, iniEntrada.id, 'priorizado').ok, true, 'com os padrões preenchidos, o gate passa sem digitar PM nem TL');
+
 bloco('Seed');
 const s = D.seedNovo();
 eq(D.itensDoQuarter(s.quarters[s.activeQuarter]), 0, 'quadro nasce vazio');

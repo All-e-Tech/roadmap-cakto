@@ -66,8 +66,10 @@ Toda ação relevante responde com uma mensagem curta no rodapé, centralizada, 
 | Enviar ao backlog · promover ao roadmap | Movido para o backlog · Promovido ao roadmap — defina as datas |
 | + Novo quarter · trocar quarter | Quarter criado — ajuste rótulo e datas em Squads & sprints · Quarter: {rótulo} |
 | Excluir quarter (travas, §7) | Quarter com itens no roadmap não pode ser excluído · Ative outro quarter antes de excluir este · Quarter excluído |
-| Kanban — criar / editar / remover | Dê um título à iniciativa · Iniciativa adicionada ao fim da fila de backlog · Iniciativa atualizada · Iniciativa removida |
-| Kanban — passagem recusada | Faltam para {coluna}: {campos} · Falta o motivo do descarte — defina na engrenagem do card · Progresso precisa estar em 100% para concluir |
+| Kanban — criar / editar / remover | Dê um título à iniciativa · Iniciativa adicionada à fila de Iniciativas · Iniciativa atualizada · Iniciativa removida |
+| Kanban — passagem recusada | Faltam para {coluna}: {campos} · Falta o motivo do descarte — defina na engrenagem do card · A squad do card não existe neste quarter |
+| Arrastar card para coluna derivada (18/09/2026) | Execução e Concluído vêm dos itens no roadmap — mova os itens, não o card |
+| Extrair item de iniciativa que já tem um item só | A iniciativa já tem um item só |
 | Editar em quarter que não é o ativo (C7) | Quarter em visualização — somente leitura |
 | Mover iniciativa para squad sem a categoria dela | Iniciativa movida — {squad} não tem a categoria {nome}; ficou sem categoria |
 | Arrastar item avulso para outra categoria | A categoria é da iniciativa — arraste a iniciativa |

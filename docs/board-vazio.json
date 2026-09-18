@@ -1,0 +1,105 @@
+{
+  "activeQuarter": "q3-2026",
+  "order": [
+    "q3-2026"
+  ],
+  "iniciativas": [],
+  "quarters": {
+    "q3-2026": {
+      "label": "Q3 2026",
+      "start": "2026-07-07",
+      "days": 14,
+      "count": 6,
+      "archived": false,
+      "squads": [
+        {
+          "name": "Payment",
+          "prefix": "PAY",
+          "archived": false,
+          "color": "#36b37e",
+          "groupByCat": true,
+          "pm": "",
+          "tl": "",
+          "categories": [],
+          "items": [],
+          "backlog": []
+        },
+        {
+          "name": "Platform",
+          "prefix": "PLA",
+          "archived": false,
+          "color": "#0f7864",
+          "groupByCat": true,
+          "pm": "",
+          "tl": "",
+          "categories": [],
+          "items": [],
+          "backlog": []
+        },
+        {
+          "name": "Cakto Members",
+          "prefix": "MEM",
+          "archived": false,
+          "color": "#fdd465",
+          "groupByCat": true,
+          "pm": "",
+          "tl": "",
+          "categories": [],
+          "items": [],
+          "backlog": []
+        },
+        {
+          "name": "Bank & App",
+          "prefix": "BNK",
+          "archived": false,
+          "color": "#f4cd97",
+          "groupByCat": true,
+          "pm": "",
+          "tl": "",
+          "categories": [],
+          "items": [],
+          "backlog": []
+        },
+        {
+          "name": "MRR & Fiscal",
+          "prefix": "MRR",
+          "archived": false,
+          "color": "#65a76b",
+          "groupByCat": true,
+          "pm": "",
+          "tl": "",
+          "categories": [],
+          "items": [],
+          "backlog": []
+        }
+      ]
+    }
+  },
+  "kcols": [
+    {
+      "k": "iniciativas",
+      "label": "Iniciativas",
+      "role": "entrada"
+    },
+    {
+      "k": "priorizado",
+      "label": "Backlog Priorizado",
+      "role": "fluxo"
+    },
+    {
+      "k": "execucao",
+      "label": "Execução",
+      "role": "execucao"
+    },
+    {
+      "k": "concluido",
+      "label": "Concluído",
+      "role": "concluido"
+    },
+    {
+      "k": "descartado",
+      "label": "Descartado",
+      "role": "descartado"
+    }
+  ]
+}

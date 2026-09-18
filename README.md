@@ -76,6 +76,10 @@ Cada `git push` na `main` gera um deploy novo, sem parar o que está no ar. Cód
 - **Supabase Free** pausa o banco após 7 dias sem acesso (reativa no painel); o Pro (US$ 25/mês) não pausa.
 - Nenhum dos dois cobra por pessoa que usa o roadmap.
 
+## Zerar o board
+
+`docs/board-vazio.json` é o quadro vazio: um quarter, as cinco squads, nenhum item e nenhuma iniciativa. Para substituir o board que está no ar, abra o roadmap, clique em **Carregar** e escolha esse arquivo. A confirmação diz o que será perdido. Use **Salvar** antes se quiser guardar uma cópia do que existe hoje.
+
 ## Como a sincronização funciona (SPEC §9)
 
 - A função `GET /api/board` devolve `{ data, version, updatedAt }`; `PUT { data, baseVersion }` grava só se `baseVersion` ainda for a versão atual (senão devolve `409 { current }`).

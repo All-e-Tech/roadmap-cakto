@@ -47,15 +47,24 @@ export const KPRIO = {
   P2: { n: 2, c: 'var(--proto-k-sage)' },
   P3: { n: 1, c: 'var(--proto-k-text-3)' },
 };
+// Colunas fixas (A3), renomeadas em 18/09/2026: a primeira deixou de se chamar "Backlog" porque havia dois
+// backlogs de mesmo nome — o do Kanban e o do roadmap. A segunda passou a dizer o que é: o backlog do
+// roadmap visto do outro lado. Nenhuma chave foi reaproveitada para outra coluna.
 export const KCOLS_DEFAULT = [
-  { k: 'backlog',    label: 'Backlog',    role: 'entrada' },
-  { k: 'priorizado', label: 'Priorizado', role: 'fluxo' },
-  { k: 'execucao',   label: 'Execução',   role: 'execucao' },
-  { k: 'concluido',  label: 'Concluído',  role: 'concluido' },
-  { k: 'descartado', label: 'Descartado', role: 'descartado' },
+  { k: 'iniciativas', label: 'Iniciativas',        role: 'entrada' },
+  { k: 'priorizado',  label: 'Backlog Priorizado', role: 'fluxo' },
+  { k: 'execucao',    label: 'Execução',           role: 'execucao' },
+  { k: 'concluido',   label: 'Concluído',          role: 'concluido' },
+  { k: 'descartado',  label: 'Descartado',         role: 'descartado' },
 ];
-// Coluna de entrada do Kanban: a primeira, seja qual for a chave (a renomeação é a 3ª entrega do 4b).
-export function chaveEntrada(data) { const c = colunasKanban(data).find(x => (x.role || '') === 'entrada'); return c ? c.k : 'backlog'; }
+// Chaves já vistas em boards antigos, mapeadas pelo papel da coluna.
+const ROLE_POR_CHAVE = {
+  backlog: 'entrada', iniciativas: 'entrada', discovery: 'fluxo', priorizado: 'fluxo',
+  andamento: 'execucao', execucao: 'execucao', concluido: 'concluido', descartado: 'descartado',
+};
+export function chavePorRole(role) { const c = KCOLS_DEFAULT.find(x => x.role === role); return c ? c.k : 'iniciativas'; }
+// Coluna de entrada do Kanban, sempre pelo papel — nunca pelo nome, que já mudou uma vez.
+export function chaveEntrada(data) { const c = colunasKanban(data).find(x => (x.role || '') === 'entrada'); return c ? c.k : chavePorRole('entrada'); }
 // Colunas calculadas a partir dos itens (SPEC §3, Derivados): não recebem arraste.
 export const COLUNAS_DERIVADAS = ['execucao', 'concluido'];
 
@@ -71,7 +80,7 @@ const SQUADS_INICIAIS = [
 ];
 export const SEED = { activeQuarter: 'q3-2026', order: ['q3-2026'], iniciativas: [], quarters: {
   'q3-2026': { label: 'Q3 2026', start: '2026-07-07', days: 14, count: 6, archived: false,
-    squads: SQUADS_INICIAIS.map(([name, prefix, color]) => ({ name, prefix, archived: false, color, groupByCat: true, categories: [], items: [], backlog: [] })) },
+    squads: SQUADS_INICIAIS.map(([name, prefix, color]) => ({ name, prefix, archived: false, color, groupByCat: true, pm: '', tl: '', categories: [], items: [], backlog: [] })) },
 } };
 
 // ---------- Datas e utilitários ----------
@@ -85,6 +94,7 @@ export function avg(arr) { return arr.length ? Math.round(arr.reduce((a, b) => a
 export function normalizeSquad(sq) {
   if (!sq.categories) sq.categories = []; if (!sq.backlog) sq.backlog = []; if (!sq.items) sq.items = [];
   if (sq.groupByCat === undefined) sq.groupByCat = true;
+  if (sq.pm === undefined) sq.pm = ''; if (sq.tl === undefined) sq.tl = '';   // padrões da squad (18/09/2026, §7)
   // `subs` não é apagado aqui: a migração abaixo precisa lê-lo para converter subcategoria em categoria.
 }
 
@@ -128,12 +138,11 @@ export function normalize(d) {
   // A2 (17/09/2026): a fila do Kanban passa a se chamar `iniciativas`; `demandas` é a chave antiga.
   if (!d.iniciativas) d.iniciativas = d.demandas || [];
   delete d.demandas;
-  if (!d.kcols || !d.kcols.length) d.kcols = JSON.parse(JSON.stringify(KCOLS_DEFAULT));
-  const ROLE_BY_KEY = { backlog: 'entrada', discovery: 'fluxo', priorizado: 'fluxo', andamento: 'execucao', execucao: 'execucao', concluido: 'concluido', descartado: 'descartado' };
-  d.kcols.forEach(c => { if (!c.role) c.role = ROLE_BY_KEY[c.k] || 'fluxo'; });
-  const KREN = { 'Discovery': 'Priorizado', 'Em andamento': 'Execução' };
-  d.kcols.forEach(c => { if (KREN[c.label]) c.label = KREN[c.label]; });
-  if (!d.kcols.some(c => c.role === 'descartado')) d.kcols.push({ k: 'descartado', label: 'Descartado', role: 'descartado' });
+  // Colunas fixas (A3): chave, rótulo e ordem vêm sempre de KCOLS_DEFAULT — o board não decide isso.
+  // Os cards são remapeados pelo papel da coluna, o que cobre as chaves antigas (`backlog`, `discovery`,
+  // `andamento`) e a renomeação de 18/09/2026 (`backlog` → `iniciativas`).
+  d.kcols = JSON.parse(JSON.stringify(KCOLS_DEFAULT));
+  d.iniciativas.forEach(x => { x.col = chavePorRole(ROLE_POR_CHAVE[x.col] || 'entrada'); });
   // C11: duração da sprint só 7/14/21/28. C8: cada squad tem `prefix` (único no quarter) e `archived`.
   Object.values(d.quarters).forEach(q => {
     if (!DURACOES_SPRINT.includes(Number(q.days))) q.days = 14;
@@ -337,6 +346,10 @@ export function criaIniciativa(data, sqName, titulo, cat, col) {
     col: col || 'priorizado', cat: cat || '', prio: '', tipo: 'Delivery', est: '', perQ: '', perM: '',
     pm: '', tl: '', origem: '', motivo: '', nota: '', arq: '', link: '', dep: [], createdAt: Date.now(),
   };
+  // PM e Tech Lead padrão da squad (§7, 18/09/2026): o card nasce preenchido, o que resolve sozinho
+  // a obrigatoriedade desses campos na passagem de coluna (A.2).
+  const sq = quarterAtivo(data).squads.find(x => x.name === sqName);
+  if (sq) { ini.pm = sq.pm || ''; ini.tl = sq.tl || ''; }
   data.iniciativas.push(ini);
   return ini;
 }
@@ -544,7 +557,7 @@ export function novoQuarter(data) {
   const t = new Date();
   const start = t.getFullYear() + '-' + dd(t.getMonth() + 1) + '-' + dd(t.getDate());
   let n = 1, label = 'Novo quarter'; while (Object.values(data.quarters).some(x => x.label === label)) label = 'Novo quarter ' + (++n);
-  data.quarters[id] = { label, start, days: 14, count: 6, archived: false, squads: cur.squads.map(s => ({ name: s.name, color: s.color, groupByCat: s.groupByCat, categories: JSON.parse(JSON.stringify(s.categories || [])), items: [], backlog: [] })) };
+  data.quarters[id] = { label, start, days: 14, count: 6, archived: false, squads: cur.squads.map(s => ({ name: s.name, prefix: s.prefix, archived: !!s.archived, color: s.color, groupByCat: s.groupByCat, pm: s.pm || '', tl: s.tl || '', categories: JSON.parse(JSON.stringify(s.categories || [])), items: [], backlog: [] })) };
   data.order.unshift(id);
   data.activeQuarter = id;
   return id;
@@ -552,7 +565,7 @@ export function novoQuarter(data) {
 // Devolve o índice da squad criada.
 export function novaSquad(data) {
   const q = quarterAtivo(data); let n = q.squads.length + 1, name = 'Nova squad'; while (q.squads.some(s => s.name === name)) name = 'Nova squad ' + (++n);
-  q.squads.push({ name, prefix: prefixoLivre(q, prefixoDeNome(name)), archived: false, color: PALETTE[q.squads.length % PALETTE.length], groupByCat: true, categories: [], items: [], backlog: [] });
+  q.squads.push({ name, prefix: prefixoLivre(q, prefixoDeNome(name)), archived: false, color: PALETTE[q.squads.length % PALETTE.length], groupByCat: true, pm: '', tl: '', categories: [], items: [], backlog: [] });
   return q.squads.length - 1;
 }
 export function removeSquad(data, i) { quarterAtivo(data).squads.splice(i, 1); }
@@ -612,7 +625,9 @@ export function moverIniciativa(data, dragId, targetId, col) {
 }
 export function novaIniciativa(data, m) {
   const ini = criaIniciativa(data, m.sq, m.t.trim(), '', chaveEntrada(data));
-  Object.assign(ini, { d: m.d.trim(), link: m.link.trim(), prio: m.prio, tipo: m.tipo, est: m.est, perQ: m.perQ, perM: m.perM, pm: m.pm, tl: m.tl, origem: m.origem, motivo: m.motivo });
+  Object.assign(ini, { d: m.d.trim(), link: m.link.trim(), prio: m.prio, tipo: m.tipo, est: m.est, perQ: m.perQ, perM: m.perM, origem: m.origem, motivo: m.motivo });
+  if (m.pm) ini.pm = m.pm;   // vazio no modal mantém o padrão da squad
+  if (m.tl) ini.tl = m.tl;
   return ini;
 }
 // Trocar a squad no card move os itens junto (§3). Devolve { semCategoria } para a interface avisar.

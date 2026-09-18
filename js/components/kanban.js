@@ -5,6 +5,8 @@
 // remover (A3); anexo é link — sem arquivo embutido (A4); squads do quarter, não arquivadas (C8 revisada).
 // 4b entrega 1 (17/09/2026): a chave passou a ser `iniciativas`; o progresso do card vem dos itens do
 // roadmap (média simples, SPEC §3) e as colunas Execução e Concluído são derivadas — não recebem arraste.
+// 4b entregas 2 e 3 (18/09/2026): arrastar para a entrada arquiva e para Descartado descarta, com nota;
+// as duas primeiras colunas passaram a se chamar Iniciativas e Backlog Priorizado.
 import { html, Button, Icon } from '../ui.js';
 import { state, set, mut, toast, quarterAtual } from '../app.js';
 import {
@@ -84,7 +86,7 @@ export function KanbanView() {
     if (m.editId != null) mut(d => { r = atualizaIniciativa(d, m.editId, m); }); else mut(d => novaIniciativa(d, m));
     set({ modal: null });
     if (r && r.semCategoria) { toast('Iniciativa movida — a squad de destino não tem a categoria; ficou sem categoria'); return; }
-    toast(m.editId != null ? 'Iniciativa atualizada' : 'Iniciativa adicionada ao fim da fila de entrada');
+    toast(m.editId != null ? 'Iniciativa atualizada' : 'Iniciativa adicionada à fila de Iniciativas');
   };
 
   // ---- um card ----
@@ -168,7 +170,7 @@ export function KanbanView() {
       <div class="g-head">
         <div>
           <h1 class="g-title">Kanban de iniciativas</h1>
-          <p class="page-sub">Fila central priorizada — arraste um card para reordenar a prioridade ou mover de etapa. Novas iniciativas entram no fim da fila de backlog.</p>
+          <p class="page-sub">Fila central priorizada — arraste um card para reordenar a prioridade ou mover de etapa. Novas iniciativas entram no fim da coluna Iniciativas.</p>
         </div>
         <${Button} variant="primary" size="medium" onClick=${abrirNovo}>Adicionar</${Button}>
       </div>

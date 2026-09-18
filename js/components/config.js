@@ -83,12 +83,14 @@ export function ConfigView() {
 
       <section class="card">
         <div class="card-title">Squads</div>
-        <div class="card-sub">Nome, cor, prefixo do ID das iniciativas e se a squad usa categorias (Pilar). Arquivar ou excluir exige remanejar antes os itens e as iniciativas; excluir só sem histórico em outros quarters.</div>
+        <div class="card-sub">Nome, cor, prefixo do ID das iniciativas, PM e Tech Lead padrão (copiados para toda iniciativa nova da squad) e se a squad usa categorias (Pilar). Arquivar ou excluir exige remanejar antes os itens e as iniciativas; excluir só sem histórico em outros quarters.</div>
         ${squadsDoQuarter(q).map((s, i) => html`
           <div class=${'sqrow' + (s.archived ? ' sqrow-arquivada' : '')}>
             <input class="color-input" type="color" value=${s.color} onChange=${e => mut(d => setCampoSquad(squadsDoQuarter(quarterAtivo(d))[i], 'color', e.target.value))} />
             <input class="sq-name" value=${s.name} onInput=${e => mut(d => setCampoSquad(squadsDoQuarter(quarterAtivo(d))[i], 'name', e.target.value))} />
             <input class="sq-prefix" value=${s.prefix} title="Prefixo do ID das iniciativas (ex.: PAY-107). Único no quarter." maxlength="4" onChange=${e => onPrefixo(i, e.target.value)} />
+            <input class="sq-pessoa" value=${s.pm || ''} placeholder="PM padrão" title="PM padrão da squad — copiado para toda iniciativa nova" onInput=${e => mut(d => setCampoSquad(squadsDoQuarter(quarterAtivo(d))[i], 'pm', e.target.value))} />
+            <input class="sq-pessoa" value=${s.tl || ''} placeholder="TL padrão" title="Tech Lead padrão da squad — o PM pode trocar no card" onInput=${e => mut(d => setCampoSquad(squadsDoQuarter(quarterAtivo(d))[i], 'tl', e.target.value))} />
             <button class="toggle-btn" onClick=${() => mut(d => alternaAgrupamento(squadsDoQuarter(quarterAtivo(d))[i]))}>
               <span class=${'sw' + (s.groupByCat ? ' on' : '')}><span class="sw-knob"></span></span>categorias
             </button>

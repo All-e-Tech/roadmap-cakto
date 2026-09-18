@@ -21,7 +21,7 @@ export function GanttView() {
 
   // ---- KPIs: todos os itens que passam no filtro, colapsados ou não (C10) ----
   squadsDoQuarter(q).forEach(normalizeSquad);
-  const counts = kpisDeItens(squadsDoQuarter(q).filter(s => !s.archived).flatMap(sqd => itensDaSquad(sqd).filter(it => passaFiltro(it, filter))));
+  const counts = kpisDeItens(squadsDoQuarter(q).filter(s => !s.archived).flatMap(sqd => itensDaSquad(sqd).filter(it => !it.arq && passaFiltro(it, filter))));   // §4.3
 
   // ---- varredura: swimlanes, camadas de categoria, iniciativas e itens ----
   // As linhas vêm de linhasRoadmap(), a mesma fonte da tabela (SPEC §5.1) — as duas telas nunca discordam.
@@ -29,7 +29,7 @@ export function GanttView() {
   const row = (it, indent) => ({ kind: 'row', label: it.n || 'sem nome', indent, p: it.p, geo: geometriaBarra(it, tl, q, MOSTRAR_ROTULO_BARRA) });
   squadsDoQuarter(q).forEach((sqd, si) => {
     if (sqd.archived) return;   // squad arquivada neste quarter não aparece
-    const items = itensDaSquad(sqd).filter(it => passaFiltro(it, filter));
+    const items = itensDaSquad(sqd).filter(it => !it.arq && passaFiltro(it, filter));
     if (!items.length && filter !== 'all') return;
     const sqKey = 'sq' + si, sqCol = collapsed[sqKey];
     lanes.push({ kind: 'squad', name: sqd.name, color: sqd.color, meta: items.length + ' itens' + (sqd.groupByCat ? ' · categorias' : ''), arrow: sqCol ? '▸' : '▾', onClick: toggle(sqKey) });

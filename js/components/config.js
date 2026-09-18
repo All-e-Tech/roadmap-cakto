@@ -9,6 +9,7 @@ import {
   setCampoQuarter, setRotuloQuarter, arquivaQuarter, excluirQuarter, novoQuarter,
   novaSquad, removeSquad, setCampoSquad, alternaAgrupamento, DURACOES_SPRINT,
   setPrefixoSquad, travaSquad, arquivaSquad, temHistorico, primeiraSquadAtiva,
+  foraDeCirculacao, retomaIniciativa, squadsAtivas,
 } from '../data.js';
 
 export function ConfigView() {
@@ -26,6 +27,14 @@ export function ConfigView() {
   const onExcluirSquad = i => { const msg = travaSquad(state.data, q, i, 'excluir'); if (msg) { toast(msg); return; } mut(d => removeSquad(d, i)); set({ activeSquad: Math.min(state.activeSquad, squadsDoQuarter(quarterAtivo(state.data)).length - 1) }); ajustaAba(); toast('Squad excluída'); };
   const onArquivarSquad = i => { const s = squadsDoQuarter(q)[i]; if (!s.archived) { const msg = travaSquad(state.data, q, i, 'arquivar'); if (msg) { toast(msg); return; } } mut(d => arquivaSquad(quarterAtivo(d), i)); ajustaAba(); toast(s.archived ? 'Squad desarquivada' : 'Squad arquivada'); };
   const onPrefixo = (i, v) => { let ok = true; mut(d => { ok = setPrefixoSquad(quarterAtivo(d), i, v); }); if (!ok) toast('Prefixo inválido ou já usado por outra squad'); };
+
+  // Fora de circulação (§4.3, §7): lista e retomada. A squad de destino é escolha local, não vai para o board.
+  const fora = foraDeCirculacao(data);
+  const destino = state.arqDestino || {};
+  const onRetomar = (code, squadNome) => {
+    let r; mut(d => { r = retomaIniciativa(d, code, squadNome); });
+    toast(r && r.semCategoria ? 'Iniciativa retomada — a squad de destino não tem a categoria; ficou sem categoria' : 'Iniciativa retomada');
+  };
 
   return html`
     <div>
@@ -88,6 +97,27 @@ export function ConfigView() {
             ${!temHistorico(data, s.name, q) && html`<button class="x-btn x-18" title="Excluir squad (sem histórico em outros quarters)" onClick=${() => onExcluirSquad(i)}>×</button>`}
           </div>`)}
         <div class="mt14"><${Button} variant="secondary" size="small" onClick=${onNovaSquad}>+ Adicionar squad</${Button}></div>
+      </section>
+
+      <section class="card">
+        <div class="card-title">Arquivados e descartados</div>
+        <div class="card-sub card-sub-18">Iniciativas fora de circulação (SPEC §4.3). Não aparecem no roadmap, no Gantt nem nos indicadores, e guardam o status em que os itens pararam. Retomar devolve tudo, na squad original ou em outra.</div>
+        ${fora.length === 0 && html`<div class="bl-empty">Nada arquivado ou descartado.</div>`}
+        ${fora.map(({ ini, itens, origens, noRoadmap }) => html`
+          <div class="qrow">
+            <span class="ini-selo">${ini.code}</span>
+            <span class="arq-nome" title=${ini.t}>${ini.t || 'Sem nome'}</span>
+            <span class=${'tag' + (ini.arq === 'descartado' ? ' tag-disc' : '')}>${ini.arq === 'descartado' ? 'descartado' : 'arquivado'}</span>
+            <span class="qmeta-cfg">${itens + (itens === 1 ? ' item' : ' itens') + (noRoadmap ? ' · ' + noRoadmap + ' no roadmap' : '') + (origens.length ? ' · ' + origens.join(' · ') : '')}</span>
+            ${!!ini.nota && html`<span class="arq-nota" title=${ini.nota}>${'“' + ini.nota + '”'}</span>`}
+            ${!!ini.motivo && html`<span class="qmeta-cfg">${'motivo: ' + ini.motivo}</span>`}
+            <div class="qactions">
+              <select class="input arq-squad" value=${destino[ini.code] || ini.sq} onChange=${e => set({ arqDestino: { ...destino, [ini.code]: e.target.value } })}>
+                ${squadsAtivas(q).map(s => html`<option value=${s.name}>${s.name}</option>`)}
+              </select>
+              <button class="pill-btn pill-ativar" onClick=${() => onRetomar(ini.code, destino[ini.code] || ini.sq)}>Retomar</button>
+            </div>
+          </div>`)}
       </section>
     </div>`;
 }

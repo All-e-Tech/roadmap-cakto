@@ -161,6 +161,40 @@ eq(dd.quarters.q3.squads[1].items.some(it => it.ini === codeMove), true, 'item m
 eq(dd.quarters.q3.squads[0].items.some(it => it.ini === codeMove), false, 'item saiu da squad de origem');
 eq(D.iniciativaPorCode(dd, codeMove).code, codeMove, 'o código não muda ao mudar de squad');
 
+bloco('Arquivar, descartar e retomar (§4.3)');
+const da = D.normalize(boardAntigo());
+const payA = da.quarters.q3.squads[0];
+const codeA = payA.items.find(it => it.n === 'FASE 1').ini;
+const itemA = payA.items.find(it => it.n === 'FASE 1');
+eq(D.arquivaIniciativa(da, codeA, 'sem capacidade'), 1, 'arquivar marca os itens da iniciativa');
+eq(itemA.arq, 'arquivado', 'item marcado como arquivado');
+eq([itemA.st, itemA.p], ['dev', 20], 'status e progresso preservados');
+eq(D.iniciativaPorCode(da, codeA).col, D.chaveEntrada(da), 'card volta para a coluna de entrada');
+eq(D.colunaDe(da, D.iniciativaPorCode(da, codeA)), D.chaveEntrada(da), 'coluna derivada ignora itens arquivados');
+ok(!D.linhasRoadmap(da, payA).some(l => l.tipo === 'item' && l.it === itemA), 'item arquivado sai do roadmap');
+eq(D.derivadosDaIniciativa(da, codeA).total, 0, 'derivados ignoram arquivados');
+eq(D.foraDeCirculacao(da).length, 1, 'aparece na lista de fora de circulação');
+eq(D.foraDeCirculacao(da)[0].ini.nota, 'sem capacidade', 'a nota da ação fica gravada');
+
+const r2 = D.retomaIniciativa(da, codeA);
+eq(itemA.arq, '', 'retomar tira a marca do item');
+eq([itemA.st, itemA.p], ['dev', 20], 'retomar devolve o status em que parou');
+eq(D.colunaDe(da, D.iniciativaPorCode(da, codeA)), 'execucao', 'com o item de volta no roadmap, a coluna volta a ser derivada');
+eq(D.foraDeCirculacao(da).length, 0, 'sai da lista depois de retomada');
+
+const semMotivo = D.descartaIniciativa(da, codeA, 'nada');
+eq(semMotivo.ok, false, 'descartar sem motivo é recusado');
+D.iniciativaPorCode(da, codeA).motivo = 'fora de estratégia';
+eq(D.descartaIniciativa(da, codeA, 'stakeholder desistiu').ok, true, 'descartar com motivo é aceito');
+eq(itemA.arq, 'descartado', 'itens marcados como descartados');
+eq(D.colunaDe(da, D.iniciativaPorCode(da, codeA)), 'descartado', 'card vai para a coluna Descartado');
+eq(D.kpisDeItens(payA.items.filter(it => !it.arq)).total, payA.items.filter(it => !it.arq).length, 'KPIs contam só itens em circulação');
+
+const codeOutraSquad = payA.items.find(it => it.n === 'FASE 0').ini;
+D.arquivaIniciativa(da, codeOutraSquad, '');
+D.retomaIniciativa(da, codeOutraSquad, 'Platform');
+eq(da.quarters.q3.squads[1].items.some(it => it.ini === codeOutraSquad), true, 'retomar em outra squad move os itens');
+
 bloco('Seed');
 const s = D.seedNovo();
 eq(D.itensDoQuarter(s.quarters[s.activeQuarter]), 0, 'quadro nasce vazio');

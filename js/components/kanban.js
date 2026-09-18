@@ -9,6 +9,7 @@ import { html, Button, Icon } from '../ui.js';
 import { state, set, mut, toast, quarterAtual } from '../app.js';
 import {
   KPRIO, squadsAtivas, iniciativas, colunasKanban, colunaDe, derivadosDaIniciativa, COLUNAS_DERIVADAS,
+  chaveEntrada, temItens, arquivaIniciativa, descartaIniciativa,
   podeMover, moverIniciativa, novaIniciativa, atualizaIniciativa, removeIniciativa,
 } from '../data.js';
 
@@ -30,7 +31,7 @@ const iniciais = nome => nome.split(/\s+/).map(x => x[0]).join('').slice(0, 2).t
 let dragId = null;
 
 export function KanbanView() {
-  const { data, kFilter, modal, kDragId, kMark } = state;
+  const { data, kFilter, modal, modalNota, kDragId, kMark } = state;
   const q = quarterAtual();   // C7: em visualização ou ativo
   const squads = squadsAtivas(q);
   const cards = iniciativas(data);
@@ -45,8 +46,30 @@ export function KanbanView() {
     const chk = podeMover(state.data, dragId, col);
     if (!chk.ok) { toast(chk.msg); dragId = null; set({ kDragId: null, kMark: null }); return; }
     const id = dragId;
+    dragId = null;
+    // Sair de circulação (§4.3): voltar à entrada arquiva, ir para Descartado descarta. A nota é pedida antes.
+    const card = iniciativas(state.data).find(x => x.id === id);
+    const acao = col === chaveEntrada(state.data) ? 'arquivar' : (col === 'descartado' ? 'descartar' : null);
+    if (card && acao && temItens(state.data, card.code)) {
+      set({ kDragId: null, kMark: null, modalNota: { id, code: card.code, acao, titulo: card.t, texto: '' } });
+      return;
+    }
     mut(d => moverIniciativa(d, id, targetId, col));
-    dragId = null; set({ kDragId: null, kMark: null });
+    set({ kDragId: null, kMark: null });
+  };
+  // Confirmação de arquivar / descartar, com a nota livre do momento da ação.
+  const nSet = e => set({ modalNota: { ...state.modalNota, texto: e.target.value } });
+  const fecharNota = () => set({ modalNota: null });
+  const confirmarNota = () => {
+    const n = state.modalNota; if (!n) return;
+    if (n.acao === 'arquivar') {
+      mut(d => arquivaIniciativa(d, n.code, n.texto.trim()));
+      set({ modalNota: null }); toast('Iniciativa arquivada — veja em Squads & sprints');
+    } else {
+      let r; mut(d => { r = descartaIniciativa(d, n.code, n.texto.trim()); });
+      if (r && !r.ok) { toast(r.msg); return; }
+      set({ modalNota: null }); toast('Iniciativa descartada');
+    }
   };
 
   // ---- modal ----
@@ -187,6 +210,24 @@ export function KanbanView() {
             <div class="m-actions">
               <${Button} variant="white" size="medium" onClick=${fechar}>Cancelar</${Button}>
               <${Button} variant="primary" size="medium" onClick=${enviar}>${m.editId != null ? 'Salvar alterações' : 'Adicionar à fila'}</${Button}>
+            </div>
+          </div>
+        </div>`}
+
+      ${modalNota && html`
+        <div class="modal-bg" onClick=${fecharNota}>
+          <div class="modal modal-nota" onClick=${e => e.stopPropagation()}>
+            <div class="m-title">${modalNota.acao === 'arquivar' ? 'Arquivar iniciativa' : 'Descartar iniciativa'}</div>
+            <div class="card-sub card-sub-18">
+              ${modalNota.acao === 'arquivar'
+                ? '“' + (modalNota.titulo || modalNota.code) + '” sai do roadmap e do Gantt, e os itens guardam o status em que pararam. Você a retoma depois em Squads & sprints.'
+                : '“' + (modalNota.titulo || modalNota.code) + '” e os itens dela saem do roadmap e do Gantt. O card fica na coluna Descartado.'}
+            </div>
+            <div class="m-field"><label class="m-label">Motivo (opcional)</label>
+              <textarea class="input m-textarea" rows="3" value=${modalNota.texto} onInput=${nSet} placeholder="Por que está saindo agora?"></textarea></div>
+            <div class="m-actions">
+              <${Button} variant="white" size="medium" onClick=${fecharNota}>Cancelar</${Button}>
+              <${Button} variant="primary" size="medium" onClick=${confirmarNota}>${modalNota.acao === 'arquivar' ? 'Arquivar' : 'Descartar'}</${Button}>
             </div>
           </div>
         </div>`}

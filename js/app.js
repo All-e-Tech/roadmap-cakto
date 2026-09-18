@@ -39,6 +39,8 @@ export const state = {
   toast: '',
   kFilter: 'all',
   modal: null,
+  modalNota: null,   // 4b: confirmação de arquivar / descartar, com a nota da ação (SPEC §4.3)
+  arqDestino: {},    // 4b: squad escolhida ao retomar cada iniciativa arquivada (local, não persiste)
   collapsed: {},
   qMenuOpen: false,
   dragMark: null,

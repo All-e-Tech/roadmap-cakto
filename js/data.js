@@ -116,6 +116,7 @@ function migraVinculo(d) {
       sq.backlog.forEach(b => {
         if (!b.ini) b.ini = nova(sq.name, b.n, b.cat || '');
         delete b.cat;
+        if (b.arq === undefined) b.arq = ''; if (b.nota === undefined) b.nota = '';
       });
     });
   });
@@ -207,14 +208,21 @@ export function derivadosDaIniciativa(data, code) {
 // Coluna em que o card aparece: Descartado e a entrada são humanos; Execução e Concluído vêm dos itens.
 export function colunaDe(data, ini) {
   if (!ini) return chaveEntrada(data);
-  if (ini.col === 'descartado') return 'descartado';
-  const ligados = itensGlobais(data, ini.code);
+  if (ini.col === 'descartado' || ini.arq === 'descartado') return 'descartado';
+  const ligados = itensGlobais(data, ini.code).filter(x => !x.it.arq);   // arquivado sai de circulação (§4.3)
   if (!ligados.length) return ini.col;
   const noRoadmap = ligados.filter(x => !x.backlog);
   if (!noRoadmap.length) return 'priorizado';
-  const vivos = noRoadmap.filter(x => !x.it.arq);
-  if (vivos.length && vivos.every(x => x.it.st === 'entregue')) return 'concluido';
+  if (noRoadmap.every(x => x.it.st === 'entregue')) return 'concluido';
   return 'execucao';
+}
+// Fora de circulação (§4.3): iniciativas arquivadas ou descartadas, com de onde vieram — a lista de §7.
+export function foraDeCirculacao(data) {
+  return iniciativas(data).filter(i => i.arq === 'arquivado' || i.arq === 'descartado').map(ini => {
+    const ligados = itensGlobais(data, ini.code);
+    const origens = [...new Set(ligados.map(x => x.q.label + ' · ' + x.sq.name))];
+    return { ini, itens: ligados.length, origens, noRoadmap: ligados.filter(x => !x.backlog).length };
+  });
 }
 // Categoria de um item, resolvida pela iniciativa (a categoria é dela — §3). "" = sem categoria.
 export function categoriaDoItem(data, sq, it) {
@@ -234,7 +242,7 @@ export function iniciativasNaSquad(data, sq) {
 // Tipos: 'categoria' | 'iniciativa' (grupo, 2+ itens) | 'item' (sozinho = iniciativa de um item) | 'vazio'
 export function linhasRoadmap(data, sq, filtro) {
   const passa = filtro || (() => true);
-  const idx = (sq.items || []).map((it, j) => ({ it, j })).filter(x => passa(x.it));
+  const idx = (sq.items || []).map((it, j) => ({ it, j })).filter(x => !x.it.arq && passa(x.it));   // §4.3: arquivado e descartado saem do roadmap
   const linhas = [];
   const daCategoria = nome => {
     const codes = [];
@@ -419,6 +427,40 @@ export function juntarIniciativas(data, codeOrigem, codeDestino) {
   data.iniciativas = iniciativas(data).filter(x => x.code !== codeOrigem);
   return { ok: true, code: codeDestino };
 }
+// ---------- Saída de circulação (SPEC §4.3) ----------
+// Arquivar e descartar não são status: marcam `arq` e preservam `st`, `pv` e `p` para a retomada.
+function marcaCirculacao(data, code, marca, nota) {
+  const ini = iniciativaPorCode(data, code);
+  if (!ini) return 0;
+  ini.arq = marca; ini.nota = nota || '';
+  const ligados = itensGlobais(data, code);
+  ligados.forEach(x => { x.it.arq = marca; x.it.nota = nota || ''; });
+  return ligados.length;
+}
+// Despriorizada por tempo indeterminado: volta à coluna de entrada e os itens saem do roadmap e do Gantt.
+export function arquivaIniciativa(data, code, nota) {
+  const n = marcaCirculacao(data, code, 'arquivado', nota);
+  const ini = iniciativaPorCode(data, code); if (ini) ini.col = chaveEntrada(data);
+  return n;
+}
+// Descartada: exige motivo (A.2); o card fica na coluna Descartado e os itens saem do roadmap.
+export function descartaIniciativa(data, code, nota) {
+  const ini = iniciativaPorCode(data, code);
+  if (!ini) return { ok: false, msg: '' };
+  if (!ini.motivo) return { ok: false, msg: 'Falta o motivo do descarte — defina na engrenagem do card' };
+  const n = marcaCirculacao(data, code, 'descartado', nota);
+  ini.col = 'descartado';
+  return { ok: true, itens: n };
+}
+// Retomar: os itens voltam no status em que pararam, onde estavam. A coluna volta a ser derivada (§3).
+export function retomaIniciativa(data, code, squadNome) {
+  const ini = iniciativaPorCode(data, code);
+  if (!ini) return { semCategoria: false };
+  marcaCirculacao(data, code, '', '');
+  ini.col = 'priorizado';
+  return squadNome && squadNome !== ini.sq ? moveIniciativaParaSquad(data, code, squadNome) : { semCategoria: false };
+}
+
 // Mover iniciativa de squad: leva os itens em todos os quarters não arquivados; `code` não muda (§3).
 export function moveIniciativaParaSquad(data, code, nome) {
   const ini = iniciativaPorCode(data, code);
@@ -522,7 +564,6 @@ export function podeMover(data, dragId, toKey) {
   // Execução e Concluído são derivados dos itens (§3) — não recebem arraste.
   if (COLUNAS_DERIVADAS.includes(toKey)) return { ok: false, msg: 'Execução e Concluído vêm dos itens no roadmap — mova os itens, não o card' };
   const entrada = chaveEntrada(data);
-  if (toKey === entrada && temItens(data, card.code)) return { ok: false, msg: 'A iniciativa tem itens no roadmap — remova os itens antes de devolvê-la à entrada' };
   const toCol = colunasKanban(data).find(x => x.k === toKey);
   if (toKey === 'descartado') {
     if (!card.motivo) return { ok: false, msg: 'Falta o motivo do descarte — defina na engrenagem do card' };

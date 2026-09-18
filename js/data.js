@@ -577,10 +577,15 @@ export function removeSquad(data, i) { quarterAtivo(data).squads.splice(i, 1); }
 // categoria dela (SPEC §8, 17/09/2026) — o `normalize()` faz a conversão logo em seguida.
 export function substituiSquads(data, squads) {
   const q = quarterAtivo(data);
-  const nomes = squads.map(s => s.name);
-  data.iniciativas = iniciativas(data).filter(i => !nomes.includes(i.sq) || !q.squads.some(s => s.name === i.sq));
+  // Some com as iniciativas cujos itens viviam SÓ nas squads deste quarter. As que têm item em outro
+  // quarter ficam: apagá-las deixaria esses itens apontando para uma iniciativa inexistente.
+  // Card sem item nenhum (fila de entrada) não é tocado pela importação.
+  const soNesteQuarter = iniciativas(data)
+    .filter(i => { const ligados = itensGlobais(data, i.code); return ligados.length > 0 && ligados.every(x => x.q === q); })
+    .map(i => i.code);
   q.squads = squads;
-  normalize(data);
+  data.iniciativas = iniciativas(data).filter(i => !soNesteQuarter.includes(i.code));
+  normalize(data);   // cria a iniciativa de cada linha importada
 }
 
 // ---------- Kanban (Anexo A) — gate e mutações ----------

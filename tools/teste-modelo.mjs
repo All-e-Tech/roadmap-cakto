@@ -235,6 +235,35 @@ ok(!D.podeMover(dc, iniEntrada.id, 'priorizado').msg.includes('PM'), 'e a recusa
 Object.assign(iniEntrada, { est: 'M', perQ: 'Q4' });
 eq(D.podeMover(dc, iniEntrada.id, 'priorizado').ok, true, 'com os padrões preenchidos, o gate passa sem digitar PM nem TL');
 
+bloco('Importar planilha');
+// Reproduz o que `io.js` entrega depois de ler o .xlsx: squads com itens no formato antigo (cat/sub).
+const di = D.normalize(boardAntigo());
+const codeQ2 = di.quarters.q2.squads[0].items[0].ini;   // iniciativa com item só no quarter arquivado
+const antesImport = di.iniciativas.length;
+D.substituiSquads(di, [
+  { name: 'Payment', color: '#36b37e', groupByCat: true, categories: [{ name: 'Checkout' }],
+    items: [
+      { n: 'Split de pagamento', s: '2026-07-07', e: '2026-07-20', st: 'dev', pv: 'prazo', p: 30, cat: 'Checkout', sub: '' },
+      { n: 'Antifraude', s: '', e: '', st: 'backlog', pv: 'nao', p: 0, cat: '', sub: '' },
+    ], backlog: [] },
+]);
+const payI = di.quarters.q3.squads[0];
+eq(di.quarters.q3.squads.length, 1, 'importar substitui as squads do quarter ativo');
+eq(payI.items.length, 2, 'itens importados');
+ok(payI.items.every(it => it.ini && D.iniciativaPorCode(di, it.ini)), 'cada linha importada virou uma iniciativa');
+eq(D.iniciativaPorCode(di, payI.items[0].ini).cat, 'Checkout', 'a coluna Pilar virou a categoria da iniciativa');
+eq(D.iniciativaPorCode(di, payI.items[1].ini).cat, '', 'linha sem Pilar fica sem categoria');
+ok(payI.items.every(it => it.cat === undefined && it.sub === undefined), 'itens já no formato novo');
+// O quarter arquivado não é tocado, e a iniciativa dele continua existindo.
+// Regressão: a importação apagava as iniciativas pelo NOME da squad e órfãos ficavam no quarter antigo.
+ok(!!D.iniciativaPorCode(di, codeQ2), 'iniciativa com item em outro quarter sobrevive à importação');
+eq(D.iniciativaPorCode(di, di.quarters.q2.squads[0].items[0].ini).code, codeQ2, 'o item do quarter arquivado continua ligado à iniciativa dele');
+eq(di.quarters.q2.squads[0].items.length, 1, 'o quarter arquivado fica intacto');
+const orfaos = [];
+Object.values(di.quarters).forEach(q => q.squads.forEach(sq => (sq.items || []).concat(sq.backlog || []).forEach(it => { if (!D.iniciativaPorCode(di, it.ini)) orfaos.push(it.n); })));
+eq(orfaos, [], 'nenhum item ficou apontando para iniciativa inexistente');
+ok(di.iniciativas.length < antesImport + 2, 'as iniciativas do quarter substituído não ficam órfãs na fila');
+
 bloco('Seed');
 const s = D.seedNovo();
 eq(D.itensDoQuarter(s.quarters[s.activeQuarter]), 0, 'quadro nasce vazio');

@@ -322,12 +322,11 @@ Abas por squad no topo (+ "+ Squad"). Cada squad tem duas tabelas: **roadmap** e
 ### 5.1 Tabela de roadmap
 - Toggle **"Agrupar por categoria"** (`groupByCat`), por squad. **Padrão: ligado em todas as squads.**
 - **Três tipos de linha** (17/09/2026), nesta ordem de aninhamento: **categoria** → **iniciativa** → **item**.
-  - **Iniciativa com vários itens** vira linha de grupo, no lugar que era da subcategoria: `code`, título, contador "N de M entregues", datas por envelope e % derivado. Os itens ficam indentados sob ela.
-  - **Iniciativa com um item só** é renderizada como a **própria linha do item**, com o `code` em selo discreto. Não vira grupo — senão todo item do roadmap viraria uma pasta com um arquivo dentro.
+  - **A linha da iniciativa aparece sempre** (18/09/2026): mesmo com um item só e mesmo sem categoria. Traz `code`, título, contador "N de M entregues", "+ N no backlog" quando há irmãos fora do roadmap, datas por envelope, % derivado, a categoria como campo editável e o botão **+ item**. Os itens ficam indentados sob ela. A regra anterior, de esconder a linha quando havia um item só, foi descartada em uso: com um item no roadmap e outro no backlog não havia como saber a que iniciativa o item pertencia.
   - Iniciativas sem categoria caem num grupo **virtual**, que tem rollup e recebe arraste, mas não tem renomear nem remover. No Gantt vira layer com o mesmo nome (B4). Rótulo a definir no passo 5; "Sem categoria" hoje.
-- **Visão plana:** coluna Categoria como input de texto editável, aplicada à iniciativa.
+- **O toggle "Agrupar por categoria" controla só a categoria.** Desligado, somem os cabeçalhos de categoria e ficam as linhas de iniciativa com os itens; as colunas são as mesmas nas duas visões. A categoria continua editável no campo da linha da iniciativa.
 - Campos editáveis inline: nome (texto), início/fim (date pickers), status/previsão (selects coloridos), % (número 0–100 com barra).
-- Por linha: **enviar ao backlog** (↓) e **remover** (🗑).
+- Por linha de item: **+ item** na mesma iniciativa, **extrair** (↗, só quando a iniciativa tem dois ou mais), **enviar ao backlog** (↓) e **remover** (×).
 - Rodapé: **+ Adicionar item ao roadmap** (o item nasce **sem datas** — ver §5.4 e §6.2; pede a iniciativa como no backlog) e **+ Nova categoria** (sempre visível; cria categoria e liga o agrupamento).
 
 ### 5.2 CRUD de categorias
@@ -362,7 +361,7 @@ Nos cabeçalhos, na visão agrupada:
 - Banda de **mês** (Julho/Agosto/Setembro…) — derivada agrupando sprints contíguas pelo mês da data de início.
 - Banda de **sprints**: `Sprint 01 … Sprint NN` (zero à esquerda) + intervalo de datas `dd/mm–dd/mm`. Coluna da sprint atual destacada.
 - **Swimlanes por squad**; dentro de cada squad, se `groupByCat`, as **categorias viram layers** (faixas) e as **iniciativas com vários itens, sub-layers** — o lugar que era das subcategorias (17/09/2026). Squad sem categorias renderiza as iniciativas direto.
-- A iniciativa com vários itens ganha uma **barra envelope**, mais clara, do menor início ao maior fim dos itens. Recolhida, mostra só o envelope; expandida, mostra os itens dentro. Iniciativa de um item só tem a barra do próprio item.
+- A iniciativa com vários itens ganha uma **barra envelope**, mais clara, do menor início ao maior fim dos itens. Recolhida, mostra só o envelope; expandida, mostra os itens dentro. **Iniciativa de um item só não ganha camada aqui** — a barra do item já a representa, e uma linha extra por item dobraria a altura do Gantt, que existe para ser denso (18/09/2026). É a única diferença deliberada entre a tabela (§5.1) e o Gantt.
 - Squads e layers são **colapsáveis** (clique no cabeçalho).
 - **Linha verde vertical = hoje** (`new Date()` posicionado na timeline).
 - **Legenda** de status e previsão no rodapé.

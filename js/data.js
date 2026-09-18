@@ -203,10 +203,11 @@ export function itensGlobais(data, code) {
 export function temItens(data, code) { return itensGlobais(data, code).length > 0; }
 // Derivados (SPEC §3): média simples do progresso, envelope de datas, contagem de entregues.
 export function derivadosDaIniciativa(data, code) {
-  const todos = itensGlobais(data, code).filter(x => !x.backlog).map(x => x.it);
-  const vivos = todos.filter(it => !it.arq);
+  const ligados = itensGlobais(data, code).filter(x => !x.it.arq);
+  const vivos = ligados.filter(x => !x.backlog).map(x => x.it);
   const datas = vivos.filter(it => it.s && it.e);
   return {
+    noBacklog: ligados.filter(x => x.backlog).length,
     total: vivos.length,
     entregues: vivos.filter(it => it.st === 'entregue').length,
     pct: avg(vivos.map(it => it.p)),
@@ -258,13 +259,14 @@ export function linhasRoadmap(data, sq, filtro) {
     idx.forEach(x => { const c = categoriaDoItem(data, sq, x.it); if (c === nome && !codes.includes(x.it.ini)) codes.push(x.it.ini); });
     return codes;
   };
+  // A linha da iniciativa aparece sempre, mesmo com um item só e mesmo sem categoria (18/09/2026):
+  // sem ela não dá para saber a que iniciativa um item pertence quando os irmãos estão no backlog.
   const empilha = codes => codes.forEach(code => {
     const ini = iniciativaPorCode(data, code);
     const meus = idx.filter(x => x.it.ini === code);
-    if (meus.length === 1) { linhas.push({ tipo: 'item', code, ini, j: meus[0].j, it: meus[0].it, sozinho: true, nivel: 1 }); return; }
     const der = derivadosDaIniciativa(data, code);
     linhas.push({ tipo: 'iniciativa', code, ini, titulo: ini ? ini.t : code, ...der, nivel: 1 });
-    meus.forEach(x => linhas.push({ tipo: 'item', code, ini, j: x.j, it: x.it, sozinho: false, nivel: 2 }));
+    meus.forEach(x => linhas.push({ tipo: 'item', code, ini, j: x.j, it: x.it, nivel: 2, total: der.total, noBacklog: der.noBacklog }));
   });
   if (!sq.groupByCat) { empilha(iniciativasNaSquad(data, sq).map(i => i.code).filter(c => idx.some(x => x.it.ini === c))); return linhas; }
   (sq.categories || []).forEach(c => {
@@ -402,8 +404,10 @@ export function reordenarItem(sq, from, to, code) {
 // Mover item para outra iniciativa (§5.3). Recusa se for o último item da origem.
 export function moveItemParaIniciativa(data, sq, from, code, to) {
   const it = sq.items[from];
+  // Último item da origem: mover equivale a juntar as duas iniciativas, com o mesmo resultado (§5.3).
   if (it.ini !== code && itensGlobais(data, it.ini).length <= 1) {
-    return { ok: false, msg: 'A iniciativa ficaria sem itens — mova a iniciativa inteira' };
+    const r = juntarIniciativas(data, it.ini, code);
+    return r.ok ? { ok: true, juntou: true, code } : r;
   }
   const destino = to !== undefined ? to : (() => { const last = ultimoIndice(sq.items, x => x.ini === code); return last >= 0 ? last + 1 : sq.items.length; })();
   reordenarItem(sq, from, destino, code);

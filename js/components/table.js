@@ -1,7 +1,8 @@
 // components/table.js — view Roadmap / tabela (SPEC §5). Preact + htm.
-// 4b entrega 1 (17/09/2026): três tipos de linha — categoria → iniciativa → item. A iniciativa ocupa o
-// lugar que era da subcategoria; iniciativa de um item só é renderizada como a própria linha do item, com
-// o código em selo. O arraste move item entre iniciativas, iniciativa entre categorias e junta iniciativas.
+// 4b (17–18/09/2026): três tipos de linha — categoria → iniciativa → item. A iniciativa ocupa o lugar que
+// era da subcategoria e tem linha SEMPRE, mesmo com um item só e mesmo sem categoria: sem ela não dá para
+// saber a que iniciativa um item pertence quando os irmãos estão no backlog.
+// O arraste move item entre iniciativas, iniciativa entre categorias e junta iniciativas.
 // Toda leitura de linhas vem de linhasRoadmap() para a tabela e o Gantt nunca discordarem.
 import { html, mix } from '../ui.js';
 import { state, set, mut, toast, quarterAtual } from '../app.js';
@@ -15,7 +16,7 @@ import {
   novaCategoria, renomeiaCategoria, removeCategoria,
 } from '../data.js';
 
-// O que está sendo arrastado: { tipo: 'item' | 'iniciativa', j, code, sozinho }. Variável de instância, não estado.
+// O que está sendo arrastado: { tipo: 'item' | 'iniciativa', j, code }. Variável de instância, não estado.
 let drag = null;
 
 export function TableView() {
@@ -51,11 +52,11 @@ export function TableView() {
       const alvo = itensDaSquad(SQ())[j];
       const de = drag.j;
       if (alvo.ini === drag.code) mut(() => reordenarItem(SQ(), de, pos));
-      else if (drag.sozinho) {
-        // Linha de item sozinha É a iniciativa: soltar sobre outra iniciativa junta as duas.
-        let r; mut(d => { r = juntarIniciativas(d, drag.code, alvo.ini); });
-        if (r && r.ok) toast('Iniciativas juntadas em ' + alvo.ini);
-      } else { let r; mut(d => { r = moveItemParaIniciativa(d, SQ(), de, alvo.ini, pos); }); if (r && !r.ok) toast(r.msg); }
+      else {
+        let r; mut(d => { r = moveItemParaIniciativa(d, SQ(), de, alvo.ini, pos); });
+        if (r && !r.ok) toast(r.msg);
+        else if (r && r.juntou) toast('Iniciativas juntadas em ' + alvo.ini);
+      }
     }
     fimDoArraste();
   };
@@ -69,12 +70,13 @@ export function TableView() {
   const iniDrop = code => e => {
     if (!drag) return; e.preventDefault();
     if (drag.code !== code) {
-      if (drag.tipo === 'iniciativa' || drag.sozinho) {
+      if (drag.tipo === 'iniciativa') {
         let r; mut(d => { r = juntarIniciativas(d, drag.code, code); });
         if (r && r.ok) toast('Iniciativas juntadas em ' + code);
       } else {
         let r; mut(d => { r = moveItemParaIniciativa(d, SQ(), drag.j, code); });
         if (r && !r.ok) toast(r.msg);
+        else if (r && r.juntou) toast('Iniciativas juntadas em ' + code);
       }
     }
     fimDoArraste();
@@ -88,7 +90,7 @@ export function TableView() {
   };
   const catDrop = nome => e => {
     if (!drag) return; e.preventDefault();
-    if (drag.tipo === 'iniciativa' || drag.sozinho) mut(d => moveIniciativaParaCategoria(d, drag.code, nome));
+    if (drag.tipo === 'iniciativa') mut(d => moveIniciativaParaCategoria(d, drag.code, nome));
     else toast('A categoria é da iniciativa — arraste a iniciativa');
     fimDoArraste();
   };
@@ -102,23 +104,19 @@ export function TableView() {
       <button class="row-btn row-btn-x" title="Remover" onClick=${() => { let foi; mut(d => { foi = removeItem(d, SQ(), j); }); if (foi) toast('Item e iniciativa removidos'); }}>×</button>
     </td>`;
 
-  // ---- uma linha de item (agrupada: 8 colunas; plana: 10) ----
+  // ---- uma linha de item, sempre filha de uma linha de iniciativa ----
   const itemRow = (l, flat) => {
-    const { j, it, code, sozinho } = l;
+    const { j, it, code } = l;
     const st = STATUS[it.st] || STATUS.backlog, pv = PREV[it.pv] || PREV.nao;
-    const ini = iniciativaPorCode(data, code);
-    const podeExtrair = !sozinho;
-    const carga = { tipo: 'item', j, code, sozinho };
+    const podeExtrair = l.total > 1;
+    const carga = { tipo: 'item', j, code };
     return html`
-      <tr class=${'t-row' + (drag && drag.tipo === 'item' && drag.j === j ? ' dragging' : '') + markRow(j) + (sozinho ? '' : ' t-row-filha')}
+      <tr class=${'t-row t-row-filha' + (drag && drag.tipo === 'item' && drag.j === j ? ' dragging' : '') + markRow(j)}
           onDragOver=${rowDragOver(j)} onDrop=${rowDrop(j)}>
-        <td class="t-handle" draggable="true" onDragStart=${onDragStart(carga)} onDragEnd=${fimDoArraste} title=${sozinho ? 'Arraste para reordenar ou mover de categoria' : 'Arraste para reordenar ou mover de iniciativa'}>⠿</td>
+        <td class="t-handle" draggable="true" onDragStart=${onDragStart(carga)} onDragEnd=${fimDoArraste} title="Arraste para reordenar ou mover de iniciativa">⠿</td>
         <td class=${'t-cell' + (flat ? ' t-min220' : ' t-min240')}>
-          <span class="ini-selo" title=${ini ? 'Iniciativa ' + ini.code : ''}>${code}</span>
           <input class="cell cell-name" value=${it.n} onInput=${u(j, 'n')} placeholder="Nome do item" />
         </td>
-        ${flat && html`<td class="t-cell"><span class="cell-ro">${ini ? ini.t || '—' : '—'}</span></td>`}
-        ${flat && html`<td class="t-cell"><input class="cell cell-cat" value=${ini ? ini.cat : ''} onInput=${e => mut(d => defineCategoriaDaIniciativa(d, SQ(), code, e.target.value))} placeholder="—" list="catlist" /></td>`}
         <td class="t-cell"><input class="cell cell-date" type="date" value=${it.s} onChange=${u(j, 's')} /></td>
         <td class="t-cell"><input class="cell cell-date" type="date" value=${it.e} onChange=${u(j, 'e')} /></td>
         <td class="t-cell"><select class="sel" value=${it.st} onChange=${u(j, 'st')} style=${`background-color:${mix(st.color, 16)};color:${st.chip}`}>${Object.entries(STATUS).map(([v, o]) => html`<option value=${v}>${o.label}</option>`)}</select></td>
@@ -142,7 +140,10 @@ export function TableView() {
           <span class="ini-selo" title="Iniciativa">${l.code}</span>
           <input class="sub-input" value=${l.titulo} title="Nome da iniciativa" onInput=${e => mut(d => setTituloIniciativa(d, l.code, e.target.value))} />
           <span class="ini-meta">${l.entregues + ' de ' + l.total + ' entregues'}</span>
+          ${l.noBacklog > 0 && html`<span class="ini-meta ini-meta-bl">${'+ ' + l.noBacklog + ' no backlog'}</span>`}
           <span class="ini-datas">${l.s ? fmtBR(l.s) + ' a ' + fmtBR(l.e) : 'sem datas'}</span>
+          <input class="ini-cat" value=${l.ini ? l.ini.cat : ''} placeholder="sem categoria" title="Categoria da iniciativa" list="catlist"
+                 onInput=${e => mut(d => defineCategoriaDaIniciativa(d, SQ(), l.code, e.target.value))} />
           <span class="cat-btns"><button class="cat-btn" title="Adicionar item a esta iniciativa" onClick=${() => mut(() => novoItemNaIniciativa(SQ(), l.code))}>+ item</button></span>
         </span>
         <span class="roll"><span class="roll-track"><i class="roll-fill roll-fill-sub" style=${`width:${l.pct}%`}></i></span><b class="roll-pct roll-pct-sub">${l.pct}%</b></span>
@@ -181,8 +182,8 @@ export function TableView() {
       }
     });
   } else {
-    theadCols = ['', 'Item', 'Iniciativa', 'Categoria', 'Início', 'Fim', 'Status', 'Previsão', '% Conclusão', '']; colspan = 10;
-    if (sq) linhasRoadmap(data, sq).filter(l => l.tipo === 'item').forEach(l => rows.push(itemRow(l, true)));
+    theadCols = ['', 'Iniciativa / Item', 'Início', 'Fim', 'Status', 'Previsão', '% Conclusão', '']; colspan = 8;
+    if (sq) linhasRoadmap(data, sq).forEach(l => { if (l.tipo === 'iniciativa') rows.push(iniRow(l, colspan)); else if (l.tipo === 'item') rows.push(itemRow(l, false)); });
   }
 
   const bl = sq ? (sq.backlog || []) : [];
@@ -195,7 +196,7 @@ export function TableView() {
       <div class="tabs">
         ${squads.map((s, i) => s.archived ? null : html`<button class=${'tab' + (i === activeSquad ? ' on' : '')} onClick=${() => set({ activeSquad: i })}><span class="tab-dot" style=${`background:${s.color}`}></span>${s.name}</button>`)}
       </div>
-      <p class="help">Arraste pela alça ⠿ para reordenar, mover um item entre iniciativas ou soltar uma iniciativa sobre outra para juntá-las. Cabeçalho de categoria recebe iniciativas.</p>
+      <p class="help">Cada iniciativa tem uma linha, com os itens dela abaixo. Arraste pela alça ⠿ para reordenar, mover um item para outra iniciativa ou soltar uma iniciativa sobre outra para juntá-las. O cabeçalho de categoria recebe iniciativas.</p>
 
       <div class="tcard">
         <div class="tcard-head">

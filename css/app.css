@@ -359,6 +359,13 @@ select.input { cursor: pointer; }
 .tag-disc { color: var(--proto-red); background: var(--proto-soft-red); }
 .modal-nota { max-width: 460px; }
 .ini-datas { font-size: 11px; font-weight: 500; color: var(--proto-text-disabled); }
+.ini-meta-bl { color: var(--proto-text-disabled); font-weight: 500; }
+.ini-cat {
+  background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 2px 7px; width: 130px;
+  font-family: inherit; font-size: 11px; font-weight: 600; color: var(--proto-text-secondary);
+}
+.ini-cat:hover { background: var(--proto-bg); }
+.ini-cat:focus { outline: none; border-color: var(--proto-green-deep); background: var(--proto-bg); color: var(--proto-text); }
 .cell-ro { font-size: 12.5px; color: var(--proto-text-secondary); padding: 0 8px; }
 .t-row-filha .cell-name { padding-left: 16px; }
 .add-td { padding: 0; }

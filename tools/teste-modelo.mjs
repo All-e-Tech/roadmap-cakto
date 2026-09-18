@@ -112,44 +112,56 @@ eq(D.colunaDe(d, iniBacklog), 'priorizado', 'só no backlog do roadmap → Backl
 
 bloco('Linhas do roadmap');
 const linhas = D.linhasRoadmap(d, pay);
-const tipos = linhas.map(l => l.tipo + (l.tipo === 'categoria' ? ':' + l.nome : ''));
-ok(tipos[0] === 'categoria:Assinatura', 'primeira linha é a categoria');
-ok(linhas.filter(l => l.tipo === 'iniciativa').length === 0, 'nenhuma linha de grupo: todas as iniciativas têm um item só');
-ok(linhas.filter(l => l.tipo === 'item').every(l => l.sozinho), 'itens sozinhos são renderizados como a própria linha');
-D.novoItemNaIniciativa(pay, pay.items.find(it => it.n === 'FASE 0').ini);
-const linhas2 = D.linhasRoadmap(d, pay);
-eq(linhas2.filter(l => l.tipo === 'iniciativa').length, 1, 'com dois itens, a iniciativa vira linha de grupo');
+ok(linhas[0].tipo === 'categoria' && linhas[0].nome === 'Assinatura', 'primeira linha é a categoria');
+eq(linhas.filter(l => l.tipo === 'iniciativa').length, 4, 'toda iniciativa tem linha, mesmo com um item só (18/09/2026)');
+ok(linhas.filter(l => l.tipo === 'item').every(l => l.nivel === 2), 'itens ficam sempre sob a linha da iniciativa');
+ok(linhas.every((l, i) => l.tipo !== 'item' || linhas.slice(0, i).reverse().find(x => x.tipo !== 'item').tipo === 'iniciativa'), 'nenhum item aparece solto');
+// A linha da iniciativa mostra quantos itens estão no roadmap e quantos ficaram no backlog.
+const codeBl = pay.backlog[0].ini;
+D.novoItemNaIniciativa(pay, codeBl);
+const linhaB = D.linhasRoadmap(d, pay).find(l => l.tipo === 'iniciativa' && l.code === codeBl);
+eq([linhaB.total, linhaB.noBacklog], [1, 1], 'um item no roadmap e um no backlog');
+// Squad sem categoria: a linha da iniciativa continua aparecendo.
+const plano = d.quarters.q3.squads[1];
+ok(D.linhasRoadmap(d, plano).some(l => l.tipo === 'iniciativa'), 'sem categoria, a iniciativa ainda tem linha');
+plano.groupByCat = false;
+ok(D.linhasRoadmap(d, plano).some(l => l.tipo === 'iniciativa'), 'com o agrupamento por categoria desligado, também');
+plano.groupByCat = true;
 
 bloco('Movimentos');
 const p2 = d.quarters.q3.squads[0];
 const idx = pred => p2.items.findIndex(pred);
+D.novoItemNaIniciativa(p2, p2.items.find(it => it.n === 'FASE 0').ini);
 const codeFase1 = p2.items.find(it => it.n === 'FASE 1').ini;   // 1 item
-const codeFase0 = p2.items.find(it => it.n === 'FASE 0').ini;   // 2 itens (o bloco anterior acrescentou um)
+const codeFase0 = p2.items.find(it => it.n === 'FASE 0').ini;   // 2 itens
 eq(D.itensDaIniciativa(p2, codeFase0).length, 2, 'FASE 0 tem dois itens antes dos movimentos');
-eq(D.moveItemParaIniciativa(d, p2, idx(it => it.n === 'FASE 1'), codeFase0).ok, false, 'mover o último item da origem é recusado');
-eq(D.moveItemParaIniciativa(d, p2, idx(it => it.ini === codeFase0 && it.n === ''), codeFase1).ok, true, 'mover um item quando a origem tem dois é aceito');
-eq(D.itensDaIniciativa(p2, codeFase1).length, 2, 'destino ficou com dois itens');
-eq(D.itensDaIniciativa(p2, codeFase0).length, 1, 'origem ficou com um');
+const antesJ = d.iniciativas.length;
+const rJ = D.moveItemParaIniciativa(d, p2, idx(it => it.n === 'FASE 1'), codeFase0);
+eq([rJ.ok, !!rJ.juntou], [true, true], 'mover o último item da origem junta as duas iniciativas');
+eq(d.iniciativas.length, antesJ - 1, 'e o card da origem some');
+eq(D.itensDaIniciativa(p2, codeFase0).length, 3, 'destino ficou com três itens');
+ok(!D.iniciativaPorCode(d, codeFase1), 'a iniciativa de origem não existe mais');
 
 const antes = d.iniciativas.length;
-const ex = D.extrairItem(d, p2, idx(it => it.ini === codeFase1 && it.n === ''));
-eq(ex.ok, true, 'extrair item de iniciativa com dois itens');
+const ex = D.extrairItem(d, p2, idx(it => it.ini === codeFase0 && it.n === ''));
+eq(ex.ok, true, 'extrair item de iniciativa com vários itens');
 eq(d.iniciativas.length, antes + 1, 'extrair cria um card novo');
 eq(D.extrairItem(d, p2, idx(it => it.ini === ex.code)).ok, false, 'extrair de iniciativa com um item só é recusado');
 
 const antes2 = d.iniciativas.length;
-eq(D.juntarIniciativas(d, ex.code, codeFase1).ok, true, 'juntar duas iniciativas');
+eq(D.juntarIniciativas(d, ex.code, codeFase0).ok, true, 'juntar duas iniciativas');
 eq(d.iniciativas.length, antes2 - 1, 'juntar remove o card da origem');
-eq(D.itensDaIniciativa(p2, codeFase1).length, 2, 'itens da origem passaram para o destino');
+eq(D.itensDaIniciativa(p2, codeFase0).length, 3, 'itens da origem passaram para o destino');
 
 bloco('Remoção e invariante');
 const codeSozinha = p2.items.find(it => it.n === 'Ebanx').ini;
 const removeu = D.removeItem(d, p2, p2.items.findIndex(it => it.n === 'Ebanx'));
 eq(removeu, true, 'remover o último item remove a iniciativa');
 ok(!D.iniciativaPorCode(d, codeSozinha), 'card sumiu junto');
-const codeDupla = codeFase1;
-D.removeItem(d, p2, p2.items.findIndex(it => it.ini === codeDupla));
-ok(!!D.iniciativaPorCode(d, codeDupla), 'remover um de dois mantém a iniciativa');
+eq(D.itensDaIniciativa(p2, codeFase0).length, 3, 'a iniciativa com três itens segue intacta');
+D.removeItem(d, p2, p2.items.findIndex(it => it.ini === codeFase0));
+ok(!!D.iniciativaPorCode(d, codeFase0), 'remover um de vários mantém a iniciativa');
+eq(D.itensDaIniciativa(p2, codeFase0).length, 2, 'e sobra um a menos');
 
 bloco('Mover de squad');
 const dd = D.normalize(boardAntigo());

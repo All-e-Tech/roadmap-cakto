@@ -44,6 +44,9 @@ export function GanttView() {
       if (catCol) return;
       if (l.tipo === 'vazio') { lanes.push({ kind: 'empty', label: '— sem itens —', indent: 40 }); return; }
       if (l.tipo === 'iniciativa') {
+        // Iniciativa de um item só não ganha camada aqui: a barra do item já a representa, e uma linha
+        // extra por item dobraria a altura do Gantt, que existe para ser denso (18/09/2026).
+        if (l.total <= 1) { iniKey = null; iniCol = false; return; }
         // Barra envelope: do menor início ao maior fim dos itens (SPEC §6.1).
         iniKey = sqKey + 'i' + l.code; iniCol = !!collapsed[iniKey];
         const geo = geometriaBarra({ s: l.s, e: l.e, st: 'backlog', pv: 'prazo', p: l.pct, n: l.titulo }, tl, q, false);
@@ -54,7 +57,7 @@ export function GanttView() {
         });
         return;
       }
-      if (l.sozinho) { lanes.push(row(l.it, sqd.groupByCat && catKey ? 40 : 24)); return; }
+      if (!iniKey) { lanes.push(row(l.it, sqd.groupByCat && catKey ? 40 : 24)); return; }   // iniciativa de um item só
       if (!iniCol) lanes.push(row(l.it, 56));
     });
   });

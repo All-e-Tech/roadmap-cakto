@@ -3,7 +3,7 @@
 // 3b (Config-1, C11): duração da sprint em seletor 7·14·21·28. 3b (Config-2, C8 revisada): prefixo editável por squad,
 // arquivar/desarquivar e excluir com travas nomeadas (itens, backlog, iniciativas; excluir só sem histórico).
 import { html, Button } from '../ui.js';
-import { state, set, mut, toast, switchQuarter, quarterAtual } from '../app.js';
+import { state, set, mut, toast, switchQuarter, quarterAtual, salvarBoard, pedirCarregar } from '../app.js';
 import {
   quarterAtivo, quartersOrdenados, squadsDoQuarter, itensDoQuarter, sprintsOf, fmtBR,
   setCampoQuarter, setRotuloQuarter, arquivaQuarter, excluirQuarter, novoQuarter,
@@ -99,6 +99,26 @@ export function ConfigView() {
             ${!temHistorico(data, s.name, q) && html`<button class="x-btn x-18" title="Excluir squad (sem histórico em outros quarters)" onClick=${() => onExcluirSquad(i)}>×</button>`}
           </div>`)}
         <div class="mt14"><${Button} variant="secondary" size="small" onClick=${onNovaSquad}>+ Adicionar squad</${Button}></div>
+      </section>
+
+      <section class="card">
+        <div class="card-title">Backup e restauração</div>
+        <div class="card-sub card-sub-18">O board é salvo sozinho no servidor e compartilhado com todos — isto aqui é a cópia em arquivo, para guardar fora ou voltar atrás.</div>
+        <div class="io-linha">
+          <div class="io-txt">
+            <b>Salvar uma cópia</b>
+            <span>Baixa o board inteiro num arquivo JSON: todos os quarters, squads, itens e iniciativas. Faça antes de qualquer mudança grande.</span>
+          </div>
+          <${Button} variant="secondary" size="small" onClick=${salvarBoard}>Salvar cópia</${Button}>
+        </div>
+        <div class="io-linha">
+          <div class="io-txt">
+            <b>Carregar uma cópia</b>
+            <span>Substitui o board inteiro pelo arquivo escolhido, para todo mundo. Pede confirmação antes. Use <code>docs/board-vazio.json</code> para começar do zero.</span>
+          </div>
+          <${Button} variant="secondary" size="small" onClick=${pedirCarregar}>Carregar cópia</${Button}>
+        </div>
+        <div class="io-nota">Para trazer dados da planilha, use <b>Importar</b> na tela Roadmap: ele acrescenta itens sem apagar nada.</div>
       </section>
 
       <section class="card">

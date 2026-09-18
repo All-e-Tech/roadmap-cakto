@@ -8,7 +8,7 @@
 import { render } from 'preact';
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { html, Button, Icon } from './ui.js';
-import { seedNovo, quarterAtivo, quartersDoSeletor, quartersOrdenados, squadsDoQuarter, itensDoQuarter, ativarQuarter, substituiSquads } from './data.js';
+import { seedNovo, quarterAtivo, quartersDoSeletor, quartersOrdenados, squadsDoQuarter, itensDoQuarter, ativarQuarter, acrescentaSquads, previaImportacao } from './data.js';
 import { carregarLocal, salvarLocal, carregarSidebar, salvarSidebar, sync, iniciar, entrar } from './sync.js';
 import { lerPlanilha, lerJson, baixarJson } from './io.js';
 import { ConfigView } from './components/config.js';
@@ -50,6 +50,10 @@ export const state = {
   sideOpen: carregarSidebar(),
 };
 let rerender = () => {};
+// Inputs de arquivo escondidos: ficam no shell, mas quem aciona Salvar e Carregar é a Config (§7, 19/09/2026).
+let jsonInput = null;
+export function salvarBoard() { baixarJson(state.data); toast('Arquivo salvo'); }
+export function pedirCarregar() { if (jsonInput) jsonInput.click(); }
 // Estado de interface: muda e re-renderiza.
 export function set(patch) { Object.assign(state, patch); rerender(); }
 // C7 (09/09/2026): o quarter mostrado nas views é o em visualização (local) ou o ativo do board.
@@ -125,7 +129,7 @@ function Gate() {
 function App() {
   const [, tick] = useState(0);
   rerender = () => tick(t => t + 1);
-  const jsonRef = useRef(null), xlsxRef = useRef(null);
+  const xlsxRef = useRef(null);
 
   // Clique fora fecha o seletor de quarter (o `_doc` do protótipo).
   useEffect(() => {
@@ -137,7 +141,6 @@ function App() {
   const q = quarterAtual(), qid = idQuarterAtual(), ro = somenteLeitura();
   const go = p => () => { set({ page: p }); window.scrollTo(0, 0); };
   const toggleSide = () => { const v = !state.sideOpen; set({ sideOpen: v }); salvarSidebar(v); };
-  const saveJson = () => { baixarJson(state.data); toast('Arquivo salvo'); };
   const onJsonFile = ev => {
     const f = ev.target.files[0]; if (!f) return;
     ev.target.value = '';
@@ -149,16 +152,20 @@ function App() {
       state.data = d; salvarLocal(d); set({ activeSquad: 0 }); toast('Dados carregados');
     });
   };
+  // Importar é ADITIVO desde 19/09/2026 (§8): acrescenta itens ao quarter ativo, sem remover nada.
+  // Num CSV, que não tem abas, tudo entra na squad cuja aba está aberta.
   const onXlsxFile = ev => {
     const f = ev.target.files[0]; if (!f) return;
     ev.target.value = '';
     if (somenteLeitura()) { toast('Quarter em visualização — somente leitura'); return; }
-    lerPlanilha(f).then(squads => {
-      if (!squads.length) { toast('Nenhuma tabela reconhecida'); return; }
-      // A11 (09/09/2026): Importar substitui o quarter — confirmação nomeando o que será perdido
-      const q = quarterAtivo(state.data);
-      if (!window.confirm(`Substituir o quarter ${q.label} (${squadsDoQuarter(q).length} squads, ${itensDoQuarter(q)} itens)? Salve antes se quiser voltar.`)) return;
-      mut(d => substituiSquads(d, squads)); set({ activeSquad: 0 }); toast('Importado: ' + squads.length + ' squads');
+    const aberta = squadsDoQuarter(quarterAtual())[state.activeSquad];
+    lerPlanilha(f, aberta ? aberta.name : '').then(blocos => {
+      if (!blocos.length) { toast('Nenhuma tabela reconhecida'); return; }
+      const q = quarterAtivo(state.data), p = previaImportacao(state.data, blocos);
+      const extra = p.criadas.length ? ` Serão criadas as squads: ${p.criadas.join(', ')}.` : '';
+      if (!window.confirm(`Acrescentar ${p.itens} itens ao quarter ${q.label}, em ${p.squads} squad(s)? Nada será removido.${extra}`)) return;
+      let r; mut(d => { r = acrescentaSquads(d, blocos); });
+      toast(`Importado: ${r.itens} itens em ${r.squads} squads`);
     }).catch(() => toast('Erro ao ler a planilha'));
   };
 
@@ -182,7 +189,7 @@ function App() {
               <div class="nav-section nav-section-cfg">Config</div>
               ${NAV_CONFIG.map(navBtn)}
             </nav>
-            <div class="side-note">Alterações são salvas automaticamente e compartilhadas com todos. Salvar / Carregar exportam e importam uma cópia em JSON.</div>`
+            <div class="side-note">Alterações são salvas automaticamente e compartilhadas com todos. Backup e restauração ficam em Squads & sprints.</div>`
           : html`<nav class="nav-list-c">${NAV_ROADMAP.map(navBtnC)}${NAV_CONFIG.map(navBtnC)}</nav>`}
       </aside>
 
@@ -199,8 +206,6 @@ function App() {
           </div>
           ${SyncBadge()}
           ${state.page === 'data' && html`<${Button} variant="secondary" size="small" onClick=${() => xlsxRef.current && xlsxRef.current.click()}>Importar</${Button}>`}
-          <${Button} variant="secondary" size="small" onClick=${() => jsonRef.current && jsonRef.current.click()}>Carregar</${Button}>
-          <${Button} variant="primary" size="small" onClick=${saveJson}>Salvar</${Button}>
           <div class="avatar"></div>
         </header>
         ${ErroBanner()}
@@ -208,8 +213,8 @@ function App() {
         ${VIEWS[state.page]()}
       </main>
 
-      <input type="file" accept=".json" ref=${jsonRef} onChange=${onJsonFile} class="hidden-input" />
-      <input type="file" accept=".xlsx,.xls" ref=${xlsxRef} onChange=${onXlsxFile} class="hidden-input" />
+      <input type="file" accept=".json" ref=${el => { jsonInput = el; }} onChange=${onJsonFile} class="hidden-input" />
+      <input type="file" accept=".xlsx,.xls,.csv" ref=${xlsxRef} onChange=${onXlsxFile} class="hidden-input" />
       ${state.toast && html`<div class="toast">${state.toast}</div>`}
     </div>`;
 }

@@ -573,19 +573,41 @@ export function novaSquad(data) {
   return q.squads.length - 1;
 }
 export function removeSquad(data, i) { quarterAtivo(data).squads.splice(i, 1); }
-// Importar planilha (A11: substitui). Cada linha vira uma iniciativa de um item; `Pilar` vira a
-// categoria dela (SPEC §8, 17/09/2026) — o `normalize()` faz a conversão logo em seguida.
-export function substituiSquads(data, squads) {
+// Importar planilha — ADITIVO desde 19/09/2026 (SPEC §8, §11 item 6): acrescenta itens ao quarter ativo
+// sem remover nada. Cada linha vira uma iniciativa de um item e o `Pilar` vira a categoria dela; a squad
+// que não existir no quarter é criada. Devolve o resumo para a interface avisar o que entrou.
+export function acrescentaSquads(data, blocos) {
   const q = quarterAtivo(data);
-  // Some com as iniciativas cujos itens viviam SÓ nas squads deste quarter. As que têm item em outro
-  // quarter ficam: apagá-las deixaria esses itens apontando para uma iniciativa inexistente.
-  // Card sem item nenhum (fila de entrada) não é tocado pela importação.
-  const soNesteQuarter = iniciativas(data)
-    .filter(i => { const ligados = itensGlobais(data, i.code); return ligados.length > 0 && ligados.every(x => x.q === q); })
-    .map(i => i.code);
-  q.squads = squads;
-  data.iniciativas = iniciativas(data).filter(i => !soNesteQuarter.includes(i.code));
-  normalize(data);   // cria a iniciativa de cada linha importada
+  const res = { squads: 0, itens: 0, criadas: [] };
+  (blocos || []).forEach(bloco => {
+    const nome = (bloco.name || '').trim(); if (!nome) return;
+    let sq = q.squads.find(s => s.name === nome);
+    if (!sq) {
+      sq = { name: nome, prefix: prefixoLivre(q, prefixoDeNome(nome)), archived: false,
+             color: bloco.color || PALETTE[q.squads.length % PALETTE.length], groupByCat: true,
+             pm: '', tl: '', categories: [], items: [], backlog: [] };
+      q.squads.push(sq); res.criadas.push(nome);
+    }
+    res.squads++;
+    (bloco.items || []).forEach(linha => {
+      const cat = String(linha.cat || '').trim();
+      if (cat && !sq.categories.some(c => c.name === cat)) sq.categories.push({ name: cat });
+      const ini = criaIniciativa(data, sq.name, linha.n, cat, 'priorizado');
+      sq.items.push({ n: linha.n, s: linha.s || '', e: linha.e || '', st: linha.st || 'backlog', pv: linha.pv || 'nao', p: linha.p || 0, ini: ini.code, arq: '', nota: '' });
+      res.itens++;
+    });
+    if (sq.categories.length) sq.groupByCat = true;
+  });
+  return res;
+}
+// Quantos itens uma importação vai acrescentar, e quais squads serão criadas — para a confirmação.
+export function previaImportacao(data, blocos) {
+  const q = quarterAtivo(data);
+  return {
+    itens: (blocos || []).reduce((n, b) => n + (b.items || []).length, 0),
+    squads: (blocos || []).length,
+    criadas: (blocos || []).map(b => b.name).filter(n => n && !q.squads.some(s => s.name === n)),
+  };
 }
 
 // ---------- Kanban (Anexo A) — gate e mutações ----------

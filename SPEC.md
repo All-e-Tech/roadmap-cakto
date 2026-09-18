@@ -45,8 +45,8 @@ Quatro views — **nomes travados** (decisão de 07/09/2026, `divergences.md` C5
 
 ### 1.1 Shell e navegação
 
-- **Barra lateral** (280px): logo, seção "Roadmap" (Roadmap, Visão geral (Gantt), Kanban de iniciativas) e seção "Config" (Squads & sprints), com ícones do design system. **Colapsável** para 64px (só ícones, com tooltip no título); o estado fica lembrado no navegador (`localStorage`, chave `cakto-roadmap-side`). Rodapé com a nota de persistência ("Alterações são salvas automaticamente e compartilhadas com todos. Salvar / Carregar exportam e importam uma cópia em JSON.", desde o passo 4).
-- **Header:** trilha `Roadmap {quarter} / {view}`; **seletor de quarter** em menu suspenso (lista **todos** os quarters, arquivados em seção própria e marcados — comportamento em §7; cada linha mostra o rótulo e "Sprint 01–NN"; fecha ao clicar fora); botões **Importar** (só na view Roadmap), **Carregar** e **Salvar** (§8); placeholder de avatar à direita.
+- **Barra lateral** (280px): logo, seção "Roadmap" (Roadmap, Visão geral (Gantt), Kanban de iniciativas) e seção "Config" (Squads & sprints), com ícones do design system. **Colapsável** para 64px (só ícones, com tooltip no título); o estado fica lembrado no navegador (`localStorage`, chave `cakto-roadmap-side`). Rodapé com a nota de persistência ("Alterações são salvas automaticamente e compartilhadas com todos. Backup e restauração ficam em Squads & sprints.").
+- **Header:** trilha `Roadmap {quarter} / {view}`; **seletor de quarter** em menu suspenso (lista **todos** os quarters, arquivados em seção própria e marcados — comportamento em §7; cada linha mostra o rótulo e "Sprint 01–NN"; fecha ao clicar fora); botão **Importar** (só na view Roadmap — §8); indicador de sincronização (§9.2); placeholder de avatar à direita. **Salvar cópia** e **Carregar cópia** saíram do header em 19/09/2026 e ficam em Squads & sprints (§7).
 - Rótulos de navegação: os quatro nomes travados de §1. Enquanto um quarter que não é o ativo estiver em visualização (§7), o header exibe o banner "Quarter arquivado — somente leitura" (ou "Quarter não ativo — somente leitura", se não estiver arquivado) e toda edição é recusada com a mensagem de §1.2.
 
 ### 1.2 Mensagens de confirmação (toasts)
@@ -55,9 +55,9 @@ Toda ação relevante responde com uma mensagem curta no rodapé, centralizada, 
 
 | Gatilho | Texto |
 |---|---|
-| Salvar | Arquivo salvo |
-| Carregar (sucesso · arquivo não reconhecido) | Dados carregados · Arquivo inválido |
-| Importar planilha | Importado: N squads · Nenhuma tabela reconhecida · Erro ao ler a planilha |
+| Salvar cópia (§7) | Arquivo salvo |
+| Carregar cópia (sucesso · arquivo não reconhecido) | Dados carregados · Arquivo inválido |
+| Importar planilha | Importado: {N} itens em {M} squads · Nenhuma tabela reconhecida · Erro ao ler a planilha |
 | + Squad · excluir squad · arquivar/desarquivar | Squad criada — renomeie no campo de nome · Squad excluída · Squad arquivada · Squad desarquivada |
 | Arquivar/excluir squad com pendências · prefixo inválido | Squad com {N itens no roadmap, M no backlog, K iniciativas no Kanban} — remaneje antes de {arquivar/excluir} · Prefixo inválido ou já usado por outra squad |
 | + Nova categoria | Categoria criada — clique no nome para editar |
@@ -387,15 +387,21 @@ Chips: Todas as squads / Em risco/atrasado / Em desenvolvimento.
 - **Quarters:** lista com ativo/arquivado; **rótulo editável inline**; ações Ativar, Arquivar/Desarquivar e **Excluir** (× — duas travas: só quarter sem nenhum item no roadmap, e nunca o quarter ativo; cada trava responde com mensagem, §1.2); **+ Novo quarter** (rótulo + início + nº de sprints; herda squads e categorias com itens vazios; numeração reinicia em Sprint 01).
 - **Squads:** nome, cor, **prefixo** (único no quarter), **PM padrão** e **Tech Lead padrão** (texto; copiados para toda iniciativa nova da squad, e editáveis no card — 17/09/2026), toggle de categorias; **+ Adicionar squad**; **Arquivar/Desarquivar** e **Excluir** (só sem histórico em outros quarters), ambos travados enquanto houver itens no roadmap, no backlog ou iniciativas no Kanban — a mensagem nomeia o que impede (§3, "Squads: estrutura e prefixo").
 - **Seletor de quarter** no header lista **todos** os quarters, com os arquivados em seção própria e marcados. Selecionar qualquer quarter que não seja o ativo muda só a **visualização de quem clicou**, em modo **somente leitura**, com banner "Quarter arquivado — somente leitura" (ou "Quarter não ativo — somente leitura"); não altera `data.activeQuarter` nem o que os outros PMs veem. O ativo aparece marcado "· ativo" no seletor. **Ativar**, aqui em Squads & sprints, é a única ação que muda o quarter ativo do board (decisão de 07/09/2026, C7). Implica separar "quarter ativo" (compartilhado) de "quarter em visualização" (local) — invariante em §3.
+- **Backup e restauração** (19/09/2026): seção com **Salvar cópia** e **Carregar cópia** (§8), cada uma com a descrição do que faz ao lado do botão. Saíram do header porque confundiam com o Importar e com o salvamento automático do servidor, que é o padrão.
 - **Arquivados** (17/09/2026): seção própria listando iniciativas e itens fora de circulação (§4.3), com de onde vieram, a `nota` do arquivamento ou descarte e o botão **Retomar**. Retomar devolve a iniciativa ao Backlog Priorizado da squad original ou de outra: os itens voltam para o **backlog do roadmap**, não para o Gantt, porque o que foi despriorizado é replanejado (18/09/2026). O estado em que pararam vira a observação do item no backlog ("estava em Em desenvolvimento · 40%"), para o PM não perder o contexto ao repriorizar.
 
 ---
 
 ## 8. Import / Export
 
-- **Importar planilha (.xlsx):** parser **header-aware** no cliente (SheetJS). Para cada aba: acha a linha de cabeçalho que contém "Item", mapeia colunas por nome (`Item`, `Pilar`/`Categoria`, `Início`, `Fim`, `Status`, `Previsão`, `% Conclusão`), lê até a primeira linha em branco (1º bloco da aba). Traduz status/previsão por regex, extrai % e datas. Desde 17/09/2026, como todo item precisa de iniciativa, **cada linha importada vira uma iniciativa de um item**, e `Pilar` vira a **categoria dessa iniciativa** — a mesma regra da migração de arquivos antigos (`docs/decisions.md`, 17/09/2026). Cada aba vira uma squad. **Comportamento atual: substitui todas as squads do quarter ativo.** A intenção original é carga inicial a partir da planilha, e o comportamento desejado é **aditivo** — adicionar itens ao roadmap, não substituir; o redesenho fica como evolução pós-validação (§11). Proteção mínima enquanto isso (após a reescrita): confirmação antes de substituir, nomeando o que será perdido — "Substituir o quarter {rótulo} ({N} squads, {M} itens)? Salve antes se quiser voltar." (decisão de 07/09/2026, A11 + B2).
-- **Backup ↓:** baixa o `data` completo como JSON.
-- **Carregar ↑:** carrega JSON de backup, **substitui o board inteiro** e **republica** no servidor (quando §9 existir). Confirmação antes de substituir: "Substituir o board inteiro ({N} quarters, {M} itens)? Salve antes se quiser voltar."
+Duas operações diferentes, em lugares diferentes de propósito (19/09/2026): **Importar** traz dados de fora e fica na tela **Roadmap**, onde os dados caem; **Salvar cópia** e **Carregar cópia** são backup do board inteiro e ficam em **Squads & sprints** (§7), com a descrição do que cada um faz. Antes os três dividiam o header e se confundiam.
+
+- **Importar planilha (.xlsx, .xls, .csv):** parser **header-aware** no cliente (SheetJS). Para cada aba: acha a linha de cabeçalho que contém "Item", mapeia colunas por nome (`Item`, `Pilar`/`Categoria`, `Início`, `Fim`, `Status`, `Previsão`, `% Conclusão`), lê até a primeira linha em branco. Traduz status/previsão por regex, extrai % e datas. **Cada linha vira uma iniciativa de um item**, e `Pilar` vira a **categoria dessa iniciativa**, criada na squad se não existir (17/09/2026).
+  - **Aditivo** (19/09/2026, fecha o item 6 de §11): acrescenta ao quarter ativo **sem remover nada**. Squad que não existe no quarter é criada, com prefixo e cor. Confirmação com o que vai entrar: "Acrescentar {N} itens ao quarter {rótulo}, em {M} squad(s)? Nada será removido." mais "Serão criadas as squads: {nomes}." quando for o caso. Substitui a confirmação destrutiva de A11, que deixou de existir junto com a substituição.
+  - **Excel**: cada aba é uma squad, pelo nome da aba. **CSV**: não tem abas, então tudo entra na squad cuja **aba está aberta** no Roadmap.
+  - Nomes repetidos **não** são atualizados nem deduplicados: entram como itens novos. Comparar por nome seria adivinhação; duplicata é visível e removível.
+- **Salvar cópia:** baixa o `data` completo como JSON. Em Squads & sprints.
+- **Carregar cópia:** carrega JSON de backup, **substitui o board inteiro** e republica no servidor. Confirmação: "Substituir o board inteiro ({N} quarters, {M} itens)? Salve antes se quiser voltar." Em Squads & sprints. É também o caminho para zerar o board, com `docs/board-vazio.json`.
 - **PDF:** `window.print()` com CSS de impressão que mostra só o Gantt (esconde sidebar/header/filtros).
 
 ---
@@ -454,7 +460,7 @@ Fora do escopo atual (validação sem auth), já mapeado:
 3. **Modelo relacional no Postgres** (Supabase/Neon) quando o formato estabilizar. A hierarquia atual mapeia direto: `quarters`, `squads`, `categories`, `initiatives`, `items`, `backlog_items`, `users`, `audit_log`.
 4. **Audit log** (quem alterou o quê e quando) — recomendado ao sair da validação.
 5. Concorrência fina (edição por item, sem last-write-wins) quando houver muitos editores simultâneos.
-6. **Importar em modo aditivo** — Importar planilha adiciona itens ao roadmap em vez de substituir o quarter (decisão de 07/09/2026; ver §8).
+6. ~~**Importar em modo aditivo**~~ — **feito em 19/09/2026** (§8), junto com o aceite de `.csv`.
 7. **Reordenar squads e quarters** pela interface (`divergences.md`, B9).
 8. **Cadastro de pessoas** (17/09/2026): PMs e Tech Leads cadastrados na plataforma e associados às squads, substituindo o texto livre de `pm`/`tl`; uma squad pode ter mais de um TL de apoio, com um deles como padrão. O passo 4b entrega só o mínimo — PM e TL padrão por squad, como texto (§7) — porque empilhar uma entidade nova e uma tela de cadastro sobre a remodelagem do vínculo dobraria o tamanho do passo. Converge com o item 2 (perfis).
 

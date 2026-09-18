@@ -1,7 +1,8 @@
 // io.js — importar planilha, salvar e carregar JSON (SPEC §8). Sem Preact.
-// Passo 3a: mesmas regras do protótipo. Importar SUBSTITUI as squads do quarter (A11 — 3b acrescenta confirmação).
+// 19/09/2026: a importação é ADITIVA e aceita .csv além de .xlsx. No Excel, cada aba é uma squad; num CSV,
+// que não tem abas, tudo entra na squad passada por quem chamou (a aba aberta no Roadmap).
 /* global XLSX */
-import { PALETTE, normalizeSquad, normalize, dd } from './data.js';
+import { PALETTE, normalize, dd } from './data.js';
 
 // ---------- Tradução da planilha ----------
 export function xlDate(v) {
@@ -31,10 +32,11 @@ export function mapPrev(v) { v = String(v || '');
 export function mapPct(v) { const m = String(v || '').match(/(\d{1,3})\s*%/); return m ? Math.min(100, parseInt(m[1])) : 0; }
 
 // Converte um workbook já lido em squads (uma por aba com cabeçalho "Item"). Puro — testável sem browser.
-export function squadsDaPlanilha(wb) {
+export function squadsDaPlanilha(wb, nomeUnico) {
   const newSquads = [];
-  wb.SheetNames.forEach((name, idx) => {
-    const ws = wb.Sheets[name];
+  wb.SheetNames.forEach((aba, idx) => {
+    const name = nomeUnico || aba;
+    const ws = wb.Sheets[aba];
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, dateNF: 'yyyy-mm-dd' });
     let h = -1;
     for (let i = 0; i < rows.length; i++) { if ((rows[i] || []).some(c => /^item/i.test(String(c).trim()))) { h = i; break; } }
@@ -50,27 +52,27 @@ export function squadsDaPlanilha(wb) {
       started = true;
       items.push({ n: nm, s: col.ini >= 0 ? xlDate(row[col.ini]) : '', e: col.fim >= 0 ? xlDate(row[col.fim]) : '', st: mapStatus(col.st >= 0 ? row[col.st] : ''), pv: mapPrev(col.pv >= 0 ? row[col.pv] : ''), p: mapPct(col.pct >= 0 ? row[col.pct] : ''), cat: col.cat >= 0 ? String(row[col.cat] || '').trim() : '', sub: '' });
     }
-    // A coluna Pilar vira a categoria da iniciativa criada para cada linha (SPEC §8, 17/09/2026);
-    // as categorias da squad saem daqui, porque `normalize()` não as reconstrói a partir dos itens.
-    if (items.length) {
-      const cats = [...new Set(items.map(i => i.cat).filter(Boolean))].map(name => ({ name }));
-      const sq = { name, color: PALETTE[idx % PALETTE.length], groupByCat: cats.length > 0, categories: cats, items, backlog: [] };
-      normalizeSquad(sq); newSquads.push(sq);
-    }
+    // A coluna Pilar vira a categoria da iniciativa criada para cada linha (SPEC §8).
+    if (items.length) newSquads.push({ name, color: PALETTE[idx % PALETTE.length], items });
   });
   return newSquads;
 }
 
 // ---------- Arquivos (browser) ----------
-// Lê um .xlsx e devolve as squads reconhecidas (array vazio = "Nenhuma tabela reconhecida"). Rejeita em erro de leitura.
-export function lerPlanilha(file) {
+// Lê .xlsx, .xls ou .csv e devolve os blocos reconhecidos (array vazio = "Nenhuma tabela reconhecida").
+// `squadPadrao` é usado quando o arquivo não tem abas nomeadas (CSV). Rejeita em erro de leitura.
+export function lerPlanilha(file, squadPadrao) {
+  const csv = /\.csv$/i.test(file.name || '');
   return new Promise((resolve, reject) => {
     const r = new FileReader();
     r.onload = () => {
-      try { resolve(squadsDaPlanilha(XLSX.read(r.result, { type: 'array', cellDates: true }))); }
-      catch (e) { console.error(e); reject(e); }
+      try {
+        const wb = csv ? XLSX.read(String(r.result), { type: 'string', cellDates: true })
+                       : XLSX.read(r.result, { type: 'array', cellDates: true });
+        resolve(squadsDaPlanilha(wb, csv ? squadPadrao : ''));
+      } catch (e) { console.error(e); reject(e); }
     };
-    r.readAsArrayBuffer(file);
+    if (csv) r.readAsText(file); else r.readAsArrayBuffer(file);
   });
 }
 // Baixa o board inteiro como JSON (botão Salvar).
